@@ -1,0 +1,26 @@
+<resources>
+
+    <dimen name="padding_horizontal">4dp</dimen>
+    <dimen name="padding_top">4dp</dimen>
+    <dimen name="padding_bottom">32dp</dimen>
+
+    <dimen name="margin_start">12dp</dimen>
+    <dimen name="margin_top">10dp</dimen>
+    <dimen name="margin_bottom">32dp</dimen>
+    <dimen name="margin_horizontal">16dp</dimen>
+
+    <dimen name="text_size_large">26sp</dimen>
+    <dimen name="text_size_medium">22sp</dimen>
+    <dimen name="text_size_small">16sp</dimen>
+
+    <dimen name="height_divider">16dp</dimen>
+    <dimen name="height_item">61dp</dimen>
+
+    <dimen name="corner_radius">16dp</dimen>
+
+    <dimen name="drawable_padding">8dp</dimen>
+
+    <dimen name="bar_height">61dp</dimen>
+
+
+</resources>
