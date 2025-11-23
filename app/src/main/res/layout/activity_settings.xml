@@ -6,20 +6,19 @@
 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="?android:attr/colorBackground"
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/padding_horizontal"
     android:paddingTop="@dimen/padding_top"
     android:paddingBottom="@dimen/padding_bottom">
 
-    <Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:title="@string/settings"
-        android:titleTextColor="@color/black"
-        android:navigationIcon="@drawable/ic_arrow_left"
-        />
+        app:navigationIcon="@drawable/ic_arrow_left"
+        app:title="@string/settings"
+        app:navigationIconTint="?attr/colorOnSurface"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,59 +26,44 @@
         android:clickable="true">
 
         <TextView
+            style="@style/SettingsElement"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:fontFamily="@font/ys_display_medium"
-            android:paddingHorizontal="@dimen/padding_horizontal"
-            android:text="@string/dark_theme"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_small" />
+            android:text="@string/dark_theme" />
 
-        <Switch
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/themeSwitcher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/margin_end"
             android:checked="false"
-            android:thumbTint="@color/switch_colors"
-            android:trackTint="@color/switch_colors"/>
+            app:thumbTint="@color/switch_thumb_color"
+            app:trackTint="@color/switch_track_color" />
     </LinearLayout>
 
     <TextView
-        android:clickable="true"
+        style="@style/SettingsElement"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bar_height"
-        android:fontFamily="@font/ys_display_medium"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="@dimen/padding_horizontal"
+        android:clickable="true"
         android:text="@string/share_app"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_size_small"
-        app:drawableEndCompat="@drawable/ic_share"/>
+        app:drawableEndCompat="@drawable/ic_share" />
 
     <TextView
-        android:clickable="true"
-        android:layout_width="match_parent"
-        android:layout_height="61dp"
-        android:fontFamily="@font/ys_display_medium"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="@dimen/padding_horizontal"
-        android:text="@string/write_to_support"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_size_small"
-        app:drawableEndCompat="@drawable/ic_support"/>
-
-    <TextView
-        android:clickable="true"
+        style="@style/SettingsElement"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bar_height"
-        android:fontFamily="@font/ys_display_medium"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="@dimen/padding_horizontal"
+        android:clickable="true"
+        android:text="@string/write_to_support"
+        app:drawableEndCompat="@drawable/ic_support" />
+
+    <TextView
+        style="@style/SettingsElement"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bar_height"
+        android:clickable="true"
         android:text="@string/user_agreement"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_size_small"
-        app:drawableEndCompat="@drawable/ic_arrow_short_right"/>
+        app:drawableEndCompat="@drawable/ic_arrow_short_right" />
 
 </LinearLayout>
