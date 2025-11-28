@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="settings_icon_tint">@color/white</color>
+
+    <color name="grey_text">@color/black</color>
+    <color name="grey_text_background">@color/white</color>
 </resources>

@@ -1,9 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/padding_horizontal"
+    android:paddingTop="@dimen/padding_top"
     tools:context=".SearchActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:navigationIcon="@drawable/ic_arrow_left"
+        app:navigationIconTint="?attr/colorOnSurface"
+        app:title="@string/search" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/search_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/drawable_padding"
+            android:background="@drawable/search_field_background"
+            android:drawableStart="@drawable/ic_search"
+            android:drawableTint="@color/grey_text"
+            android:textColor="@color/grey_text"
+            android:hint="@string/search"
+            android:inputType="text"
+            android:lines="1"
+            android:maxLength="15"
+            android:padding="@dimen/padding_horizontal"
+            android:paddingVertical="@dimen/drawable_padding"
+            android:textColorHint="@color/grey_text" />
+
+        <ImageView
+            android:id="@+id/button_clear"
+            android:contentDescription="@string/search_request_cleaning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:clickable="true"
+            android:paddingEnd="@dimen/padding_horizontal"
+            android:src="@drawable/ic_clear"
+            app:tint="@color/grey_text"
+            />
+    </FrameLayout>
+
+</LinearLayout>
+
