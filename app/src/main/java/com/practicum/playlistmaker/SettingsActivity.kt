@@ -43,7 +43,7 @@ class SettingsActivity : AppCompatActivity() {
             intent.type = "text/plain"
             intent.putExtra(
                 Intent.EXTRA_TEXT,
-                "Ссылка на курс: https://practicum.yandex.ru/android-developer/"
+                getString(R.string.course_link)
             )
             startActivity(Intent.createChooser(intent, chooserTitle))
         }
@@ -52,20 +52,20 @@ class SettingsActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_SENDTO)
             val chooserTitle = getString(R.string.write_to_support)
 
-            intent.data = Uri.parse("mailto:andrey@izoor.com")
+            intent.data = Uri.parse("mailto:" + getString(R.string.my_email))
             intent.putExtra(
                 Intent.EXTRA_SUBJECT,
-                "Сообщение разработчикам и разработчицам приложения Playlist Maker"
+                getString(R.string.subj_for_developers)
             )
             intent.putExtra(
                 Intent.EXTRA_TEXT,
-                "Спасибо разработчикам и разработчицам за крутое приложение!"
+                getString(R.string.message_for_developers)
             )
             startActivity(Intent.createChooser(intent, chooserTitle))
         }
 
         userAgreement.setOnClickListener {
-            val url = Uri.parse("https://yandex.ru/legal/practicum_offer/")
+            val url = Uri.parse(getString(R.string.practicum_offer))
             val intent = Intent(Intent.ACTION_VIEW, url)
             startActivity(intent)
         }
