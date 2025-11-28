@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.widget.TextView
@@ -13,7 +14,7 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        val currentNightMode = AppCompatDelegate.getDefaultNightMode()
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
 
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         val darkThemeSwitch = findViewById<SwitchMaterial>(R.id.themeSwitcher)
@@ -21,7 +22,7 @@ class SettingsActivity : AppCompatActivity() {
         val writeToSupport = findViewById<TextView>(R.id.writeToSupport)
         val userAgreement = findViewById<TextView>(R.id.userAgreement)
 
-        darkThemeSwitch.isChecked = (currentNightMode == AppCompatDelegate.MODE_NIGHT_YES)
+        darkThemeSwitch.isChecked = (currentNightMode == Configuration.UI_MODE_NIGHT_YES)
 
         darkThemeSwitch.setOnCheckedChangeListener { _, checked ->
             if (checked) {
@@ -32,8 +33,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         toolbar.setNavigationOnClickListener {
-            val mainScreenIntent = Intent(this, MainActivity::class.java)
-            startActivity(mainScreenIntent)
+            finish()
         }
 
         shareApp.setOnClickListener {

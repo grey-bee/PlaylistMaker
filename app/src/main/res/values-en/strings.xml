@@ -8,4 +8,6 @@
     <string name="share_app">Application sharing</string>
     <string name="write_to_support">Write to support</string>
     <string name="user_agreement">User Agreement</string>
+    <string name="search_request_cleaning">Clear search query</string>
+
 </resources>
