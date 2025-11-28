@@ -17,8 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:navigationIcon="@drawable/ic_arrow_left"
-        app:title="@string/settings"
-        app:navigationIconTint="?attr/colorOnSurface"/>
+        app:navigationIconTint="?attr/colorOnSurface"
+        app:title="@string/settings" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -43,6 +43,7 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/shareApp"
         style="@style/SettingsElement"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bar_height"
@@ -51,6 +52,7 @@
         app:drawableEndCompat="@drawable/ic_share" />
 
     <TextView
+        android:id="@+id/writeToSupport"
         style="@style/SettingsElement"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bar_height"
@@ -59,6 +61,7 @@
         app:drawableEndCompat="@drawable/ic_support" />
 
     <TextView
+        android:id="@+id/userAgreement"
         style="@style/SettingsElement"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bar_height"
