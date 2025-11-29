@@ -69,5 +69,7 @@ class SettingsActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_VIEW, url)
             startActivity(intent)
         }
+
+
     }
 }
