@@ -9,6 +9,7 @@ import  com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.appbar.MaterialToolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.net.toUri
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,20 +53,16 @@ class SettingsActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_SENDTO)
             val chooserTitle = getString(R.string.write_to_support)
 
-            intent.data = Uri.parse("mailto:" + getString(R.string.my_email))
-            intent.putExtra(
-                Intent.EXTRA_SUBJECT,
-                getString(R.string.subj_for_developers)
-            )
-            intent.putExtra(
-                Intent.EXTRA_TEXT,
-                getString(R.string.message_for_developers)
-            )
+            val mailto = "mailto:${getString(R.string.my_email)}" +
+                    "?subject=${Uri.encode(getString(R.string.subj_for_developers))}" +
+                    "&body=${Uri.encode(getString(R.string.message_for_developers))}"
+
+            intent.data = mailto.toUri()
             startActivity(Intent.createChooser(intent, chooserTitle))
         }
 
         userAgreement.setOnClickListener {
-            val url = Uri.parse(getString(R.string.practicum_offer))
+            val url = getString(R.string.practicum_offer).toUri()
             val intent = Intent(Intent.ACTION_VIEW, url)
             startActivity(intent)
         }
