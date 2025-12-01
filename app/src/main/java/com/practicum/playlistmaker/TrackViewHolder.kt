@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker
 
+import android.annotation.SuppressLint
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -12,6 +13,7 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val trackImage: ImageView = itemView.findViewById(R.id.track_image)
     private val trackName: TextView = itemView.findViewById(R.id.track_name)
     private val trackInfo: TextView = itemView.findViewById(R.id.track_info)
+    @SuppressLint("SetTextI18n")
     fun bind(model: Track) {
         Glide.with(itemView)
             .load(model.artworkUrl100)
