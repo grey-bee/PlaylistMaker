@@ -36,6 +36,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.okhttp)
     implementation(libs.glide)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)

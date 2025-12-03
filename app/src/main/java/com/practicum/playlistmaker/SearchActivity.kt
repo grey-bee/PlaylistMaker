@@ -18,6 +18,8 @@ import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Callback
 import android.util.Log
+import android.widget.Button
+import android.widget.LinearLayout
 
 class SearchActivity : AppCompatActivity() {
 
@@ -34,19 +36,84 @@ class SearchActivity : AppCompatActivity() {
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         searchField = findViewById(R.id.search_field)
         val clearButton = findViewById<ImageView>(R.id.button_clear)
+        val refreshButton = findViewById<Button>(R.id.refresh_button)
+        val nothingFoundLayer = findViewById<LinearLayout>(R.id.nothing_found)
+        val noConnectionLayer = findViewById<LinearLayout>(R.id.no_connection)
         val recyclerView = findViewById<RecyclerView>(R.id.recycle_view)
         val trackAdapter = TrackAdapter(tracks)
+        recyclerView.isVisible = true
         recyclerView.adapter = trackAdapter
 
-        clearButton.isVisible = false
+        fun showContent() {
+            Log.d("SearchActivity", "showContent() called")
+            recyclerView.isVisible = true
+            nothingFoundLayer.isVisible = false
+            noConnectionLayer.isVisible = false
+        }
+
+        fun showNothingFound() {
+            Log.d("SearchActivity", "showNothingFound() called")
+            recyclerView.isVisible = false
+            nothingFoundLayer.isVisible = true
+            noConnectionLayer.isVisible = false
+        }
+
+        fun showError() {
+            Log.d("SearchActivity", "showError() called")
+            recyclerView.isVisible = false
+            nothingFoundLayer.isVisible = false
+            noConnectionLayer.isVisible = true
+        }
+
+        fun closeAll() {
+            recyclerView.isVisible = false
+            nothingFoundLayer.isVisible = false
+            noConnectionLayer.isVisible = false
+        }
+
+        fun performSearch() {
+            RetrofitClient.api.search(searchField.text.toString())
+                .enqueue(object : Callback<TrackResponse> {
+                    override fun onResponse(
+                        call: Call<TrackResponse>,
+                        response: Response<TrackResponse>
+                    ) {
+                        if (response.code() == 200) {
+                            val resultList = response.body()?.results
+                            tracks.clear()
+                            if (!resultList.isNullOrEmpty()) {
+                                showContent()
+                                tracks.addAll(resultList)
+                                trackAdapter.notifyDataSetChanged()
+                            } else {
+                                showNothingFound()
+                            }
+                        } else {
+                            showError()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                        Log.e("SearchActivity", "onFailure called: ${t.message}", t)
+                        showError()
+                    }
+                })
+
+        }
+
         clearButton.setOnClickListener {
             searchField.text.clear()
             val inputMethodManager =
                 getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(searchField.windowToken, 0)
             tracks.clear()
+            closeAll()
             trackAdapter.notifyDataSetChanged()
 
+        }
+
+        refreshButton.setOnClickListener {
+            performSearch()
         }
 
         val searchWatcher = object : TextWatcher {
@@ -70,30 +137,7 @@ class SearchActivity : AppCompatActivity() {
 
         searchField.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                RetrofitClient.api.search(searchField.text.toString())
-                    .enqueue(object : Callback<TrackResponse> {
-                        override fun onResponse(
-                            call: Call<TrackResponse>,
-                            response: Response<TrackResponse>
-                        ) {
-                            if (response.code() == 200) {
-                                val resultList = response.body()?.results
-                                tracks.clear()
-                                if (!resultList.isNullOrEmpty()) {
-                                    tracks.addAll(resultList)
-                                    trackAdapter.notifyDataSetChanged()
-                                } else {
-                                    //показать заглушку
-                                }
-                            } else {
-                                //показать ошибку
-                            }
-                        }
-
-                        override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                            //показать ошибку
-                        }
-                    })
+                performSearch()
             }
             false
         }

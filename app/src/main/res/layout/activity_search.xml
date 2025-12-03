@@ -28,22 +28,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin_horizontal"
-            android:importantForAutofill="no"
             android:background="@drawable/search_field_background"
             android:drawableStart="@drawable/ic_search"
             android:drawablePadding="@dimen/drawable_padding"
             android:drawableTint="@color/grey_text"
             android:hint="@string/search"
+            android:imeOptions="actionDone"
+            android:importantForAutofill="no"
             android:inputType="text"
             android:lines="1"
-            android:maxLength="15"
+            android:maxLength="30"
             android:padding="@dimen/padding_horizontal"
             android:paddingVertical="@dimen/drawable_padding"
+            android:singleLine="true"
             android:textColor="@color/black"
             android:textColorHint="@color/grey_text"
-            android:textCursorDrawable="@drawable/cursor_color"
-            android:imeOptions="actionDone"
-            android:singleLine="true"/>
+            android:textCursorDrawable="@drawable/cursor_color" />
 
         <ImageView
             android:id="@+id/button_clear"
@@ -64,9 +64,59 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_16"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical"
-        />
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    <LinearLayout
+        android:id="@+id/nothing_found"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="102dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_nothing_found" />
+
+        <TextView
+            style="@style/ErrorText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/nothing_found" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/no_connection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingTop="102dp"
+            android:src="@drawable/ic_no_connection" />
+
+        <TextView
+            style="@style/ErrorText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/no_connection" />
+
+        <Button
+            android:id="@+id/refresh_button"
+            style="@style/SmallButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_24"
+            android:text="@string/refresh" />
+    </LinearLayout>
 
 </LinearLayout>
 
