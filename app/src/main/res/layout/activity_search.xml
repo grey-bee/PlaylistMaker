@@ -41,7 +41,9 @@
             android:paddingVertical="@dimen/drawable_padding"
             android:textColor="@color/black"
             android:textColorHint="@color/grey_text"
-            android:textCursorDrawable="@drawable/cursor_color" />
+            android:textCursorDrawable="@drawable/cursor_color"
+            android:imeOptions="actionDone"
+            android:singleLine="true"/>
 
         <ImageView
             android:id="@+id/button_clear"
