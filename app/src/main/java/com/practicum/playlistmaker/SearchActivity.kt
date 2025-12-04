@@ -78,7 +78,7 @@ class SearchActivity : AppCompatActivity() {
                         call: Call<TrackResponse>,
                         response: Response<TrackResponse>
                     ) {
-                        if (response.code() == 200) {
+                        if (response.isSuccessful) {
                             val resultList = response.body()?.results
                             tracks.clear()
                             if (!resultList.isNullOrEmpty()) {

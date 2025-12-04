@@ -15,7 +15,3 @@ data class Track(
             timeZone = TimeZone.getTimeZone("UTC")
         }.format(trackTimeMillis)
 }
-
-data class TrackResponse(
-    val results: List<Track>
-)

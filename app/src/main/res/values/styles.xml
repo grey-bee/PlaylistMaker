@@ -5,7 +5,7 @@
         <item name="backgroundTint">@color/white</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
         <item name="android:textColor">@color/dark_grey</item>
-        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:textSize">@dimen/text_size_26</item>
         <item name="android:textAllCaps">false</item>
         <item name="cornerRadius">@dimen/corner_radius</item>
         <item name="iconTint">@color/dark_grey</item>
@@ -31,8 +31,9 @@
     <style name="SettingsElement">
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textSize">@dimen/text_size_16</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:paddingVertical">@dimen/padding_21</item>
         <item name="android:drawableTint">@color/settings_icon_tint</item>
         <item name="android:paddingHorizontal">@dimen/padding_horizontal</item>
     </style>
@@ -40,8 +41,15 @@
     <style name="ErrorText">
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textAlignment">center</item>
-        <item name="android:textSize">@dimen/text_size_medium2</item>
+        <item name="android:textSize">@dimen/text_size_19</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:layout_marginTop">@dimen/padding_16</item>
+    </style>
+
+    <style name="ToolbarTitle">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
     </style>
 </resources>
