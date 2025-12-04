@@ -17,7 +17,6 @@ import com.google.android.material.appbar.MaterialToolbar
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Callback
-import android.util.Log
 import android.widget.Button
 import android.widget.LinearLayout
 
@@ -45,21 +44,18 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.adapter = trackAdapter
 
         fun showContent() {
-            Log.d("SearchActivity", "showContent() called")
             recyclerView.isVisible = true
             nothingFoundLayer.isVisible = false
             noConnectionLayer.isVisible = false
         }
 
         fun showNothingFound() {
-            Log.d("SearchActivity", "showNothingFound() called")
             recyclerView.isVisible = false
             nothingFoundLayer.isVisible = true
             noConnectionLayer.isVisible = false
         }
 
         fun showError() {
-            Log.d("SearchActivity", "showError() called")
             recyclerView.isVisible = false
             nothingFoundLayer.isVisible = false
             noConnectionLayer.isVisible = true
@@ -94,7 +90,6 @@ class SearchActivity : AppCompatActivity() {
                     }
 
                     override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                        Log.e("SearchActivity", "onFailure called: ${t.message}", t)
                         showError()
                     }
                 })
