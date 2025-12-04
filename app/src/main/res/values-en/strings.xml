@@ -9,5 +9,7 @@
     <string name="write_to_support">Write to support</string>
     <string name="user_agreement">User Agreement</string>
     <string name="search_request_cleaning">Clear search query</string>
-
+    <string name="nothing_found">Nothing found</string>
+    <string name="no_connection">Connection problems\n\nDownload failed. Check your internet connection</string>
+    <string name="refresh">Refresh</string>
 </resources>

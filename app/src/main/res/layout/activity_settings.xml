@@ -2,42 +2,45 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/settings"
 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground"
-    android:orientation="vertical"
-    android:paddingHorizontal="@dimen/padding_horizontal"
-    android:paddingTop="@dimen/padding_top"
-    android:paddingBottom="@dimen/padding_bottom">
+    android:orientation="vertical">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="4dp"
+        app:contentInsetStartWithNavigation="64dp"
         app:navigationIcon="@drawable/ic_arrow_left"
         app:navigationIconTint="?attr/colorOnSurface"
-        app:title="@string/settings" />
+        app:title="@string/settings"
+        app:titleTextAppearance="@style/ToolbarTitle" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/bar_height"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_24"
         android:clickable="true">
 
         <TextView
             style="@style/SettingsElement"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingStart="@dimen/padding_16"
             android:text="@string/dark_theme" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/themeSwitcher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/margin_end"
-            android:checked="false"
+            android:layout_marginEnd="@dimen/margin_16"
+            tools:checked="true"
             app:thumbTint="@color/switch_thumb_color"
             app:trackTint="@color/switch_track_color" />
     </LinearLayout>
@@ -46,8 +49,10 @@
         android:id="@+id/shareApp"
         style="@style/SettingsElement"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/bar_height"
+        android:layout_height="wrap_content"
         android:clickable="true"
+        android:paddingStart="@dimen/padding_16"
+        android:paddingEnd="@dimen/padding_12"
         android:text="@string/share_app"
         app:drawableEndCompat="@drawable/ic_share" />
 
@@ -55,8 +60,10 @@
         android:id="@+id/writeToSupport"
         style="@style/SettingsElement"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/bar_height"
+        android:layout_height="wrap_content"
         android:clickable="true"
+        android:paddingStart="@dimen/padding_16"
+        android:paddingEnd="@dimen/padding_12"
         android:text="@string/write_to_support"
         app:drawableEndCompat="@drawable/ic_support" />
 
@@ -64,8 +71,10 @@
         android:id="@+id/userAgreement"
         style="@style/SettingsElement"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/bar_height"
+        android:layout_height="wrap_content"
         android:clickable="true"
+        android:paddingStart="@dimen/padding_16"
+        android:paddingEnd="@dimen/padding_12"
         android:text="@string/user_agreement"
         app:drawableEndCompat="@drawable/ic_arrow_short_right" />
 

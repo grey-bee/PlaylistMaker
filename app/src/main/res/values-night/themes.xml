@@ -8,5 +8,6 @@
         <item name="colorOnSurface">@color/white</item>
         <!-- Customize your dark theme here. -->
         <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondary">@color/black</item>
     </style>
 </resources>

@@ -31,7 +31,7 @@
             android:fontFamily="@font/ys_display_regular"
             android:maxLines="1"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="@dimen/text_size_small"
+            android:textSize="@dimen/text_size_16"
             tools:text="Yesterday (Remastered 2009)" />
 
         <TextView
