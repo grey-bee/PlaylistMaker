@@ -8,7 +8,7 @@
     android:background="?attr/colorPrimary"
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/padding_horizontal"
-    android:paddingTop="@dimen/padding_top"
+    android:paddingTop="@dimen/padding_4"
     android:paddingBottom="@dimen/padding_bottom">
 
     <Toolbar

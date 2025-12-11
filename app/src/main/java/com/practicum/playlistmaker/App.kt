@@ -9,6 +9,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         val sharedPrefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
+        SearchHistoryManager.initialize(this)
         darkTheme = sharedPrefs.getBoolean("dark_theme", false)
         switchTheme(darkTheme)
     }
