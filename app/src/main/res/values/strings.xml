@@ -16,4 +16,7 @@
     <string name="nothing_found">Ничего не нашлось</string>
     <string name="no_connection">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
     <string name="refresh">Обновить</string>
+    <string name="search_hint">Вводите название песни на английском языке. Можно указать год для более точного поиска</string>
+    <string name="you_search">Вы искали</string>
+    <string name="history_clear">Очистить историю</string>
 </resources>

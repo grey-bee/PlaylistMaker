@@ -23,10 +23,9 @@ import android.widget.LinearLayout
 class SearchActivity : AppCompatActivity() {
 
     private var tracks = arrayListOf<Track>()
-
+    private var historyTracks = arrayListOf<Track>()
     var searchRequest = ""
     lateinit var searchField: EditText //вынужденная мера так как в задании нужно восстанавливать в onRestoreInstanceState
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,14 +33,31 @@ class SearchActivity : AppCompatActivity() {
         setContentView(R.layout.activity_search)
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         searchField = findViewById(R.id.search_field)
+        val layoutHistory = findViewById<LinearLayout>(R.id.layout_history)
+        val historyRecyclerView = findViewById<RecyclerView>(R.id.recycle_view_history)
         val clearButton = findViewById<ImageView>(R.id.button_clear)
+        val historyClearButton = findViewById<Button>(R.id.history_clear)
         val refreshButton = findViewById<Button>(R.id.refresh_button)
         val nothingFoundLayer = findViewById<LinearLayout>(R.id.nothing_found)
         val noConnectionLayer = findViewById<LinearLayout>(R.id.no_connection)
         val recyclerView = findViewById<RecyclerView>(R.id.recycle_view)
-        val trackAdapter = TrackAdapter(tracks)
+        val trackAdapter = TrackAdapter(
+            tracks,
+            onItemClick = { item ->
+                SearchHistoryManager.addTrack(item)
+            }
+        )
+        val historyAdapter = TrackAdapter(
+            historyTracks,
+            onItemClick = {
+                //todo
+            }
+        )
+
         recyclerView.isVisible = true
         recyclerView.adapter = trackAdapter
+
+        historyRecyclerView.adapter = historyAdapter
 
         fun showContent() {
             recyclerView.isVisible = true
@@ -65,6 +81,36 @@ class SearchActivity : AppCompatActivity() {
             recyclerView.isVisible = false
             nothingFoundLayer.isVisible = false
             noConnectionLayer.isVisible = false
+            val historySource = SearchHistoryManager.getTrackList()
+            layoutHistory.isVisible = historySource.isNotEmpty()
+        }
+
+        fun updateHistory() {
+            val historySource = SearchHistoryManager.getTrackList()
+            historyTracks.clear()
+            if (historySource.isNotEmpty()) historyTracks.addAll(historySource)
+            historyAdapter.notifyDataSetChanged()
+        }
+
+        fun clearHistory() {
+            SearchHistoryManager.clear()
+            historyTracks.clear()
+            historyAdapter.notifyDataSetChanged()
+            layoutHistory.isVisible = false
+        }
+
+        historyClearButton.setOnClickListener {
+            clearHistory()
+        }
+
+        searchField.setOnFocusChangeListener { _, hasFocus ->
+            updateHistory()
+            if (hasFocus
+                && historyTracks.isNotEmpty()
+                && searchField.text.isNullOrEmpty()
+
+            ) closeAll()
+            else layoutHistory.isVisible = false
         }
 
         fun performSearch() {
@@ -96,12 +142,15 @@ class SearchActivity : AppCompatActivity() {
 
         }
 
+
+
         clearButton.setOnClickListener {
             searchField.text.clear()
             val inputMethodManager =
                 getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(searchField.windowToken, 0)
             tracks.clear()
+            updateHistory()
             closeAll()
             trackAdapter.notifyDataSetChanged()
 
@@ -112,16 +161,27 @@ class SearchActivity : AppCompatActivity() {
         }
 
         val searchWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
                 // empty
             }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            override fun onTextChanged(
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int
+            ) {
                 if (s.isNullOrEmpty()) {
                     clearButton.isVisible = false
-                    return
+                    if (historyTracks.isNotEmpty()) layoutHistory.isVisible = true
                 } else {
                     clearButton.isVisible = true
+                    layoutHistory.isVisible = false
                 }
             }
 
@@ -145,7 +205,12 @@ class SearchActivity : AppCompatActivity() {
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            v.setPadding(
+                systemBars.left,
+                systemBars.top,
+                systemBars.right,
+                systemBars.bottom
+            )
             insets
         }
 

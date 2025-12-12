@@ -1,21 +1,18 @@
 package com.practicum.playlistmaker
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.widget.TextView
 import  com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.appbar.MaterialToolbar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.net.toUri
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
 
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         val darkThemeSwitch = findViewById<SwitchMaterial>(R.id.themeSwitcher)
@@ -23,14 +20,10 @@ class SettingsActivity : AppCompatActivity() {
         val writeToSupport = findViewById<TextView>(R.id.writeToSupport)
         val userAgreement = findViewById<TextView>(R.id.userAgreement)
 
-        darkThemeSwitch.isChecked = (currentNightMode == Configuration.UI_MODE_NIGHT_YES)
+        darkThemeSwitch.isChecked = (applicationContext as App).darkTheme
 
         darkThemeSwitch.setOnCheckedChangeListener { _, checked ->
-            if (checked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
+            (applicationContext as App).switchTheme(checked)
         }
 
         toolbar.setNavigationOnClickListener {
