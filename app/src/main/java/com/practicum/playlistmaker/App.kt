@@ -5,21 +5,26 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 
 class App : Application() {
+    companion object {
+        private const val PREFS_NAME = "app_prefs"
+        private const val KEY_DARK_THEME = "dark_theme"
+    }
+
     var darkTheme = false
     override fun onCreate() {
         super.onCreate()
-        val sharedPrefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
+        val sharedPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
         SearchHistoryManager.initialize(this)
-        darkTheme = sharedPrefs.getBoolean("dark_theme", false)
+        darkTheme = sharedPrefs.getBoolean(KEY_DARK_THEME, false)
         switchTheme(darkTheme)
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {
         darkTheme = darkThemeEnabled
 
-        getSharedPreferences("app_prefs", MODE_PRIVATE)
+        getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
             .edit {
-                putBoolean("dark_theme", darkThemeEnabled)
+                putBoolean(KEY_DARK_THEME, darkThemeEnabled)
             }
 
         AppCompatDelegate.setDefaultNightMode(
