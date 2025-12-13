@@ -12,6 +12,10 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 class AudioPlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +23,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_audio_player)
 
-        val track = intent.getSerializableExtra("track", Track::class.java)
+        val track = intent.getParcelableExtra("track", Track::class.java)
         val buttonBack = findViewById<ImageView>(R.id.backArrow)
         val albumCover = findViewById<ImageView>(R.id.albumCover)
         val trackName = findViewById<TextView>(R.id.trackName)
@@ -38,7 +42,9 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         trackName.text = track?.trackName
         artistName.text = track?.artistName
-        playingTime.text = "00:00" //todo
+        playingTime.text =  SimpleDateFormat("mm:ss", Locale.getDefault()).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }.format(0)
         durationData.text = track?.trackTime
 
 
@@ -47,7 +53,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         Glide.with(albumCover)
             .load(track?.artworkUrl512)
             .placeholder(R.drawable.placeholder)
-            .transform(CenterCrop())
+            .transform(CenterCrop(), RoundedCorners(8.dpToPx(albumCover.context)))
             .into(albumCover)
 
         if (track?.collectionName.isNullOrEmpty()) {

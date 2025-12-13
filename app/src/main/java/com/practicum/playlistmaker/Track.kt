@@ -1,10 +1,12 @@
 package com.practicum.playlistmaker
 
-import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class Track(
     val trackId: String,
     val trackName: String, // Название композиции
@@ -15,7 +17,7 @@ data class Track(
     val releaseDate: String, // Год релиза трека — может не быть
     val primaryGenreName: String, // Жанр
     val country: String // Страна
-) : Serializable {
+) : Parcelable {
     val trackTime: String
         get() = SimpleDateFormat("m:ss", Locale.getDefault()).apply {
             timeZone = TimeZone.getTimeZone("UTC")
