@@ -8,15 +8,26 @@
     <string name="write_to_support">Написать в поддержку</string>
     <string name="user_agreement">Пользовательское соглашение</string>
     <string name="search_request_cleaning">Почистить поисковый запрос</string>
-    <string name="course_link">Ссылка на курс: https://practicum.yandex.ru/android-developer/</string>
-    <string name="my_email">andrey@izoor.com</string>
-    <string name="subj_for_developers">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
-    <string name="message_for_developers">Спасибо разработчикам и разработчицам за крутое приложение!</string>
-    <string name="practicum_offer">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="course_link" translatable="false">Ссылка на курс: https://practicum.yandex.ru/android-developer/</string>
+    <string name="my_email" translatable="false">andrey@izoor.com</string>
+    <string name="subj_for_developers" translatable="false">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="message_for_developers" translatable="false">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="practicum_offer" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
     <string name="nothing_found">Ничего не нашлось</string>
     <string name="no_connection">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
     <string name="refresh">Обновить</string>
     <string name="search_hint">Вводите название песни на английском языке. Можно указать год для более точного поиска</string>
     <string name="you_search">Вы искали</string>
     <string name="history_clear">Очистить историю</string>
+    <string name="to_previous_screen">на предыдущий экран</string>
+    <string name="album_cover">Обложка альбома</string>
+    <string name="button_add_to_playlist">Кнопка Добавить в плейлист</string>
+    <string name="button_play">Кнопка Плей</string>
+    <string name="button_like">Кнопка Лайк</string>
+    <string name="duration">Длительность</string>
+    <string name="album">Альбом</string>
+    <string name="year">Год</string>
+    <string name="genre">Жанр</string>
+    <string name="country">Страна</string>
+    <string name="united_kingdom">United Kingdom</string>
 </resources>

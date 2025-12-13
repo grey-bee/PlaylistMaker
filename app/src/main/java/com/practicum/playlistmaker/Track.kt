@@ -9,7 +9,11 @@ data class Track(
     val trackName: String, // Название композиции
     val artistName: String, // Имя исполнителя
     val trackTimeMillis: Int, // Продолжительность трека
-    val artworkUrl100: String // Ссылка на изображение обложки
+    val artworkUrl100: String, // Ссылка на изображение обложки
+    val collectionName: String, // Название Альбома — может не быть
+    val releaseDate: String, // Год релиза трека — может не быть
+    val primaryGenreName: String, // Жанр
+    val country: String // Страна
 ) {
     val trackTime: String
         get() = SimpleDateFormat("m:ss", Locale.getDefault()).apply {
