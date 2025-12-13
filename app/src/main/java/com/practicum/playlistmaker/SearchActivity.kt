@@ -47,13 +47,16 @@ class SearchActivity : AppCompatActivity() {
             onItemClick = { item ->
                 SearchHistoryManager.addTrack(item)
                 val audioPlayerDisplayIntent = Intent(this, AudioPlayerActivity::class.java)
+                audioPlayerDisplayIntent.putExtra("track", item)
                 startActivity(audioPlayerDisplayIntent)
             }
         )
         val historyAdapter = TrackAdapter(
             historyTracks,
-            onItemClick = {
-                //todo
+            onItemClick = { item ->
+                val audioPlayerDisplayIntent = Intent(this, AudioPlayerActivity::class.java)
+                audioPlayerDisplayIntent.putExtra("track", item)
+                startActivity(audioPlayerDisplayIntent)
             }
         )
 
