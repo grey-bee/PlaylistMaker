@@ -28,6 +28,7 @@
     <dimen name="margin_18">18dp</dimen>
     <dimen name="margin_24">24dp</dimen>
     <dimen name="margin_26">26dp</dimen>
+    <dimen name="margin_140">140dp</dimen>
 
     <dimen name="text_size_26">26sp</dimen>
     <dimen name="text_size_22">22sp</dimen>
@@ -36,6 +37,8 @@
     <dimen name="text_size_11">11sp</dimen>
     <dimen name="text_size_13">13sp</dimen>
     <dimen name="text_size_14">14sp</dimen>
+
+    <dimen name="progressbar_size">44dp</dimen>
 
     <dimen name="height_divider">16dp</dimen>
 
