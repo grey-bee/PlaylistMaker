@@ -1,11 +1,9 @@
 package com.practicum.playlistmaker
 
-import android.annotation.SuppressLint
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -24,14 +22,6 @@ import java.util.TimeZone
 
 class AudioPlayerActivity : AppCompatActivity() {
 
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-
-        private const val DELAY = 500L
-    }
 
     private var playerState = STATE_DEFAULT
     private val mediaPlayer = MediaPlayer()
@@ -42,14 +32,10 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     private fun preparePlayer() {
         mediaPlayer.setOnErrorListener { mp, what, extra ->
-            Log.e("AudioPlayer", "MediaPlayer error: what=$what, extra=$extra")
             true
         }
-        Log.d("AudioPlayer", "preparePlayer started, url=$url")
         mediaPlayer.setDataSource(url)
-        Log.d("AudioPlayer", "setDataSource done")
         mediaPlayer.prepareAsync()
-        Log.d("AudioPlayer", "prepareAsync called")
         mediaPlayer.setOnPreparedListener {
             buttonPlay.isEnabled = true
             playerState = STATE_PREPARED
@@ -129,7 +115,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         }.format(0)
         durationData.text = track?.trackTime
         val test = track?.previewUrl.toString()
-        Log.d("debug", test)
         if (!track?.previewUrl.isNullOrEmpty()) {
             url = track?.previewUrl.toString()
             preparePlayer()
@@ -186,6 +171,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         mediaPlayer.release()
+        handler.removeCallbacksAndMessages(null)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -194,5 +180,13 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
+    }
+
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val DELAY = 500L
     }
 }

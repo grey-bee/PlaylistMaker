@@ -260,4 +260,9 @@ class SearchActivity : AppCompatActivity() {
         searchField.setText(searchRequest)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
+    }
+
 }
