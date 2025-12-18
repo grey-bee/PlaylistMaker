@@ -16,7 +16,8 @@ data class Track(
     val collectionName: String, // Название Альбома — может не быть
     val releaseDate: String, // Год релиза трека — может не быть
     val primaryGenreName: String, // Жанр
-    val country: String // Страна
+    val country: String, // Страна
+    val previewUrl: String //Ссылка на отрывок трека в формате
 ) : Parcelable {
     val trackTime: String
         get() = SimpleDateFormat("m:ss", Locale.getDefault()).apply {
