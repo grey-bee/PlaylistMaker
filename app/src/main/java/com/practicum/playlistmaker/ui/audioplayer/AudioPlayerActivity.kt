@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.ui.audioplayer
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -16,6 +16,9 @@ import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.dpToPx
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -136,10 +139,10 @@ class AudioPlayerActivity : AppCompatActivity() {
         } else {
             albumData.text = track?.collectionName
         }
-        if (track?.releaseDate.isNullOrEmpty()) {
+        if (track?.releaseYear.isNullOrEmpty()) {
             yearGroup.isVisible = false
         } else {
-            yearData.text = track?.year
+            yearData.text = track?.releaseYear
         }
 
 

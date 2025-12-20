@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.practicum.playlistmaker.domain.models.Track
 
 class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val trackImage: ImageView = itemView.findViewById(R.id.track_image)
