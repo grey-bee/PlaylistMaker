@@ -22,7 +22,7 @@ class SearchTracksInteractorImpl(
                 handler.post {
                     consumer.consume(result)
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 handler.post {
                     consumer.consume(null)
                 }

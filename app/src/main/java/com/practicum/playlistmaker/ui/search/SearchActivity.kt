@@ -6,7 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
@@ -109,16 +108,12 @@ class SearchActivity : AppCompatActivity() {
         noConnectionLayer.isVisible = false
         layoutHistory.isVisible = false
         progress.isVisible = true
-        Log.d("debugA", "Start searchTracksInteractor.execute")
-        Log.d("debugA", "Start searchTracksInteractor.execute")
-        Log.d("debugA", searchField.text.toString())
         searchTracksInteractor.execute(
             searchField.text.toString(),
             object : SearchTracksInteractor.Consumer {
                 override fun consume(foundTracks: List<Track>?) {
                     tracks.clear()
                     progress.isVisible = false
-                    Log.d("debugA", foundTracks.toString())
                     if (foundTracks != null) {
                         if (foundTracks.isNotEmpty()) {
                             showContent()

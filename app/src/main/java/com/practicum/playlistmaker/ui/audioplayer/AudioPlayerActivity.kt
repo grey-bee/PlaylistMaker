@@ -34,7 +34,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
 
     private fun preparePlayer() {
-        mediaPlayer.setOnErrorListener { mp, what, extra ->
+        mediaPlayer.setOnErrorListener { _, _, _ ->
             true
         }
         mediaPlayer.setDataSource(url)
@@ -80,9 +80,8 @@ class AudioPlayerActivity : AppCompatActivity() {
     private fun startTimer() {
         handler.postDelayed(object : Runnable {
             override fun run() {
-                val data = mediaPlayer.getCurrentPosition()
-                val seconds = data / 1000
-                playingTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(data)
+                val currentPosition = mediaPlayer.currentPosition
+                playingTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
                 handler.postDelayed(this, DELAY)
             }
         }, DELAY)
@@ -117,7 +116,6 @@ class AudioPlayerActivity : AppCompatActivity() {
             timeZone = TimeZone.getTimeZone("UTC")
         }.format(0)
         durationData.text = track?.trackTime
-        val test = track?.previewUrl.toString()
         if (!track?.previewUrl.isNullOrEmpty()) {
             url = track?.previewUrl.toString()
             preparePlayer()
