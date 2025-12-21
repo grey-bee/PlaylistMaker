@@ -1,15 +1,17 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.ui.search
 
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.TextWatcher
 import android.text.Editable
-import android.view.inputmethod.EditorInfo
+import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -17,32 +19,24 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
-import retrofit2.Call
-import retrofit2.Response
-import retrofit2.Callback
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.ProgressBar
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.Creator
+import com.practicum.playlistmaker.domain.api.SearchTracksInteractor
+import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.ui.audioplayer.AudioPlayerActivity
 
 class SearchActivity : AppCompatActivity() {
-
-    companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-    }
-
     private var tracks = arrayListOf<Track>()
     private var historyTracks = arrayListOf<Track>()
     private var searchRequest = ""
-    lateinit var searchField: EditText
-    lateinit var recyclerView: RecyclerView
-    lateinit var nothingFoundLayer: LinearLayout
-    lateinit var noConnectionLayer: LinearLayout
-    lateinit var layoutHistory: LinearLayout
-    lateinit var progress: ProgressBar
+    private lateinit var searchField: EditText
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var nothingFoundLayer: LinearLayout
+    private lateinit var noConnectionLayer: LinearLayout
+    private lateinit var layoutHistory: LinearLayout
+    private lateinit var progress: ProgressBar
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
-
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
@@ -52,15 +46,31 @@ class SearchActivity : AppCompatActivity() {
         return current
     }
 
+    private val addTrackToHistoryInteractor by lazy {
+        Creator.provideAddTrackToHistoryInteractor(
+            this
+        )
+    }
+    private val getSearchHistoryInteractor by lazy { Creator.provideGetSearchHistoryInteractor(this) }
+    private val clearSearchHistoryInteractor by lazy {
+        Creator.provideClearSearchHistoryInteractor(
+            this
+        )
+    }
+    private val searchTracksInteractor by lazy { Creator.provideSearchTracksInteractor() }
+
+    private fun openAudioPlayer(item: Track) {
+        addTrackToHistoryInteractor(item)
+        val audioPlayerDisplayIntent = Intent(this, AudioPlayerActivity::class.java)
+        audioPlayerDisplayIntent.putExtra("track", item)
+        startActivity(audioPlayerDisplayIntent)
+    }
 
     private val trackAdapter = TrackAdapter(
         tracks,
         onItemClick = { item ->
             if (clickDebounce()) {
-                SearchHistoryManager.addTrack(item)
-                val audioPlayerDisplayIntent = Intent(this, AudioPlayerActivity::class.java)
-                audioPlayerDisplayIntent.putExtra("track", item)
-                startActivity(audioPlayerDisplayIntent)
+                openAudioPlayer(item)
             }
         }
     )
@@ -87,7 +97,7 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.isVisible = false
         nothingFoundLayer.isVisible = false
         noConnectionLayer.isVisible = false
-        val historySource = SearchHistoryManager.getTrackList()
+        val historySource = getSearchHistoryInteractor()
         layoutHistory.isVisible = historySource.isNotEmpty()
     }
 
@@ -97,43 +107,53 @@ class SearchActivity : AppCompatActivity() {
         noConnectionLayer.isVisible = false
         layoutHistory.isVisible = false
         progress.isVisible = true
-        RetrofitClient.api.search(searchField.text.toString())
-            .enqueue(object : Callback<TrackResponse> {
-                override fun onResponse(
-                    call: Call<TrackResponse>,
-                    response: Response<TrackResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        val resultList = response.body()?.results
-                        tracks.clear()
-                        if (!resultList.isNullOrEmpty()) {
-                            progress.isVisible = false
+        searchTracksInteractor(
+            searchField.text.toString(),
+            object : SearchTracksInteractor.Consumer {
+                override fun consume(foundTracks: List<Track>?) {
+                    tracks.clear()
+                    progress.isVisible = false
+                    if (foundTracks != null) {
+                        if (foundTracks.isNotEmpty()) {
                             showContent()
-                            tracks.addAll(resultList)
+                            tracks.addAll(foundTracks)
                             trackAdapter.notifyDataSetChanged()
                         } else {
-                            progress.isVisible = false
                             showNothingFound()
                         }
                     } else {
-                        progress.isVisible = false
                         showError()
                     }
                 }
-
-                override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                    progress.isVisible = false
-                    showError()
-                }
-            })
-
+            }
+        )
     }
 
     private val searchRunnable = Runnable { performSearch() }
-
     private fun searchDebounce() {
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
+    private val historyAdapter = TrackAdapter(
+        historyTracks,
+        onItemClick = { item ->
+            openAudioPlayer(item)
+        }
+    )
+
+    private fun updateHistory() {
+        val historySource = getSearchHistoryInteractor()
+        historyTracks.clear()
+        if (historySource.isNotEmpty()) historyTracks.addAll(historySource)
+        historyAdapter.notifyDataSetChanged()
+    }
+
+    private fun clearHistory() {
+        clearSearchHistoryInteractor()
+        historyTracks.clear()
+        historyAdapter.notifyDataSetChanged()
+        layoutHistory.isVisible = false
     }
 
 
@@ -141,6 +161,7 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_search)
+
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         searchField = findViewById(R.id.search_field)
         recyclerView = findViewById(R.id.recycle_view)
@@ -153,33 +174,10 @@ class SearchActivity : AppCompatActivity() {
         val historyClearButton = findViewById<Button>(R.id.history_clear)
         val refreshButton = findViewById<Button>(R.id.refresh_button)
 
-
-        val historyAdapter = TrackAdapter(
-            historyTracks,
-            onItemClick = { item ->
-                val audioPlayerDisplayIntent = Intent(this, AudioPlayerActivity::class.java)
-                audioPlayerDisplayIntent.putExtra("track", item)
-                startActivity(audioPlayerDisplayIntent)
-            }
-        )
         recyclerView.isVisible = true
         recyclerView.adapter = trackAdapter
 
         historyRecyclerView.adapter = historyAdapter
-
-        fun updateHistory() {
-            val historySource = SearchHistoryManager.getTrackList()
-            historyTracks.clear()
-            if (historySource.isNotEmpty()) historyTracks.addAll(historySource)
-            historyAdapter.notifyDataSetChanged()
-        }
-
-        fun clearHistory() {
-            SearchHistoryManager.clear()
-            historyTracks.clear()
-            historyAdapter.notifyDataSetChanged()
-            layoutHistory.isVisible = false
-        }
 
         historyClearButton.setOnClickListener {
             clearHistory()
@@ -249,6 +247,7 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString("SEARCH_REQUEST", searchRequest)
@@ -265,4 +264,8 @@ class SearchActivity : AppCompatActivity() {
         handler.removeCallbacksAndMessages(null)
     }
 
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+    }
 }
