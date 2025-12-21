@@ -11,7 +11,7 @@ class SearchTracksInteractorImpl(
 ) :
     SearchTracksInteractor {
     private val executor = Executors.newCachedThreadPool()
-    override fun execute(
+    override operator fun invoke(
         query: String,
         consumer: SearchTracksInteractor.Consumer
     ) {

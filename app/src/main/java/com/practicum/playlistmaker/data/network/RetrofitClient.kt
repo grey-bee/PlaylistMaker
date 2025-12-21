@@ -8,8 +8,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
+private const val BASE_URL = "https://itunes.apple.com"
 class RetrofitClient : NetworkClient {
-    private val BASE_URL = "https://itunes.apple.com"
+
 
     private val okHttpClient = OkHttpClient.Builder()
         .connectTimeout(5, TimeUnit.SECONDS)

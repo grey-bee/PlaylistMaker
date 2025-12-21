@@ -9,13 +9,13 @@ class App : Application() {
     var darkTheme = false
     override fun onCreate() {
         super.onCreate()
-        darkTheme = getDarkThemeInteractor.execute()
+        darkTheme = getDarkThemeInteractor()
         switchTheme(darkTheme)
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {
         darkTheme = darkThemeEnabled
-        setDarkThemeInteractor.execute(darkThemeEnabled)
+        setDarkThemeInteractor(darkThemeEnabled)
         AppCompatDelegate.setDefaultNightMode(
             if (darkThemeEnabled) {
                 AppCompatDelegate.MODE_NIGHT_YES

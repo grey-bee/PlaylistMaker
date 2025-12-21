@@ -5,7 +5,7 @@ import com.practicum.playlistmaker.domain.api.SearchHistoryRepository
 
 class ClearSearchHistoryInteractorImpl(private val repository: SearchHistoryRepository) :
     ClearSearchHistoryInteractor {
-    override fun execute() {
+    override operator fun invoke() {
         repository.clearHistory()
     }
 }

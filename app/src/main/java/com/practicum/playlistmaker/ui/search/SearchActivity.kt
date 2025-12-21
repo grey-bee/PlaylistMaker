@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.Creator
-import com.practicum.playlistmaker.TrackAdapter
 import com.practicum.playlistmaker.domain.api.SearchTracksInteractor
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.ui.audioplayer.AudioPlayerActivity
@@ -61,7 +60,7 @@ class SearchActivity : AppCompatActivity() {
     private val searchTracksInteractor by lazy { Creator.provideSearchTracksInteractor() }
 
     private fun openAudioPlayer(item: Track) {
-        addTrackToHistoryInteractor.execute(item)
+        addTrackToHistoryInteractor(item)
         val audioPlayerDisplayIntent = Intent(this, AudioPlayerActivity::class.java)
         audioPlayerDisplayIntent.putExtra("track", item)
         startActivity(audioPlayerDisplayIntent)
@@ -98,7 +97,7 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.isVisible = false
         nothingFoundLayer.isVisible = false
         noConnectionLayer.isVisible = false
-        val historySource = getSearchHistoryInteractor.execute()
+        val historySource = getSearchHistoryInteractor()
         layoutHistory.isVisible = historySource.isNotEmpty()
     }
 
@@ -108,7 +107,7 @@ class SearchActivity : AppCompatActivity() {
         noConnectionLayer.isVisible = false
         layoutHistory.isVisible = false
         progress.isVisible = true
-        searchTracksInteractor.execute(
+        searchTracksInteractor(
             searchField.text.toString(),
             object : SearchTracksInteractor.Consumer {
                 override fun consume(foundTracks: List<Track>?) {
@@ -144,14 +143,14 @@ class SearchActivity : AppCompatActivity() {
     )
 
     private fun updateHistory() {
-        val historySource = getSearchHistoryInteractor.execute()
+        val historySource = getSearchHistoryInteractor()
         historyTracks.clear()
         if (historySource.isNotEmpty()) historyTracks.addAll(historySource)
         historyAdapter.notifyDataSetChanged()
     }
 
     private fun clearHistory() {
-        clearSearchHistoryInteractor.execute()
+        clearSearchHistoryInteractor()
         historyTracks.clear()
         historyAdapter.notifyDataSetChanged()
         layoutHistory.isVisible = false
