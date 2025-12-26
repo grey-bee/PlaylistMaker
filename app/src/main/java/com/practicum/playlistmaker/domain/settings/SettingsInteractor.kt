@@ -1,4 +1,8 @@
 package com.practicum.playlistmaker.domain.settings
 
-class SettingsInteractor {
+import com.practicum.playlistmaker.domain.settings.model.ThemeSettings
+
+interface SettingsInteractor {
+    fun getThemeSettings(): ThemeSettings
+    fun updateThemeSetting(settings: ThemeSettings)
 }
