@@ -1,7 +1,6 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.creator
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import com.google.gson.Gson
 import com.practicum.playlistmaker.data.network.RetrofitClient
 import com.practicum.playlistmaker.data.repository.SearchHistoryRepositoryImpl
@@ -60,14 +59,14 @@ object Creator {
     private fun getSearchHistoryRepository(context: Context): SearchHistoryRepository {
         return SearchHistoryRepositoryImpl(
             context.getSharedPreferences(
-                KEY_HISTORY, MODE_PRIVATE
+                KEY_HISTORY, Context.MODE_PRIVATE
             ), Gson()
         )
     }
 
     private fun getSettingsRepository(context: Context): SettingsRepository {
         return SettingsRepositoryImpl(
-            context.getSharedPreferences(KEY_PREFS, MODE_PRIVATE)
+            context.getSharedPreferences(KEY_PREFS, Context.MODE_PRIVATE)
         )
     }
 
