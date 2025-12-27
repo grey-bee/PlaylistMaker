@@ -16,14 +16,14 @@
         android:theme="@style/Theme.MyApp"
         tools:targetApi="31">
         <activity
-            android:name=".ui.settings.activity.SettingsActivity"
+            android:name=".settings.ui.SettingsActivity"
             android:exported="false" />
-        <activity
-            android:name=".ui.medialibrary.MediaLibraryActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.search.SearchActivity"
-            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".old.creator.ui.medialibrary.MediaLibraryActivity"-->
+<!--            android:exported="false" />-->
+<!--        <activity-->
+<!--            android:name=".old.creator.ui.search.SearchActivity"-->
+<!--            android:exported="false" />-->
         <activity
             android:name=".main.ui.MainActivity"
             android:exported="true">
@@ -33,9 +33,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.audioplayer.AudioPlayerActivity"
-            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".old.creator.ui.audioplayer.AudioPlayerActivity"-->
+<!--            android:exported="false" />-->
     </application>
 
 </manifest>
