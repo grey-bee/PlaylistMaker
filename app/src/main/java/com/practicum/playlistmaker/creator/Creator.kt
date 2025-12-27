@@ -1,11 +1,12 @@
 package com.practicum.playlistmaker.creator
 
 import android.content.Context
-import com.google.gson.Gson
 import com.practicum.playlistmaker.settings.data.SettingsRepositoryImpl
 import com.practicum.playlistmaker.settings.domain.SettingsInteractor
 import com.practicum.playlistmaker.settings.domain.SettingsInteractorImpl
 import com.practicum.playlistmaker.settings.domain.SettingsRepository
+import com.practicum.playlistmaker.sharing.data.SharingInteractorImpl
+import com.practicum.playlistmaker.sharing.domain.SharingInteractor
 
 object Creator {
     private const val KEY_PREFS = "app_prefs"
@@ -68,6 +69,10 @@ object Creator {
         return SettingsRepositoryImpl(
             context.getSharedPreferences(KEY_PREFS, Context.MODE_PRIVATE)
         )
+    }
+
+    fun provideSharingInteractor(context: Context): SharingInteractor {
+        return SharingInteractorImpl(context)
     }
 
 }
