@@ -21,9 +21,9 @@
         <activity
             android:name=".medialibrary.ui.MediaLibraryActivity"
             android:exported="false" />
-<!--        <activity-->
-<!--            android:name=".old.creator.ui.search.SearchActivity"-->
-<!--            android:exported="false" />-->
+        <activity
+            android:name=".search.ui.SearchActivity"
+            android:exported="false" />
         <activity
             android:name=".main.ui.MainActivity"
             android:exported="true">

@@ -9,7 +9,7 @@
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/padding_horizontal"
     android:paddingTop="@dimen/padding_4"
-    tools:context=".old.creator.ui.search.SearchActivity">
+    tools:context=".search.ui.SearchActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"

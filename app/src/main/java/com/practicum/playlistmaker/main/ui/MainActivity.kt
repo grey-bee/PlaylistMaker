@@ -8,6 +8,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.practicum.playlistmaker.databinding.ActivityMainBinding
 import com.practicum.playlistmaker.medialibrary.ui.MediaLibraryActivity
+import com.practicum.playlistmaker.search.ui.SearchActivity
 import com.practicum.playlistmaker.settings.ui.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonSearch.setOnClickListener {
-//            startActivity(Intent(this, SearchActivity::class.java))
+            startActivity(Intent(this, SearchActivity::class.java))
         }
 
         binding.buttonMedia.setOnClickListener {
