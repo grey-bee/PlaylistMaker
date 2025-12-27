@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.practicum.playlistmaker.databinding.ActivityMainBinding
+import com.practicum.playlistmaker.medialibrary.ui.MediaLibraryActivity
 import com.practicum.playlistmaker.settings.ui.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonMedia.setOnClickListener {
-//            startActivity(Intent(this, MediaLibraryActivity::class.java))
+            startActivity(Intent(this, MediaLibraryActivity::class.java))
         }
 
         binding.buttonSettings.setOnClickListener {

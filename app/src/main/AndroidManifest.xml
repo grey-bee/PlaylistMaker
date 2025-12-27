@@ -18,9 +18,9 @@
         <activity
             android:name=".settings.ui.SettingsActivity"
             android:exported="false" />
-<!--        <activity-->
-<!--            android:name=".old.creator.ui.medialibrary.MediaLibraryActivity"-->
-<!--            android:exported="false" />-->
+        <activity
+            android:name=".medialibrary.ui.MediaLibraryActivity"
+            android:exported="false" />
 <!--        <activity-->
 <!--            android:name=".old.creator.ui.search.SearchActivity"-->
 <!--            android:exported="false" />-->
