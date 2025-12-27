@@ -62,7 +62,7 @@
     </FrameLayout>
 
     <ProgressBar
-        android:id="@+id/progress"
+        android:id="@+id/loading"
         android:layout_margin="@dimen/margin_140"
         android:layout_width="@dimen/progressbar_size"
         android:layout_height="@dimen/progressbar_size"
@@ -72,7 +72,7 @@
         tools:visibility="visible"/>
 
     <LinearLayout
-        android:id="@+id/layout_history"
+        android:id="@+id/history_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_24"

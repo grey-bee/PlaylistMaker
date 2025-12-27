@@ -1,157 +1,84 @@
 package com.practicum.playlistmaker.player.ui
 
-import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
+
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.Group
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.practicum.playlistmaker.dpToPx
+import com.practicum.playlistmaker.search.domain.model.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
 
 class AudioPlayerActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityAudioPlayerBinding
+    private lateinit var viewModel: AudioPlayerViewModel
 
-
-    private var playerState = STATE_DEFAULT
-    private val mediaPlayer = MediaPlayer()
-    private lateinit var buttonPlay: ImageButton
-    private lateinit var url: String
-    private lateinit var playingTime: TextView
-    private val handler = Handler(Looper.getMainLooper())
-
-    private fun preparePlayer() {
-        mediaPlayer.setOnErrorListener { _, _, _ ->
-            true
-        }
-        mediaPlayer.setDataSource(url)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            buttonPlay.isEnabled = true
-            playerState = STATE_PREPARED
-        }
-        mediaPlayer.setOnCompletionListener {
-            buttonPlay.setImageResource(R.drawable.button_play)
-            handler.removeCallbacksAndMessages(null)
-            playingTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0)
-            playerState = STATE_PREPARED
-        }
-    }
-
-    private fun startPlayer() {
-        mediaPlayer.start()
-        startTimer()
-        buttonPlay.setImageResource(R.drawable.button_pause)
-        playerState = STATE_PLAYING
-    }
-
-    private fun pausePlayer() {
-        mediaPlayer.pause()
-        handler.removeCallbacksAndMessages(null)
-        buttonPlay.setImageResource(R.drawable.button_play)
-        playerState = STATE_PAUSED
-    }
-
-    private fun playbackControl() {
-        when (playerState) {
-            STATE_PLAYING -> {
-                pausePlayer()
-            }
-
-            STATE_PREPARED, STATE_PAUSED -> {
-                startPlayer()
-            }
-        }
-    }
-
-    private fun startTimer() {
-        handler.postDelayed(object : Runnable {
-            override fun run() {
-                val currentPosition = mediaPlayer.currentPosition
-                playingTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
-                handler.postDelayed(this, DELAY)
-            }
-        }, DELAY)
-    }
-
-
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_audio_player)
-        val track = intent.getParcelableExtra("track", Track::class.java)
-        val buttonBack = findViewById<ImageView>(R.id.backArrow)
-        val albumCover = findViewById<ImageView>(R.id.albumCover)
-        val trackName = findViewById<TextView>(R.id.trackName)
-        val artistName = findViewById<TextView>(R.id.artistName)
-        val buttonAddToPlaylist = findViewById<ImageButton>(R.id.buttonAddToPlaylist) //todo
-        buttonPlay = findViewById(R.id.buttonPlay)
-        buttonPlay.isEnabled = false
-        val buttonLike = findViewById<ImageButton>(R.id.buttonLike) //todo
-        playingTime = findViewById(R.id.playingTime)
-        val durationData = findViewById<TextView>(R.id.durationData)
-        val albumData = findViewById<TextView>(R.id.albumData)
-        val yearData = findViewById<TextView>(R.id.yearData)
-        val genreData = findViewById<TextView>(R.id.genreData)
-        val countryData = findViewById<TextView>(R.id.countryData)
-        val albumGroup = findViewById<Group>(R.id.albumGroup)
-        val yearGroup = findViewById<Group>(R.id.yearGroup)
-
-        trackName.text = track?.trackName
-        artistName.text = track?.artistName
-        playingTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).apply {
-            timeZone = TimeZone.getTimeZone("UTC")
-        }.format(0)
-        durationData.text = track?.trackTime
-        if (!track?.previewUrl.isNullOrEmpty()) {
-            url = track?.previewUrl.toString()
-            preparePlayer()
+        binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        val track = intent.getParcelableExtra("track", Track::class.java) ?: run {
+            finish()
+            return
         }
-        buttonPlay.setOnClickListener {
-            playbackControl()
-        }
+        val factory = AudioPlayerViewModel.getFactory(track)
 
-        genreData.text = track?.primaryGenreName
-        countryData.text = track?.country
-        Glide.with(albumCover)
-            .load(track?.artworkUrl512)
+        viewModel = ViewModelProvider(this, factory)[AudioPlayerViewModel::class.java]
+
+        binding.apply {
+            buttonPlay.isEnabled = false
+            trackName.text = track.trackName
+            artistName.text = track.artistName
+            playingTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).apply {
+                timeZone = TimeZone.getTimeZone("UTC")
+            }.format(0)
+            durationData.text = track.trackTime
+            genreData.text = track.primaryGenreName
+            countryData.text = track.country
+            buttonPlay.setOnClickListener {
+                viewModel.startPlayer()
+            }
+
+        }
+        Glide.with(binding.albumCover)
+            .load(track.artworkUrl512)
             .placeholder(R.drawable.placeholder)
-            .transform(CenterCrop(), RoundedCorners(8.dpToPx(albumCover.context)))
-            .into(albumCover)
+            .transform(CenterCrop(), RoundedCorners(8.dpToPx(binding.albumCover.context)))
+            .into(binding.albumCover)
 
-        if (track?.collectionName.isNullOrEmpty()) {
-            albumGroup.isVisible = false
+        if (track.collectionName.isEmpty()) {
+            binding.albumGroup.isVisible = false
         } else {
-            albumData.text = track?.collectionName
+            binding.albumData.text = track.collectionName
         }
-        if (track?.releaseYear.isNullOrEmpty()) {
-            yearGroup.isVisible = false
+        if (track.releaseYear.isEmpty()) {
+            binding.yearGroup.isVisible = false
         } else {
-            yearData.text = track?.releaseYear
+            binding.yearData.text = track.releaseYear
         }
 
 
+//        binding.buttonPlay.setImageResource(R.drawable.button_pause)
 
-
-        buttonBack.setOnClickListener {
-            mediaPlayer.stop()
-            handler.removeCallbacksAndMessages(null)
+        binding.backArrow.setOnClickListener {
+            viewModel.stopPlayer()
             finish()
         }
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(
                 systemBars.left,
@@ -163,16 +90,9 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        pausePlayer()
-        handler.removeCallbacksAndMessages(null)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release()
-        handler.removeCallbacksAndMessages(null)
+        viewModel.destroyPlayer()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -181,13 +101,5 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-    }
-
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-        private const val DELAY = 500L
     }
 }
