@@ -40,13 +40,6 @@ class AudioPlayerViewModel(private val track: Track) : ViewModel() {
         resetTimer()
     }
 
-    fun onPlayButtonClicked() {
-        when (playerStateLiveData.value) {
-            STATE_PLAYING -> pausePlayer()
-            STATE_PREPARED, STATE_PAUSED -> startPlayer()
-        }
-    }
-
     private fun preparePlayer() {
         mediaPlayer.setDataSource(track.previewUrl)
         mediaPlayer.prepareAsync()
@@ -74,12 +67,8 @@ class AudioPlayerViewModel(private val track: Track) : ViewModel() {
 
     fun playbackControl() {
         when (playerStateLiveData.value) {
-            STATE_PLAYING -> {
-                pausePlayer()
-            }
-            STATE_PREPARED, STATE_PAUSED -> {
-                startPlayer()
-            }
+            STATE_PLAYING -> pausePlayer()
+            STATE_PREPARED, STATE_PAUSED -> startPlayer()
         }
     }
 

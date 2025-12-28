@@ -4,7 +4,6 @@ import android.os.Build
 import android.os.Bundle
 
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -25,13 +24,18 @@ class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAudioPlayerBinding
     private lateinit var viewModel: AudioPlayerViewModel
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val track = intent.getParcelableExtra("track", Track::class.java) ?: run {
+        val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("track", Track::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra("track")
+        }
+        if (track == null) {
             finish()
             return
         }
@@ -39,7 +43,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, factory)[AudioPlayerViewModel::class.java]
 
         binding.apply {
-            buttonPlay.isEnabled = false
             trackName.text = track.trackName
             artistName.text = track.artistName
             playingTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).apply {
@@ -72,8 +75,26 @@ class AudioPlayerActivity : AppCompatActivity() {
             binding.playingTime.text = data
         }
 
-        viewModel.observePlayerState().observe(this) { data ->
-            when(data) is vi
+        viewModel.observePlayerState().observe(this) { state ->
+            when (state) {
+                AudioPlayerViewModel.STATE_PREPARED -> {
+                    binding.buttonPlay.isEnabled = true
+                }
+
+                AudioPlayerViewModel.STATE_PLAYING -> {
+                    binding.buttonPlay.setImageResource(R.drawable.button_pause)
+
+                }
+
+                AudioPlayerViewModel.STATE_PAUSED -> {
+                    binding.buttonPlay.setImageResource(R.drawable.button_play)
+
+                }
+
+                AudioPlayerViewModel.STATE_DEFAULT -> {
+                    binding.buttonPlay.isEnabled = false
+                }
+            }
         }
 
         binding.backArrow.setOnClickListener {
