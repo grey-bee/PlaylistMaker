@@ -2,7 +2,6 @@ package com.practicum.playlistmaker.player.ui
 
 import android.os.Build
 import android.os.Bundle
-
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -71,14 +70,13 @@ class AudioPlayerActivity : AppCompatActivity() {
         } else {
             binding.yearData.text = track.releaseYear
         }
-        viewModel.observeProgressTime().observe(this) { data ->
-            binding.playingTime.text = data
-        }
 
-        viewModel.observePlayerState().observe(this) { state ->
-            when (state) {
+        viewModel.observePlayerScreenState().observe(this) { state ->
+            binding.playingTime.text = state.progressTime
+            when (state.playerState) {
                 AudioPlayerViewModel.STATE_PREPARED -> {
                     binding.buttonPlay.isEnabled = true
+                    binding.buttonPlay.setImageResource(R.drawable.button_play)
                 }
 
                 AudioPlayerViewModel.STATE_PLAYING -> {

@@ -9,23 +9,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.search.domain.model.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class AudioPlayerViewModel(private val track: Track) : ViewModel() {
-    private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
-    fun observePlayerState(): LiveData<Int> = playerStateLiveData
+class AudioPlayerViewModel(
+    private val track: Track,
+    private val mediaPlayer: MediaPlayer
+) : ViewModel() {
+    private val stateLiveData =
+        MutableLiveData(AudioPlayerScreenState(STATE_DEFAULT, "00:00"))
 
-    private val progressTimeLiveData = MutableLiveData("00:00")
-    fun observeProgressTime(): LiveData<String> = progressTimeLiveData
-
-    private val mediaPlayer = MediaPlayer()
+    fun observePlayerScreenState(): LiveData<AudioPlayerScreenState> =
+        stateLiveData
 
     private val handler = Handler(Looper.getMainLooper())
 
     private val timerRunnable = Runnable {
-        if (playerStateLiveData.value == STATE_PLAYING) {
+        if (stateLiveData.value?.playerState == STATE_PLAYING) {
             startTimerUpdate()
         }
     }
@@ -44,29 +46,36 @@ class AudioPlayerViewModel(private val track: Track) : ViewModel() {
         mediaPlayer.setDataSource(track.previewUrl)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
-            playerStateLiveData.postValue(STATE_PREPARED)
+            stateLiveData.postValue(
+                AudioPlayerScreenState(
+                    STATE_PREPARED,
+                    SimpleDateFormat("mm:ss", Locale.getDefault()).format(0)
+                )
+            )
         }
         mediaPlayer.setOnCompletionListener {
-            playerStateLiveData.postValue(STATE_PREPARED)
             resetTimer()
+            stateLiveData.value = (stateLiveData.value?.copy(playerState = STATE_PREPARED))
         }
     }
 
     private fun startPlayer() {
         mediaPlayer.start()
-        playerStateLiveData.postValue(STATE_PLAYING)
+        val newState = stateLiveData.value?.copy(playerState = STATE_PLAYING)
+        stateLiveData.value = newState
         startTimerUpdate()
     }
 
     private fun pausePlayer() {
         pauseTimer()
         mediaPlayer.pause()
-        playerStateLiveData.postValue(STATE_PAUSED)
+        val newState = stateLiveData.value?.copy(playerState = STATE_PAUSED)
+        stateLiveData.value = newState
         handler.removeCallbacksAndMessages(null)
     }
 
     fun playbackControl() {
-        when (playerStateLiveData.value) {
+        when (stateLiveData.value?.playerState) {
             STATE_PLAYING -> pausePlayer()
             STATE_PREPARED, STATE_PAUSED -> startPlayer()
         }
@@ -84,11 +93,12 @@ class AudioPlayerViewModel(private val track: Track) : ViewModel() {
     }
 
     private fun startTimerUpdate() {
-        progressTimeLiveData.postValue(
-            SimpleDateFormat("mm:ss", Locale.getDefault()).format(
+        val newState = stateLiveData.value?.copy(
+            progressTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(
                 mediaPlayer.currentPosition
             )
         )
+        stateLiveData.value = newState
         handler.postDelayed(timerRunnable, 200)
     }
 
@@ -98,7 +108,10 @@ class AudioPlayerViewModel(private val track: Track) : ViewModel() {
 
     private fun resetTimer() {
         handler.removeCallbacks(timerRunnable)
-        progressTimeLiveData.postValue("00:00")
+        val newState = stateLiveData.value?.copy(
+            progressTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0)
+        )
+        stateLiveData.postValue(newState)
     }
 
     companion object {
@@ -107,11 +120,14 @@ class AudioPlayerViewModel(private val track: Track) : ViewModel() {
         const val STATE_PLAYING = 2
         const val STATE_PAUSED = 3
 
-        fun getFactory(track: Track): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                AudioPlayerViewModel(track)
+        fun getFactory(track: Track): ViewModelProvider.Factory =
+            viewModelFactory {
+                initializer {
+                    AudioPlayerViewModel(
+                        track,
+                        Creator.provideMediaPlayer()
+                    )
+                }
             }
-        }
     }
-
 }

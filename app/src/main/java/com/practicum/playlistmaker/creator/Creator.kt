@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.creator
 
 import android.content.Context
+import android.media.MediaPlayer
 import com.practicum.playlistmaker.search.data.network.RetrofitClient
 import com.practicum.playlistmaker.search.data.repository.SearchHistoryRepositoryImpl
 import com.practicum.playlistmaker.search.data.repository.TracksRepositoryImpl
@@ -75,5 +76,9 @@ object Creator {
                 KEY_HISTORY, Context.MODE_PRIVATE
             )
         )
+    }
+
+    fun provideMediaPlayer(): MediaPlayer {
+        return MediaPlayer()
     }
 }
