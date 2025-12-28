@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.creator
 
 import android.content.Context
 import android.media.MediaPlayer
+import com.practicum.playlistmaker.search.data.network.ApiService
 import com.practicum.playlistmaker.search.data.network.RetrofitClient
 import com.practicum.playlistmaker.search.data.repository.SearchHistoryRepositoryImpl
 import com.practicum.playlistmaker.search.data.repository.TracksRepositoryImpl
@@ -21,11 +22,15 @@ import com.practicum.playlistmaker.settings.domain.SettingsInteractorImpl
 import com.practicum.playlistmaker.settings.domain.SettingsRepository
 import com.practicum.playlistmaker.sharing.data.SharingInteractorImpl
 import com.practicum.playlistmaker.sharing.domain.SharingInteractor
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 object Creator {
     private const val KEY_PREFS = "app_prefs"
     private const val KEY_HISTORY = "history"
-    private val networkClient = RetrofitClient()
+    private const val BASE_URL = "https://itunes.apple.com"
     fun provideSharingInteractor(context: Context): SharingInteractor {
         return SharingInteractorImpl(context)
     }
@@ -67,7 +72,7 @@ object Creator {
     }
 
     private fun getTracksRepository(): TracksRepository {
-        return TracksRepositoryImpl(networkClient)
+        return TracksRepositoryImpl(RetrofitClient(provideApiService()))
     }
 
     private fun getSearchHistoryRepository(context: Context): SearchHistoryRepository {
@@ -80,5 +85,21 @@ object Creator {
 
     fun provideMediaPlayer(): MediaPlayer {
         return MediaPlayer()
+    }
+
+    fun provideApiService(): ApiService {
+        val okHttpClient = OkHttpClient.Builder()
+            .connectTimeout(5, TimeUnit.SECONDS)
+            .readTimeout(5, TimeUnit.SECONDS)
+            .writeTimeout(5, TimeUnit.SECONDS)
+            .build()
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        return retrofit.create(ApiService::class.java)
     }
 }
