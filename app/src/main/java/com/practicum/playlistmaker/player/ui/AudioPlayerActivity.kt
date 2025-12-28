@@ -36,7 +36,6 @@ class AudioPlayerActivity : AppCompatActivity() {
             return
         }
         val factory = AudioPlayerViewModel.getFactory(track)
-
         viewModel = ViewModelProvider(this, factory)[AudioPlayerViewModel::class.java]
 
         binding.apply {
@@ -50,9 +49,8 @@ class AudioPlayerActivity : AppCompatActivity() {
             genreData.text = track.primaryGenreName
             countryData.text = track.country
             buttonPlay.setOnClickListener {
-                viewModel.startPlayer()
+                viewModel.playbackControl()
             }
-
         }
         Glide.with(binding.albumCover)
             .load(track.artworkUrl512)
@@ -70,9 +68,13 @@ class AudioPlayerActivity : AppCompatActivity() {
         } else {
             binding.yearData.text = track.releaseYear
         }
+        viewModel.observeProgressTime().observe(this) { data ->
+            binding.playingTime.text = data
+        }
 
-
-//        binding.buttonPlay.setImageResource(R.drawable.button_pause)
+        viewModel.observePlayerState().observe(this) { data ->
+            when(data) is vi
+        }
 
         binding.backArrow.setOnClickListener {
             viewModel.stopPlayer()

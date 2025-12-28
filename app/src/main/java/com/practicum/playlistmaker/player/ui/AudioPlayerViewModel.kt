@@ -59,17 +59,28 @@ class AudioPlayerViewModel(private val track: Track) : ViewModel() {
         }
     }
 
-    fun startPlayer() {
+    private fun startPlayer() {
         mediaPlayer.start()
         playerStateLiveData.postValue(STATE_PLAYING)
         startTimerUpdate()
     }
 
-    fun pausePlayer() {
+    private fun pausePlayer() {
         pauseTimer()
         mediaPlayer.pause()
         playerStateLiveData.postValue(STATE_PAUSED)
         handler.removeCallbacksAndMessages(null)
+    }
+
+    fun playbackControl() {
+        when (playerStateLiveData.value) {
+            STATE_PLAYING -> {
+                pausePlayer()
+            }
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+            }
+        }
     }
 
     fun stopPlayer() {
