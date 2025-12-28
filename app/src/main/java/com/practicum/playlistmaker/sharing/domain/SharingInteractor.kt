@@ -1,9 +1,11 @@
 package com.practicum.playlistmaker.sharing.domain
 
-import android.content.Intent
+import com.practicum.playlistmaker.sharing.domain.model.Share
+import com.practicum.playlistmaker.sharing.domain.model.Email
+import com.practicum.playlistmaker.sharing.domain.model.Url
 
 interface SharingInteractor {
-    fun shareApp(): Intent
-    fun writeSupport(): Intent
-    fun userAgreement(): Intent
+    fun shareApp(): Share
+    fun writeSupport(): Email
+    fun userAgreement(): Url
 }

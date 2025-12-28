@@ -10,4 +10,8 @@ class SettingsInteractorImpl(private val settingsRepository: SettingsRepository)
     override fun getThemeSettings(): ThemeSettings {
         return settingsRepository.getThemeSettings()
     }
+
+    override fun applyCurrentTheme() {
+        settingsRepository.applyTheme(getThemeSettings().isDarkTheme)
+    }
 }

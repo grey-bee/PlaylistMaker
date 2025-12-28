@@ -7,7 +7,7 @@ import com.practicum.playlistmaker.search.domain.api.SearchHistoryRepository
 import com.practicum.playlistmaker.search.domain.model.Track
 
 class SearchHistoryRepositoryImpl(
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences, private val gson: Gson
 ) :
     SearchHistoryRepository {
     override fun getHistory(): List<Track> {
@@ -36,6 +36,5 @@ class SearchHistoryRepositoryImpl(
 
     companion object {
         private const val KEY_TRACKS = "tracks"
-        private val gson = Gson()
     }
 }

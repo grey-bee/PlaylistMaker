@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.creator
 
 import android.content.Context
 import android.media.MediaPlayer
+import com.google.gson.Gson
 import com.practicum.playlistmaker.search.data.network.ApiService
 import com.practicum.playlistmaker.search.data.network.RetrofitClient
 import com.practicum.playlistmaker.search.data.repository.SearchHistoryRepositoryImpl
@@ -31,6 +32,10 @@ object Creator {
     private const val KEY_PREFS = "app_prefs"
     private const val KEY_HISTORY = "history"
     private const val BASE_URL = "https://itunes.apple.com"
+
+    private const val THEME_SETTINGS = "theme_settings"
+
+    private val gson = Gson()
     fun provideSharingInteractor(context: Context): SharingInteractor {
         return SharingInteractorImpl(context)
     }
@@ -67,7 +72,7 @@ object Creator {
         return SettingsRepositoryImpl(
             context.getSharedPreferences(
                 KEY_PREFS, Context.MODE_PRIVATE
-            )
+            ), THEME_SETTINGS, gson
         )
     }
 
@@ -79,7 +84,7 @@ object Creator {
         return SearchHistoryRepositoryImpl(
             context.getSharedPreferences(
                 KEY_HISTORY, Context.MODE_PRIVATE
-            )
+            ), gson
         )
     }
 
@@ -97,7 +102,7 @@ object Creator {
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
 
         return retrofit.create(ApiService::class.java)
