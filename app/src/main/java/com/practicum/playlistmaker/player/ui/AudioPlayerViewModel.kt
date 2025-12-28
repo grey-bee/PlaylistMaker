@@ -19,7 +19,7 @@ class AudioPlayerViewModel(
     private val mediaPlayer: MediaPlayer
 ) : ViewModel() {
     private val stateLiveData =
-        MutableLiveData(AudioPlayerScreenState(STATE_DEFAULT, "00:00"))
+        MutableLiveData(AudioPlayerScreenState(PlayerState.DEFAULT, "00:00"))
 
     fun observePlayerScreenState(): LiveData<AudioPlayerScreenState> =
         stateLiveData
@@ -27,7 +27,7 @@ class AudioPlayerViewModel(
     private val handler = Handler(Looper.getMainLooper())
 
     private val timerRunnable = Runnable {
-        if (stateLiveData.value?.playerState == STATE_PLAYING) {
+        if (stateLiveData.value?.playerState == PlayerState.PLAYING) {
             startTimerUpdate()
         }
     }
@@ -48,20 +48,20 @@ class AudioPlayerViewModel(
         mediaPlayer.setOnPreparedListener {
             stateLiveData.postValue(
                 AudioPlayerScreenState(
-                    STATE_PREPARED,
+                    PlayerState.PREPARED,
                     SimpleDateFormat("mm:ss", Locale.getDefault()).format(0)
                 )
             )
         }
         mediaPlayer.setOnCompletionListener {
             resetTimer()
-            stateLiveData.value = (stateLiveData.value?.copy(playerState = STATE_PREPARED))
+            stateLiveData.value = (stateLiveData.value?.copy(playerState = PlayerState.PREPARED))
         }
     }
 
     private fun startPlayer() {
         mediaPlayer.start()
-        val newState = stateLiveData.value?.copy(playerState = STATE_PLAYING)
+        val newState = stateLiveData.value?.copy(playerState = PlayerState.PLAYING)
         stateLiveData.value = newState
         startTimerUpdate()
     }
@@ -69,15 +69,16 @@ class AudioPlayerViewModel(
     private fun pausePlayer() {
         pauseTimer()
         mediaPlayer.pause()
-        val newState = stateLiveData.value?.copy(playerState = STATE_PAUSED)
+        val newState = stateLiveData.value?.copy(playerState = PlayerState.PAUSED)
         stateLiveData.value = newState
         handler.removeCallbacksAndMessages(null)
     }
 
     fun playbackControl() {
         when (stateLiveData.value?.playerState) {
-            STATE_PLAYING -> pausePlayer()
-            STATE_PREPARED, STATE_PAUSED -> startPlayer()
+            PlayerState.PLAYING -> pausePlayer()
+            PlayerState.PREPARED, PlayerState.PAUSED -> startPlayer()
+            else -> {}
         }
     }
 
@@ -114,12 +115,14 @@ class AudioPlayerViewModel(
         stateLiveData.postValue(newState)
     }
 
-    companion object {
-        const val STATE_DEFAULT = 0
-        const val STATE_PREPARED = 1
-        const val STATE_PLAYING = 2
-        const val STATE_PAUSED = 3
+    enum class PlayerState {
+        DEFAULT,
+        PREPARED,
+        PLAYING,
+        PAUSED
+    }
 
+    companion object {
         fun getFactory(track: Track): ViewModelProvider.Factory =
             viewModelFactory {
                 initializer {

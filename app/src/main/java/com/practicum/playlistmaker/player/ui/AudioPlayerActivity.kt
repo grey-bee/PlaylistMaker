@@ -74,22 +74,22 @@ class AudioPlayerActivity : AppCompatActivity() {
         viewModel.observePlayerScreenState().observe(this) { state ->
             binding.playingTime.text = state.progressTime
             when (state.playerState) {
-                AudioPlayerViewModel.STATE_PREPARED -> {
+                AudioPlayerViewModel.PlayerState.PREPARED -> {
                     binding.buttonPlay.isEnabled = true
                     binding.buttonPlay.setImageResource(R.drawable.button_play)
                 }
 
-                AudioPlayerViewModel.STATE_PLAYING -> {
+                AudioPlayerViewModel.PlayerState.PLAYING -> {
                     binding.buttonPlay.setImageResource(R.drawable.button_pause)
 
                 }
 
-                AudioPlayerViewModel.STATE_PAUSED -> {
+                AudioPlayerViewModel.PlayerState.PAUSED -> {
                     binding.buttonPlay.setImageResource(R.drawable.button_play)
 
                 }
 
-                AudioPlayerViewModel.STATE_DEFAULT -> {
+                AudioPlayerViewModel.PlayerState.DEFAULT -> {
                     binding.buttonPlay.isEnabled = false
                 }
             }
