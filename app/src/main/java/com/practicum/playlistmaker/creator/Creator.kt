@@ -21,8 +21,10 @@ import com.practicum.playlistmaker.settings.data.SettingsRepositoryImpl
 import com.practicum.playlistmaker.settings.domain.SettingsInteractor
 import com.practicum.playlistmaker.settings.domain.SettingsInteractorImpl
 import com.practicum.playlistmaker.settings.domain.SettingsRepository
-import com.practicum.playlistmaker.sharing.data.SharingInteractorImpl
+import com.practicum.playlistmaker.sharing.data.SharingRepositoryImpl
+import com.practicum.playlistmaker.sharing.domain.impl.SharingInteractorImpl
 import com.practicum.playlistmaker.sharing.domain.SharingInteractor
+import com.practicum.playlistmaker.sharing.domain.api.SharingRepository
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -37,7 +39,7 @@ object Creator {
 
     private val gson = Gson()
     fun provideSharingInteractor(context: Context): SharingInteractor {
-        return SharingInteractorImpl(context)
+        return SharingInteractorImpl(getSharingRepository(context))
     }
 
     fun provideSettingsInteractor(context: Context): SettingsInteractor {
@@ -87,6 +89,11 @@ object Creator {
             ), gson
         )
     }
+
+    private fun getSharingRepository(context: Context): SharingRepository {
+        return SharingRepositoryImpl(context)
+    }
+
 
     fun provideMediaPlayer(): MediaPlayer {
         return MediaPlayer()
