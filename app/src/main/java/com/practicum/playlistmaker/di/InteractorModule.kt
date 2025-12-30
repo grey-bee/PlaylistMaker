@@ -10,8 +10,8 @@ import com.practicum.playlistmaker.search.domain.impl.GetSearchHistoryInteractor
 import com.practicum.playlistmaker.search.domain.impl.SearchTracksInteractorImpl
 import com.practicum.playlistmaker.settings.domain.SettingsInteractor
 import com.practicum.playlistmaker.settings.domain.SettingsInteractorImpl
-import com.practicum.playlistmaker.sharing.data.SharingInteractorImpl
 import com.practicum.playlistmaker.sharing.domain.SharingInteractor
+import com.practicum.playlistmaker.sharing.domain.impl.SharingInteractorImpl
 import org.koin.dsl.module
 
 val interactorModule = module {

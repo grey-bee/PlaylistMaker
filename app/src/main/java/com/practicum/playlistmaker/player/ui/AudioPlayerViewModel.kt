@@ -6,10 +6,6 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.search.domain.model.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -88,11 +84,6 @@ class AudioPlayerViewModel(
         handler.removeCallbacksAndMessages(null)
     }
 
-    fun destroyPlayer() {
-        mediaPlayer.release()
-        handler.removeCallbacksAndMessages(null)
-    }
-
     private fun startTimerUpdate() {
         val newState = stateLiveData.value?.copy(
             progressTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(
@@ -120,17 +111,5 @@ class AudioPlayerViewModel(
         PREPARED,
         PLAYING,
         PAUSED
-    }
-
-    companion object {
-        fun getFactory(track: Track): ViewModelProvider.Factory =
-            viewModelFactory {
-                initializer {
-                    AudioPlayerViewModel(
-                        track,
-                        Creator.provideMediaPlayer()
-                    )
-                }
-            }
     }
 }

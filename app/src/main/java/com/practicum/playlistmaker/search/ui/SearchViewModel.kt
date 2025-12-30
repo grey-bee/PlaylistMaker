@@ -1,16 +1,10 @@
 package com.practicum.playlistmaker.search.ui
 
-
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.search.domain.api.AddTrackToHistoryInteractor
 import com.practicum.playlistmaker.search.domain.api.ClearSearchHistoryInteractor
 import com.practicum.playlistmaker.search.domain.api.GetSearchHistoryInteractor
@@ -50,9 +44,6 @@ class SearchViewModel(
         clearSearchHistoryInteractor()
     }
 
-    fun openPlayer() {
-    }
-
     private fun searching() {
         stateLiveData.postValue(SearchScreenState.Loading)
         searchTracksInteractor(currentSearchText, object : SearchTracksInteractor.Consumer {
@@ -88,16 +79,5 @@ class SearchViewModel(
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private const val CLICK_DEBOUNCE_DELAY = 1000L
-        fun getFactory(context: Context): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SearchViewModel(
-                    Creator.provideSearchTracksInteractor(),
-                    Creator.provideGetSearchHistoryInteractor(context),
-                    Creator.provideAddTrackToHistoryInteractor(context),
-                    Creator.provideClearSearchHistoryInteractor(context)
-                )
-            }
-
-        }
     }
 }
