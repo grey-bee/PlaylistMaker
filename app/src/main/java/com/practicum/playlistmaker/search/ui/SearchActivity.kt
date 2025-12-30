@@ -10,14 +10,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.player.ui.AudioPlayerActivity
 import com.practicum.playlistmaker.search.domain.model.Track
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel: SearchViewModel by viewModel()
     private var tracks = arrayListOf<Track>()
     private var historyTracks = arrayListOf<Track>()
     private var searchRequest = ""
@@ -27,8 +27,6 @@ class SearchActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val factory = SearchViewModel.getFactory(this)
-        viewModel = ViewModelProvider(this, factory)[SearchViewModel::class.java]
         viewModel.getSearchHistory()
         binding.searchRecycleView.adapter = trackAdapter
         binding.recycleViewHistory.adapter = historyAdapter
