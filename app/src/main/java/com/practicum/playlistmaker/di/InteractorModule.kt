@@ -1,0 +1,24 @@
+package com.practicum.playlistmaker.di
+
+import com.practicum.playlistmaker.search.domain.api.AddTrackToHistoryInteractor
+import com.practicum.playlistmaker.search.domain.api.ClearSearchHistoryInteractor
+import com.practicum.playlistmaker.search.domain.api.GetSearchHistoryInteractor
+import com.practicum.playlistmaker.search.domain.api.SearchTracksInteractor
+import com.practicum.playlistmaker.search.domain.impl.AddTrackToHistoryInteractorImpl
+import com.practicum.playlistmaker.search.domain.impl.ClearSearchHistoryInteractorImpl
+import com.practicum.playlistmaker.search.domain.impl.GetSearchHistoryInteractorImpl
+import com.practicum.playlistmaker.search.domain.impl.SearchTracksInteractorImpl
+import com.practicum.playlistmaker.settings.domain.SettingsInteractor
+import com.practicum.playlistmaker.settings.domain.SettingsInteractorImpl
+import com.practicum.playlistmaker.sharing.data.SharingInteractorImpl
+import com.practicum.playlistmaker.sharing.domain.SharingInteractor
+import org.koin.dsl.module
+
+val interactorModule = module {
+    single<SearchTracksInteractor> { SearchTracksInteractorImpl(get()) }
+    single<GetSearchHistoryInteractor> { GetSearchHistoryInteractorImpl(get()) }
+    single<AddTrackToHistoryInteractor> { AddTrackToHistoryInteractorImpl(get()) }
+    single<ClearSearchHistoryInteractor> { ClearSearchHistoryInteractorImpl(get()) }
+    single<SettingsInteractor> { SettingsInteractorImpl(get()) }
+    single<SharingInteractor> { SharingInteractorImpl(get()) }
+}

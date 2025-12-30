@@ -29,82 +29,78 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object Creator {
-    private const val KEY_PREFS = "app_prefs"
-    private const val KEY_HISTORY = "history"
-    private const val BASE_URL = "https://itunes.apple.com"
 
-    private const val THEME_SETTINGS = "theme_settings"
 
-    private val gson = Gson()
-    fun provideSharingInteractor(context: Context): SharingInteractor {
-        return SharingInteractorImpl(context)
-    }
+//    private val gson = Gson()
+//    fun provideSharingInteractor(context: Context): SharingInteractor {
+//        return SharingInteractorImpl(context)
+//    }
+//
+//    fun provideSettingsInteractor(context: Context): SettingsInteractor {
+//        return SettingsInteractorImpl(getSettingsRepository(context))
+//    }
+//
+//    fun provideSearchTracksInteractor(): SearchTracksInteractor {
+//        return SearchTracksInteractorImpl(
+//            getTracksRepository()
+//        )
+//    }
+//
+//    fun provideAddTrackToHistoryInteractor(context: Context): AddTrackToHistoryInteractor {
+//        return AddTrackToHistoryInteractorImpl(
+//            getSearchHistoryRepository(context)
+//        )
+//    }
+//
+//    fun provideGetSearchHistoryInteractor(context: Context): GetSearchHistoryInteractor {
+//        return GetSearchHistoryInteractorImpl(
+//            getSearchHistoryRepository(context)
+//        )
+//    }
+//
+//    fun provideClearSearchHistoryInteractor(context: Context): ClearSearchHistoryInteractor {
+//        return ClearSearchHistoryInteractorImpl(
+//            getSearchHistoryRepository(context)
+//        )
+//    }
 
-    fun provideSettingsInteractor(context: Context): SettingsInteractor {
-        return SettingsInteractorImpl(getSettingsRepository(context))
-    }
+//    private fun getSettingsRepository(context: Context): SettingsRepository {
+//        return SettingsRepositoryImpl(
+////            context.getSharedPreferences(
+////                KEY_PREFS, Context.MODE_PRIVATE
+////            ), THEME_SETTINGS, gson
+//        )
+//    }
+//
+//    private fun getTracksRepository(): TracksRepository {
+//        return TracksRepositoryImpl(RetrofitClient(provideApiService()))
+//    }
 
-    fun provideSearchTracksInteractor(): SearchTracksInteractor {
-        return SearchTracksInteractorImpl(
-            getTracksRepository()
-        )
-    }
+//    private fun getSearchHistoryRepository(context: Context): SearchHistoryRepository {
+//        return SearchHistoryRepositoryImpl(
+////            context.getSharedPreferences(
+////                , Context.MODE_PRIVATE
+//            ), gson
+//        )
+//    }
 
-    fun provideAddTrackToHistoryInteractor(context: Context): AddTrackToHistoryInteractor {
-        return AddTrackToHistoryInteractorImpl(
-            getSearchHistoryRepository(context)
-        )
-    }
+//    fun provideMediaPlayer(): MediaPlayer {
+//        return MediaPlayer()
+//    }
 
-    fun provideGetSearchHistoryInteractor(context: Context): GetSearchHistoryInteractor {
-        return GetSearchHistoryInteractorImpl(
-            getSearchHistoryRepository(context)
-        )
-    }
-
-    fun provideClearSearchHistoryInteractor(context: Context): ClearSearchHistoryInteractor {
-        return ClearSearchHistoryInteractorImpl(
-            getSearchHistoryRepository(context)
-        )
-    }
-
-    private fun getSettingsRepository(context: Context): SettingsRepository {
-        return SettingsRepositoryImpl(
-            context.getSharedPreferences(
-                KEY_PREFS, Context.MODE_PRIVATE
-            ), THEME_SETTINGS, gson
-        )
-    }
-
-    private fun getTracksRepository(): TracksRepository {
-        return TracksRepositoryImpl(RetrofitClient(provideApiService()))
-    }
-
-    private fun getSearchHistoryRepository(context: Context): SearchHistoryRepository {
-        return SearchHistoryRepositoryImpl(
-            context.getSharedPreferences(
-                KEY_HISTORY, Context.MODE_PRIVATE
-            ), gson
-        )
-    }
-
-    fun provideMediaPlayer(): MediaPlayer {
-        return MediaPlayer()
-    }
-
-    fun provideApiService(): ApiService {
-        val okHttpClient = OkHttpClient.Builder()
-            .connectTimeout(5, TimeUnit.SECONDS)
-            .readTimeout(5, TimeUnit.SECONDS)
-            .writeTimeout(5, TimeUnit.SECONDS)
-            .build()
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
-
-        return retrofit.create(ApiService::class.java)
-    }
+//    fun provideApiService(): ApiService {
+//        val okHttpClient = OkHttpClient.Builder()
+//            .connectTimeout(5, TimeUnit.SECONDS)
+//            .readTimeout(5, TimeUnit.SECONDS)
+//            .writeTimeout(5, TimeUnit.SECONDS)
+//            .build()
+//
+//        val retrofit = Retrofit.Builder()
+//            .baseUrl(BASE_URL)
+//            .client(okHttpClient)
+//            .addConverterFactory(GsonConverterFactory.create(gson))
+//            .build()
+//
+//        return retrofit.create(ApiService::class.java)
+//    }
 }
