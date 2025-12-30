@@ -9,7 +9,7 @@
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/padding_horizontal"
     android:paddingTop="@dimen/padding_4"
-    tools:context=".ui.search.SearchActivity">
+    tools:context=".search.ui.SearchActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
@@ -46,7 +46,7 @@
             android:textCursorDrawable="@drawable/cursor_color" />
 
         <ImageView
-            android:id="@+id/button_clear"
+            android:id="@+id/button_search_clear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
@@ -62,7 +62,7 @@
     </FrameLayout>
 
     <ProgressBar
-        android:id="@+id/progress"
+        android:id="@+id/loading"
         android:layout_margin="@dimen/margin_140"
         android:layout_width="@dimen/progressbar_size"
         android:layout_height="@dimen/progressbar_size"
@@ -72,7 +72,7 @@
         tools:visibility="visible"/>
 
     <LinearLayout
-        android:id="@+id/layout_history"
+        android:id="@+id/history_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_24"
@@ -112,7 +112,7 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycle_view"
+        android:id="@+id/search_recycle_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_16"
