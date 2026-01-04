@@ -28,5 +28,6 @@
     <string name="united_kingdom">United Kingdom</string>
     <string name="didnt_make_any_playlist">You didn\'t make\n any playlist</string>
     <string name="new_playlist">New playlist</string>
-    <string name="placeholder">Плейсхолдер</string>
+    <string name="placeholder">Placeholder</string>
+    <string name="your_media_library_is_empty">Your media library is empty</string>
 </resources>

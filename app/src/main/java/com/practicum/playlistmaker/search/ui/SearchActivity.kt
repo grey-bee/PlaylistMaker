@@ -28,16 +28,16 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel.getSearchHistory()
-        binding.searchRecycleView.adapter = trackAdapter
-        binding.recycleViewHistory.adapter = historyAdapter
+        binding.searchRecyclerView.adapter = trackAdapter
+        binding.historyRecyclerView.adapter = historyAdapter
 
         val searchWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 if (s.isNullOrEmpty()) {
-                    binding.buttonSearchClear.isVisible = false
+                    binding.searchClearButton.isVisible = false
                 } else {
-                    binding.buttonSearchClear.isVisible = true
+                    binding.searchClearButton.isVisible = true
                     viewModel.onTextChanged(s.toString())
                 }
             }
@@ -47,7 +47,7 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        binding.searchField.addTextChangedListener(searchWatcher)
+        binding.searchInput.addTextChangedListener(searchWatcher)
 
         viewModel.observeState().observe(this) { state ->
             when (state) {
@@ -59,30 +59,30 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        binding.searchField.setOnFocusChangeListener { _, hasFocus ->
+        binding.searchInput.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus
                 && historyTracks.isNotEmpty()
-                && binding.searchField.text.isNullOrEmpty()
+                && binding.searchInput.text.isNullOrEmpty()
             ) viewModel.getSearchHistory()
             else closeAll()
         }
 
-        binding.buttonSearchClear.setOnClickListener {
-            binding.searchField.text.clear()
+        binding.searchClearButton.setOnClickListener {
+            binding.searchInput.text.clear()
             val inputMethodManager =
                 getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputMethodManager?.hideSoftInputFromWindow(binding.searchField.windowToken, 0)
+            inputMethodManager?.hideSoftInputFromWindow(binding.searchInput.windowToken, 0)
             tracks.clear()
             viewModel.getSearchHistory()
         }
         binding.refreshButton.setOnClickListener {
-            viewModel.onTextChanged(binding.searchField.text.toString())
+            viewModel.onTextChanged(binding.searchInput.text.toString())
         }
         binding.toolbar.setNavigationOnClickListener {
             finish()
         }
 
-        binding.historyClear.setOnClickListener {
+        binding.historyClearButton.setOnClickListener {
             viewModel.historyClear()
             closeAll()
         }
@@ -112,7 +112,7 @@ class SearchActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         searchRequest = savedInstanceState.getString("SEARCH_REQUEST", "")
-        binding.searchField.setText(searchRequest)
+        binding.searchInput.setText(searchRequest)
     }
 
     private val trackAdapter = TrackAdapter(
@@ -136,11 +136,11 @@ class SearchActivity : AppCompatActivity() {
         trackAdapter.notifyDataSetChanged()
 
         binding.apply {
-            searchRecycleView.isVisible = true
+            searchRecyclerView.isVisible = true
             historyLayout.isVisible = false
-            nothingFound.isVisible = false
-            noConnection.isVisible = false
-            loading.isVisible = false
+            nothingFoundPlaceholder.isVisible = false
+            noConnectionPlaceholder.isVisible = false
+            progressBar.isVisible = false
         }
     }
 
@@ -149,51 +149,51 @@ class SearchActivity : AppCompatActivity() {
         historyTracks.addAll(data)
         historyAdapter.notifyDataSetChanged()
         binding.apply {
-            searchRecycleView.isVisible = false
+            searchRecyclerView.isVisible = false
             if (historyTracks.isNotEmpty()) historyLayout.isVisible = true
-            nothingFound.isVisible = false
-            noConnection.isVisible = false
-            loading.isVisible = false
+            nothingFoundPlaceholder.isVisible = false
+            noConnectionPlaceholder.isVisible = false
+            progressBar.isVisible = false
         }
     }
 
     private fun showLoading() {
         binding.apply {
-            searchRecycleView.isVisible = false
+            searchRecyclerView.isVisible = false
             historyLayout.isVisible = false
-            nothingFound.isVisible = false
-            noConnection.isVisible = false
-            loading.isVisible = true
+            nothingFoundPlaceholder.isVisible = false
+            noConnectionPlaceholder.isVisible = false
+            progressBar.isVisible = true
         }
     }
 
     private fun showNothingFound() {
         binding.apply {
-            searchRecycleView.isVisible = false
+            searchRecyclerView.isVisible = false
             historyLayout.isVisible = false
-            nothingFound.isVisible = true
-            noConnection.isVisible = false
-            loading.isVisible = false
+            nothingFoundPlaceholder.isVisible = true
+            noConnectionPlaceholder.isVisible = false
+            progressBar.isVisible = false
         }
     }
 
     private fun showError() {
         binding.apply {
-            searchRecycleView.isVisible = false
+            searchRecyclerView.isVisible = false
             historyLayout.isVisible = false
-            nothingFound.isVisible = false
-            noConnection.isVisible = true
-            loading.isVisible = false
+            nothingFoundPlaceholder.isVisible = false
+            noConnectionPlaceholder.isVisible = true
+            progressBar.isVisible = false
         }
     }
 
     private fun closeAll() {
         binding.apply {
-            searchRecycleView.isVisible = false
+            searchRecyclerView.isVisible = false
             historyLayout.isVisible = false
-            nothingFound.isVisible = false
-            noConnection.isVisible = false
-            loading.isVisible = false
+            nothingFoundPlaceholder.isVisible = false
+            noConnectionPlaceholder.isVisible = false
+            progressBar.isVisible = false
         }
     }
 

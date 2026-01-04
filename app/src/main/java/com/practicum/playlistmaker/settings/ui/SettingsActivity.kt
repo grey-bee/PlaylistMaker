@@ -30,7 +30,7 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        binding.shareApp.setOnClickListener {
+        binding.shareLabel.setOnClickListener {
             val data = viewModel.shareApp()
             val intent = Intent(Intent.ACTION_SEND)
             val chooserTitle = data.title
@@ -42,7 +42,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(intent, chooserTitle))
         }
 
-        binding.writeToSupport.setOnClickListener {
+        binding.supportLabel.setOnClickListener {
             val data = viewModel.writeToSupport()
             val intent = Intent(Intent.ACTION_SENDTO)
             val chooserTitle = data.title
@@ -55,7 +55,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(intent, chooserTitle))
         }
 
-        binding.userAgreement.setOnClickListener {
+        binding.agreementLabel.setOnClickListener {
             val data = viewModel.userAgreement()
             val intent = Intent(Intent.ACTION_VIEW, data.value.toUri())
             startActivity(intent)

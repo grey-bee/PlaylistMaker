@@ -28,7 +28,7 @@
         android:clickable="true">
 
         <TextView
-            style="@style/settingsLabel"
+            style="@style/SettingsLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -47,7 +47,7 @@
 
     <TextView
         android:id="@+id/shareLabel"
-        style="@style/settingsLabel"
+        style="@style/SettingsLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
@@ -58,7 +58,7 @@
 
     <TextView
         android:id="@+id/supportLabel"
-        style="@style/settingsLabel"
+        style="@style/SettingsLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
@@ -69,7 +69,7 @@
 
     <TextView
         android:id="@+id/agreementLabel"
-        style="@style/settingsLabel"
+        style="@style/SettingsLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
