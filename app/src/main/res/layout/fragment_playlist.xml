@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Playlist">
+
+    <LinearLayout
+        android:id="@+id/noPlaylistsPlaceholder"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/margin_24"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:gravity="center"
+        tools:visibility="visible">
+
+        <Button
+            android:id="@+id/clearHistoryBtn"
+            style="@style/SmallButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/button_height_small"
+            android:text="@string/new_playlist" />
+
+        <ImageView
+            android:layout_marginTop="@dimen/margin_46"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/nothing_found"
+            android:src="@drawable/ic_nothing_found" />
+
+        <TextView
+            style="@style/ErrorText"
+            android:layout_marginTop="@dimen/margin_16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/didnt_make_any_playlist" />
+    </LinearLayout>
+</FrameLayout>
