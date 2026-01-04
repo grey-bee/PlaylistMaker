@@ -44,60 +44,60 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
 
         binding.apply {
-            trackName.text = track.trackName
-            artistName.text = track.artistName
-            playingTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).apply {
+            trackNameText.text = track.trackName
+            artistNameText.text = track.artistName
+            playingTimeText.text = SimpleDateFormat("mm:ss", Locale.getDefault()).apply {
                 timeZone = TimeZone.getTimeZone("UTC")
             }.format(0)
-            durationData.text = track.trackTime
-            genreData.text = track.primaryGenreName
-            countryData.text = track.country
-            buttonPlay.setOnClickListener {
+            durationText.text = track.trackTime
+            genreText.text = track.primaryGenreName
+            countryText.text = track.country
+            playButton.setOnClickListener {
                 viewModel.playbackControl()
             }
         }
-        Glide.with(binding.albumCover)
+        Glide.with(binding.albumCoverImage)
             .load(track.artworkUrl512)
             .placeholder(R.drawable.placeholder)
-            .transform(CenterCrop(), RoundedCorners(8.dpToPx(binding.albumCover.context)))
-            .into(binding.albumCover)
+            .transform(CenterCrop(), RoundedCorners(8.dpToPx(binding.albumCoverImage.context)))
+            .into(binding.albumCoverImage)
 
         if (track.collectionName.isEmpty()) {
             binding.albumGroup.isVisible = false
         } else {
-            binding.albumData.text = track.collectionName
+            binding.albumText.text = track.collectionName
         }
         if (track.releaseYear.isEmpty()) {
             binding.yearGroup.isVisible = false
         } else {
-            binding.yearData.text = track.releaseYear
+            binding.yearText.text = track.releaseYear
         }
 
         viewModel.observePlayerScreenState().observe(this) { state ->
-            binding.playingTime.text = state.progressTime
+            binding.playingTimeText.text = state.progressTime
             when (state.playerState) {
                 AudioPlayerViewModel.PlayerState.PREPARED -> {
-                    binding.buttonPlay.isEnabled = true
-                    binding.buttonPlay.setImageResource(R.drawable.button_play)
+                    binding.playButton.isEnabled = true
+                    binding.playButton.setImageResource(R.drawable.button_play)
                 }
 
                 AudioPlayerViewModel.PlayerState.PLAYING -> {
-                    binding.buttonPlay.setImageResource(R.drawable.button_pause)
+                    binding.playButton.setImageResource(R.drawable.button_pause)
 
                 }
 
                 AudioPlayerViewModel.PlayerState.PAUSED -> {
-                    binding.buttonPlay.setImageResource(R.drawable.button_play)
+                    binding.playButton.setImageResource(R.drawable.button_play)
 
                 }
 
                 AudioPlayerViewModel.PlayerState.DEFAULT -> {
-                    binding.buttonPlay.isEnabled = false
+                    binding.playButton.isEnabled = false
                 }
             }
         }
 
-        binding.backArrow.setOnClickListener {
+        binding.backArrowImage.setOnClickListener {
             viewModel.stopPlayer()
             finish()
         }
