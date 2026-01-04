@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import kotlin.getValue
 
 class PlaylistsFragment : Fragment() {
     private lateinit var binding: FragmentPlaylistsBinding

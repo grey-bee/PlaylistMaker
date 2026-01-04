@@ -34,4 +34,6 @@
     <string name="new_playlist">Новый плейлист</string>
     <string name="placeholder">Плейсхолдер</string>
     <string name="your_media_library_is_empty">Ваша медиатека пуста</string>
+    <string name="playlists">"Плейлисты"</string>
+    <string name="featured_tracks">"Избранные треки"</string>
 </resources>
