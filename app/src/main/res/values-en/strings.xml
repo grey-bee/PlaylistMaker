@@ -25,5 +25,8 @@
     <string name="year">Year</string>
     <string name="genre">Genre</string>
     <string name="country">Country</string>
-    <string name="united_kingdom">Великобритания</string>
+    <string name="united_kingdom">United Kingdom</string>
+    <string name="didnt_make_any_playlist">You didn\'t make\n any playlist</string>
+    <string name="new_playlist">New playlist</string>
+    <string name="placeholder">Плейсхолдер</string>
 </resources>
