@@ -12,6 +12,7 @@
         android:id="@+id/track_image"
         android:layout_width="@dimen/track_image_size"
         android:layout_height="@dimen/track_image_size"
+        android:contentDescription="@string/placeholder"
         tools:src="@drawable/placeholder" />
 
     <LinearLayout

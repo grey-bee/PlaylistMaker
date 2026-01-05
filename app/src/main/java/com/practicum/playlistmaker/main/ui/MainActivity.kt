@@ -27,15 +27,15 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        binding.buttonSearch.setOnClickListener {
+        binding.searchButton.setOnClickListener {
             startActivity(Intent(this, SearchActivity::class.java))
         }
 
-        binding.buttonMedia.setOnClickListener {
+        binding.mediaButton.setOnClickListener {
             startActivity(Intent(this, MediaLibraryActivity::class.java))
         }
 
-        binding.buttonSettings.setOnClickListener {
+        binding.settingsButton.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
     }
