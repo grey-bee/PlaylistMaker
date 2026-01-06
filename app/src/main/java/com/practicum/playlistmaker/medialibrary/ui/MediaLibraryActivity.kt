@@ -9,12 +9,10 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.tabs.TabLayoutMediator
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivityMediaLibraryBinding
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MediaLibraryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMediaLibraryBinding
     private lateinit var tabMediator: TabLayoutMediator
-    private val viewModel: MediaLibraryViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
