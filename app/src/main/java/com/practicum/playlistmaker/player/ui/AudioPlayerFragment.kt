@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.os.BundleCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -100,6 +101,10 @@ class AudioPlayerFragment : Fragment() {
                     binding.playButton.isEnabled = false
                 }
             }
+        }
+
+        binding.backArrowImage.setOnClickListener {
+            findNavController().navigateUp()
         }
     }
 
