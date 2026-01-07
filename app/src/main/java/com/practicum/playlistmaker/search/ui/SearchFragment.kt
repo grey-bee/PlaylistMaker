@@ -10,8 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
-import com.practicum.playlistmaker.player.ui.AudioPlayerActivity
+import com.practicum.playlistmaker.player.ui.AudioPlayerFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
@@ -176,8 +178,7 @@ class SearchFragment : Fragment() {
 
     private fun openAudioPlayer(item: Track) {
         viewModel.addTrackToHistory(item)
-//        val intent = Intent(this, AudioPlayerActivity::class.java)
-//        intent.putExtra("track", item)
-//        startActivity(intent)
+        val bundle = AudioPlayerFragment.createArgs(item)
+        findNavController().navigate(R.id.audioPlayerFragment, bundle)
     }
 }
