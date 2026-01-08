@@ -1,17 +1,19 @@
 package com.practicum.playlistmaker.player.ui
 
-import android.os.Build
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.os.BundleCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.practicum.playlistmaker.databinding.FragmentAudioPlayerBinding
 import com.practicum.playlistmaker.dpToPx
 import com.practicum.playlistmaker.search.domain.model.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -19,25 +21,30 @@ import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
+import kotlin.getValue
 
-class AudioPlayerActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityAudioPlayerBinding
+class AudioPlayerFragment : Fragment() {
+    private lateinit var binding: FragmentAudioPlayerBinding
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentAudioPlayerBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("track", Track::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra("track")
-        }
-        if (track == null) {
-            finish()
-            return
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val track = requireNotNull(
+            BundleCompat.getParcelable(
+                requireArguments(),
+                ARGS_TRACK,
+                Track::class.java
+            )
+        ) {
+            "Track is required"
         }
         val viewModel: AudioPlayerViewModel by viewModel() {
             parametersOf(track)
@@ -61,7 +68,6 @@ class AudioPlayerActivity : AppCompatActivity() {
             .placeholder(R.drawable.placeholder)
             .transform(CenterCrop(), RoundedCorners(8.dpToPx(binding.albumCoverImage.context)))
             .into(binding.albumCoverImage)
-
         if (track.collectionName.isEmpty()) {
             binding.albumGroup.isVisible = false
         } else {
@@ -73,7 +79,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             binding.yearText.text = track.releaseYear
         }
 
-        viewModel.observePlayerScreenState().observe(this) { state ->
+        viewModel.observePlayerScreenState().observe(viewLifecycleOwner) { state ->
             binding.playingTimeText.text = state.progressTime
             when (state.playerState) {
                 AudioPlayerViewModel.PlayerState.PREPARED -> {
@@ -98,26 +104,13 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
 
         binding.backArrowImage.setOnClickListener {
-            viewModel.stopPlayer()
-            finish()
-        }
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(
-                systemBars.left,
-                systemBars.top,
-                systemBars.right,
-                systemBars.bottom
-            )
-            insets
+            findNavController().navigateUp()
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
+    companion object {
+        private const val ARGS_TRACK = "track"
+        fun createArgs(track: Track): Bundle =
+            bundleOf(ARGS_TRACK to track)
     }
 }

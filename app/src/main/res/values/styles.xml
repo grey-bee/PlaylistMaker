@@ -82,4 +82,14 @@
         <item name="tabTextAppearance">@style/TabLayoutText</item>
         <item name="tabSelectedTextAppearance">@style/TabLayoutText</item>
     </style>
+
+    <style name="bottomNavigationStyle">
+        <item name="android:background">?attr/colorSecondaryVariant</item>
+        <item name="itemIconTint">@color/bottom_nav_selector</item>
+        <item name="itemTextColor">@color/bottom_nav_selector</item>
+    </style>
+
+    <style name="bottomNavigationSelector" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">?attr/colorSecondaryVariant</item>
+    </style>
 </resources>

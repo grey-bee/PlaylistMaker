@@ -1,32 +1,40 @@
 package com.practicum.playlistmaker.search.ui
 
-import android.content.Intent
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.player.ui.AudioPlayerActivity
+import androidx.navigation.fragment.findNavController
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.databinding.FragmentSearchBinding
+import com.practicum.playlistmaker.player.ui.AudioPlayerFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.getValue
 
-class SearchActivity : AppCompatActivity() {
-    private lateinit var binding: ActivitySearchBinding
+class SearchFragment : Fragment() {
+    private lateinit var binding: FragmentSearchBinding
     private val viewModel: SearchViewModel by viewModel()
     private var tracks = arrayListOf<Track>()
     private var historyTracks = arrayListOf<Track>()
     private var searchRequest = ""
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         viewModel.getSearchHistory()
         binding.searchRecyclerView.adapter = trackAdapter
         binding.historyRecyclerView.adapter = historyAdapter
@@ -49,7 +57,7 @@ class SearchActivity : AppCompatActivity() {
 
         binding.searchInput.addTextChangedListener(searchWatcher)
 
-        viewModel.observeState().observe(this) { state ->
+        viewModel.observeState().observe(viewLifecycleOwner) { state ->
             when (state) {
                 is SearchScreenState.Empty -> showNothingFound()
                 is SearchScreenState.Error -> showError()
@@ -70,7 +78,7 @@ class SearchActivity : AppCompatActivity() {
         binding.searchClearButton.setOnClickListener {
             binding.searchInput.text.clear()
             val inputMethodManager =
-                getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+                requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.searchInput.windowToken, 0)
             tracks.clear()
             viewModel.getSearchHistory()
@@ -78,41 +86,12 @@ class SearchActivity : AppCompatActivity() {
         binding.refreshButton.setOnClickListener {
             viewModel.onTextChanged(binding.searchInput.text.toString())
         }
-        binding.toolbar.setNavigationOnClickListener {
-            finish()
-        }
 
         binding.historyClearButton.setOnClickListener {
             viewModel.historyClear()
             closeAll()
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(
-                systemBars.left,
-                systemBars.top,
-                systemBars.right,
-                systemBars.bottom
-            )
-            insets
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-//        handler.removeCallbacksAndMessages(null)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString("SEARCH_REQUEST", searchRequest)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        searchRequest = savedInstanceState.getString("SEARCH_REQUEST", "")
-        binding.searchInput.setText(searchRequest)
     }
 
     private val trackAdapter = TrackAdapter(
@@ -199,8 +178,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun openAudioPlayer(item: Track) {
         viewModel.addTrackToHistory(item)
-        val intent = Intent(this, AudioPlayerActivity::class.java)
-        intent.putExtra("track", item)
-        startActivity(intent)
+        val bundle = AudioPlayerFragment.createArgs(item)
+        findNavController().navigate(R.id.audioPlayerFragment, bundle)
     }
 }

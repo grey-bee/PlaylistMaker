@@ -4,29 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".medialibrary.ui.MediaLibraryFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_4"
+        android:layout_margin="@dimen/margin_4"
         app:contentInsetStartWithNavigation="@dimen/toolbar_content_inset"
-        app:navigationIcon="@drawable/ic_arrow_left"
-        app:navigationIconTint="?attr/colorOnSurface"
         app:title="@string/media_library"
         app:titleTextAppearance="@style/ToolbarTitle" />
 
     <com.google.android.material.tabs.TabLayout
-        style="@style/tabLayout"
         android:id="@+id/tabLayout"
+        style="@style/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="@string/featured_tracks" />
+            tools:text="@string/featured_tracks"
+            />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
@@ -39,5 +39,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
+
 
 </LinearLayout>
