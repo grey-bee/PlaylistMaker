@@ -29,13 +29,6 @@ class SearchViewModel(
             true
         ) { changedText -> searchRequest(changedText) }
 
-    fun searchDebounce(changedText: String) {
-        if (currentSearchText != changedText) {
-            currentSearchText = changedText
-            trackSearchDebounce(changedText)
-        }
-    }
-
     private fun searchRequest(query: String) {
         if (query.isNotEmpty()) {
             renderState(SearchScreenState.Loading)
@@ -49,8 +42,10 @@ class SearchViewModel(
     }
 
     fun onTextChanged(value: String) {
-        currentSearchText = value
-        searchDebounce(value)
+        if (currentSearchText != value) {
+            currentSearchText = value
+            trackSearchDebounce(value)
+        }
     }
 
     fun getSearchHistory() {
