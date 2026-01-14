@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".medialibrary.ui.FeaturedTracksFragment">
+    tools:context=".favorites.ui.FavoritesFragment">
 
     <LinearLayout
         android:id="@+id/noTracksPlaceholder"
@@ -28,4 +29,26 @@
             android:layout_marginTop="@dimen/margin_16"
             android:text="@string/your_media_library_is_empty" />
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/tracklist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_24"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/tracksRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_8"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="10"
+            tools:listitem="@layout/track_item"
+            android:visibility="gone"
+            tools:visibility="gone" />
+    </LinearLayout>
+
 </FrameLayout>

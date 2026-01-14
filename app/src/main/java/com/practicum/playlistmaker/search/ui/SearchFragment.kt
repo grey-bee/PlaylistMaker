@@ -189,6 +189,6 @@ class SearchFragment : Fragment() {
     private fun openAudioPlayer(item: Track) {
         viewModel.addTrackToHistory(item)
         val bundle = PlayerFragment.createArgs(item)
-        findNavController().navigate(R.id.audioPlayerFragment, bundle)
+        findNavController().navigate(R.id.action_searchFragment_to_audioPlayerFragment, bundle)
     }
 }

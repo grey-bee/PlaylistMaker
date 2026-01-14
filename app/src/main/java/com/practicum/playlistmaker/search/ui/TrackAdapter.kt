@@ -13,7 +13,7 @@ class TrackAdapter(private val tracks: List<Track>, private val onItemClick: (Tr
         viewType: Int
     ): TrackViewHolder {
         val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.track_search_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.track_item, parent, false)
         return TrackViewHolder(view)
     }
 
