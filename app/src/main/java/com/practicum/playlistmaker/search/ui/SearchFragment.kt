@@ -32,6 +32,7 @@ class SearchFragment : Fragment() {
     private var searchRequest = ""
     private lateinit var trackClickDebounce: (Track) -> Unit
     private lateinit var trackAdapter: TrackAdapter
+    private lateinit var historyAdapter: TrackAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +44,10 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getSearchHistory()
+        if (viewModel.observeState().value == null) {
+            viewModel.getSearchHistory()
+        }
+
 
         val searchWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -108,17 +112,12 @@ class SearchFragment : Fragment() {
             }
 
         trackAdapter = TrackAdapter(tracks, { item -> trackClickDebounce(item) })
+        historyAdapter = TrackAdapter(historyTracks, { item -> trackClickDebounce(item) })
+
         binding.searchRecyclerView.adapter = trackAdapter
         binding.historyRecyclerView.adapter = historyAdapter
     }
 
-
-    private val historyAdapter = TrackAdapter(
-        historyTracks,
-        onItemClick = { item ->
-            openAudioPlayer(item)
-        }
-    )
 
     private fun showContent(data: List<Track>) {
         tracks.clear()

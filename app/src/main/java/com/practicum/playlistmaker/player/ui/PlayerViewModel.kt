@@ -36,6 +36,7 @@ class PlayerViewModel(
             playerState.postValue(PlayerState.Prepared())
         }
         mediaPlayer.setOnCompletionListener {
+            timerJob?.cancel()
             playerState.postValue(PlayerState.Prepared())
         }
     }
