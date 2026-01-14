@@ -3,7 +3,7 @@ package com.practicum.playlistmaker.di
 import android.media.MediaPlayer
 import com.practicum.playlistmaker.medialibrary.ui.FeaturedTracksViewModel
 import com.practicum.playlistmaker.medialibrary.ui.PlaylistsViewModel
-import com.practicum.playlistmaker.player.ui.AudioPlayerViewModel
+import com.practicum.playlistmaker.player.ui.PlayerViewModel
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.SearchViewModel
 import com.practicum.playlistmaker.settings.ui.SettingsViewModel
@@ -14,7 +14,7 @@ val viewModelModule = module {
     factory { MediaPlayer() }
     viewModel { SettingsViewModel(get(), get()) }
     viewModel { SearchViewModel(get(), get(), get(), get()) }
-    viewModel { (track: Track) -> AudioPlayerViewModel(track, get()) }
+    viewModel { (track: Track) -> PlayerViewModel(track, get()) }
     viewModel { PlaylistsViewModel() }
     viewModel { FeaturedTracksViewModel() }
 }

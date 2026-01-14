@@ -10,20 +10,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
-import com.practicum.playlistmaker.player.ui.AudioPlayerFragment
+import com.practicum.playlistmaker.player.ui.PlayerFragment
 import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 
 class SearchFragment : Fragment() {
+    companion object {
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+    }
+
     private lateinit var binding: FragmentSearchBinding
     private val viewModel: SearchViewModel by viewModel()
     private var tracks = arrayListOf<Track>()
     private var historyTracks = arrayListOf<Track>()
     private var searchRequest = ""
+    private lateinit var trackClickDebounce: (Track) -> Unit
+    private lateinit var trackAdapter: TrackAdapter
+    private lateinit var historyAdapter: TrackAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,9 +44,10 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getSearchHistory()
-        binding.searchRecyclerView.adapter = trackAdapter
-        binding.historyRecyclerView.adapter = historyAdapter
+        if (viewModel.observeState().value == null) {
+            viewModel.getSearchHistory()
+        }
+
 
         val searchWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -92,22 +102,22 @@ class SearchFragment : Fragment() {
             closeAll()
         }
 
+        trackClickDebounce =
+            debounce<Track>(
+                CLICK_DEBOUNCE_DELAY,
+                viewLifecycleOwner.lifecycleScope,
+                false
+            ) { track ->
+                openAudioPlayer(track)
+            }
+
+        trackAdapter = TrackAdapter(tracks, { item -> trackClickDebounce(item) })
+        historyAdapter = TrackAdapter(historyTracks, { item -> trackClickDebounce(item) })
+
+        binding.searchRecyclerView.adapter = trackAdapter
+        binding.historyRecyclerView.adapter = historyAdapter
     }
 
-    private val trackAdapter = TrackAdapter(
-        tracks,
-        onItemClick = { item ->
-            if (viewModel.clickDebounce()) {
-                openAudioPlayer(item)
-            }
-        }
-    )
-    private val historyAdapter = TrackAdapter(
-        historyTracks,
-        onItemClick = { item ->
-            openAudioPlayer(item)
-        }
-    )
 
     private fun showContent(data: List<Track>) {
         tracks.clear()
@@ -178,7 +188,7 @@ class SearchFragment : Fragment() {
 
     private fun openAudioPlayer(item: Track) {
         viewModel.addTrackToHistory(item)
-        val bundle = AudioPlayerFragment.createArgs(item)
+        val bundle = PlayerFragment.createArgs(item)
         findNavController().navigate(R.id.audioPlayerFragment, bundle)
     }
 }

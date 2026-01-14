@@ -23,7 +23,7 @@ import java.util.Locale
 import java.util.TimeZone
 import kotlin.getValue
 
-class AudioPlayerFragment : Fragment() {
+class PlayerFragment : Fragment() {
     private lateinit var binding: FragmentAudioPlayerBinding
 
     override fun onCreateView(
@@ -46,7 +46,7 @@ class AudioPlayerFragment : Fragment() {
         ) {
             "Track is required"
         }
-        val viewModel: AudioPlayerViewModel by viewModel() {
+        val viewModel: PlayerViewModel by viewModel() {
             parametersOf(track)
         }
 
@@ -80,24 +80,22 @@ class AudioPlayerFragment : Fragment() {
         }
 
         viewModel.observePlayerScreenState().observe(viewLifecycleOwner) { state ->
-            binding.playingTimeText.text = state.progressTime
-            when (state.playerState) {
-                AudioPlayerViewModel.PlayerState.PREPARED -> {
+            binding.playingTimeText.text = state.progress
+            when (state) {
+                is PlayerState.Prepared -> {
                     binding.playButton.isEnabled = true
                     binding.playButton.setImageResource(R.drawable.button_play)
                 }
 
-                AudioPlayerViewModel.PlayerState.PLAYING -> {
+                is PlayerState.Playing -> {
                     binding.playButton.setImageResource(R.drawable.button_pause)
-
                 }
 
-                AudioPlayerViewModel.PlayerState.PAUSED -> {
+                is PlayerState.Paused -> {
                     binding.playButton.setImageResource(R.drawable.button_play)
-
                 }
 
-                AudioPlayerViewModel.PlayerState.DEFAULT -> {
+                is PlayerState.Default -> {
                     binding.playButton.isEnabled = false
                 }
             }
