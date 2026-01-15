@@ -1,5 +1,5 @@
 package com.practicum.playlistmaker.search.domain.api
 
-interface ClearSearchHistoryInteractor {
+interface HistoryClearInteractor {
     operator fun invoke()
 }

@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.practicum.playlistmaker.search.domain.api.AddTrackToHistoryInteractor
-import com.practicum.playlistmaker.search.domain.api.ClearSearchHistoryInteractor
-import com.practicum.playlistmaker.search.domain.api.GetSearchHistoryInteractor
+import com.practicum.playlistmaker.search.domain.api.HistoryAddInteractor
+import com.practicum.playlistmaker.search.domain.api.HistoryClearInteractor
+import com.practicum.playlistmaker.search.domain.api.HistoryGetInteractor
 import com.practicum.playlistmaker.search.domain.api.TracksInteractor
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.util.debounce
@@ -14,9 +14,9 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
-    private val getSearchHistoryInteractor: GetSearchHistoryInteractor,
-    private val addTrackToHistoryInteractor: AddTrackToHistoryInteractor,
-    private val clearSearchHistoryInteractor: ClearSearchHistoryInteractor
+    private val historyGetInteractor: HistoryGetInteractor,
+    private val historyAddInteractor: HistoryAddInteractor,
+    private val historyClearInteractor: HistoryClearInteractor
 ) :
     ViewModel() {
     private val stateLiveData = MutableLiveData<SearchScreenState>()
@@ -49,16 +49,21 @@ class SearchViewModel(
     }
 
     fun getSearchHistory() {
-        val historyTracks = getSearchHistoryInteractor()
-        stateLiveData.postValue(SearchScreenState.History(historyTracks))
+        viewModelScope.launch {
+            val historyTracks = historyGetInteractor()
+            stateLiveData.postValue(SearchScreenState.History(historyTracks))
+        }
+
     }
 
     fun addTrackToHistory(track: Track) {
-        addTrackToHistoryInteractor(track)
+        viewModelScope.launch {
+            historyAddInteractor(track)
+        }
     }
 
     fun historyClear() {
-        clearSearchHistoryInteractor()
+        historyClearInteractor()
     }
 
     private fun renderState(state: SearchScreenState) {

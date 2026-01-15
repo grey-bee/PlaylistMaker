@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias (libs.plugins.ksp)
     id("kotlin-parcelize")
 }
 
@@ -41,6 +42,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.room.ktx)
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
     implementation(libs.okhttp)
     implementation(libs.glide)
     implementation(libs.retrofit)

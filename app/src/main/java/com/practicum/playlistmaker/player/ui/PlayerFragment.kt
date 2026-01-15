@@ -59,8 +59,13 @@ class PlayerFragment : Fragment() {
             durationText.text = track.trackTime
             genreText.text = track.primaryGenreName
             countryText.text = track.country
+
             playButton.setOnClickListener {
                 viewModel.playbackControl()
+            }
+            likeButton.setOnClickListener {
+                viewModel.onFavoriteClicked(track)
+
             }
         }
         Glide.with(binding.albumCoverImage)
@@ -77,6 +82,10 @@ class PlayerFragment : Fragment() {
             binding.yearGroup.isVisible = false
         } else {
             binding.yearText.text = track.releaseYear
+        }
+        viewModel.observeIsFavorite().observe(viewLifecycleOwner) {isFavorite ->
+            if (isFavorite) binding.likeButton.setImageResource(R.drawable.button_like)
+            else binding.likeButton.setImageResource(R.drawable.button_unlike)
         }
 
         viewModel.observePlayerScreenState().observe(viewLifecycleOwner) { state ->
