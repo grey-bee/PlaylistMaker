@@ -27,8 +27,6 @@ class SearchFragment : Fragment() {
 
     private lateinit var binding: FragmentSearchBinding
     private val viewModel: SearchViewModel by viewModel()
-    private var tracks = arrayListOf<Track>()
-    private var historyTracks = arrayListOf<Track>()
     private var searchRequest = ""
     private lateinit var trackClickDebounce: (Track) -> Unit
     private lateinit var trackAdapter: TrackAdapter
@@ -78,9 +76,7 @@ class SearchFragment : Fragment() {
         }
 
         binding.searchInput.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus
-                && historyTracks.isNotEmpty()
-                && binding.searchInput.text.isNullOrEmpty()
+            if (hasFocus && binding.searchInput.text.isNullOrEmpty()
             ) viewModel.getSearchHistory()
             else closeAll()
         }
@@ -90,7 +86,6 @@ class SearchFragment : Fragment() {
             val inputMethodManager =
                 requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.searchInput.windowToken, 0)
-            tracks.clear()
             viewModel.getSearchHistory()
         }
         binding.refreshButton.setOnClickListener {
@@ -111,8 +106,8 @@ class SearchFragment : Fragment() {
                 openAudioPlayer(track)
             }
 
-        trackAdapter = TrackAdapter(tracks, { item -> trackClickDebounce(item) })
-        historyAdapter = TrackAdapter(historyTracks, { item -> trackClickDebounce(item) })
+        trackAdapter = TrackAdapter(emptyList(), { item -> trackClickDebounce(item) })
+        historyAdapter = TrackAdapter(emptyList(), { item -> trackClickDebounce(item) })
 
         binding.searchRecyclerView.adapter = trackAdapter
         binding.historyRecyclerView.adapter = historyAdapter
@@ -120,8 +115,7 @@ class SearchFragment : Fragment() {
 
 
     private fun showContent(data: List<Track>) {
-        tracks.clear()
-        tracks.addAll(data)
+        trackAdapter.updateTracks(data)
         trackAdapter.notifyDataSetChanged()
 
         binding.apply {
@@ -134,12 +128,11 @@ class SearchFragment : Fragment() {
     }
 
     private fun showHistory(data: List<Track>) {
-        historyTracks.clear()
-        historyTracks.addAll(data)
+        historyAdapter.updateTracks(data)
         historyAdapter.notifyDataSetChanged()
         binding.apply {
             searchRecyclerView.isVisible = false
-            if (historyTracks.isNotEmpty()) historyLayout.isVisible = true
+            if (data.isNotEmpty()) historyLayout.isVisible = true
             nothingFoundPlaceholder.isVisible = false
             noConnectionPlaceholder.isVisible = false
             progressBar.isVisible = false

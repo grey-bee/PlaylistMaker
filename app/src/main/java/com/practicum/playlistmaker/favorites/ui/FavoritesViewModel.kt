@@ -20,7 +20,7 @@ class FavoritesViewModel(
     private fun favoriteRequest() {
         viewModelScope.launch {
             favoritesInteractor.getTracks().collect { tracks ->
-                if (tracks.isEmpty()) _tracks.postValue(FavoritesState.Empty("no"))
+                if (tracks.isEmpty()) _tracks.postValue(FavoritesState.Empty)
                 else _tracks.postValue(FavoritesState.Content(tracks))
             }
         }

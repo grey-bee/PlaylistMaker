@@ -20,7 +20,6 @@ class FavoritesFragment : Fragment() {
     private lateinit var trackClickDebounce: (Track) -> Unit
     private lateinit var trackAdapter: TrackAdapter
     private val viewModel: FavoritesViewModel by viewModel()
-    private var tracks = arrayListOf<Track>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,8 +35,7 @@ class FavoritesFragment : Fragment() {
         viewModel.observeState().observe(viewLifecycleOwner) { state ->
             when (state) {
                 is FavoritesState.Content -> {
-                    tracks.clear()
-                    tracks.addAll(state.tracks)
+                    trackAdapter.updateTracks(state.tracks)
                     trackAdapter.notifyDataSetChanged()
                     binding.noTracksPlaceholder.visibility = View.GONE
                     binding.tracksRecyclerView.visibility = View.VISIBLE
@@ -59,14 +57,17 @@ class FavoritesFragment : Fragment() {
                 openAudioPlayer(track)
             }
 
-        trackAdapter = TrackAdapter(tracks, { item -> trackClickDebounce(item) })
+        trackAdapter = TrackAdapter(emptyList(), { item -> trackClickDebounce(item) })
 
         binding.tracksRecyclerView.adapter = trackAdapter
     }
 
     private fun openAudioPlayer(track: Track) {
         val bundle = PlayerFragment.createArgs(track)
-        findNavController().navigate(R.id.action_mediaLibraryFragment_to_audioPlayerFragment, bundle)
+        findNavController().navigate(
+            R.id.action_mediaLibraryFragment_to_audioPlayerFragment,
+            bundle
+        )
     }
 
     companion object {
