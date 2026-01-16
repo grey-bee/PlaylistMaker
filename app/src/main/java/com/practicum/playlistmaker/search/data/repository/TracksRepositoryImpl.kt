@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.search.data.repository
 
-import com.practicum.playlistmaker.favorites.data.db.AppDatabase
+import com.practicum.playlistmaker.data.db.AppDatabase
 import com.practicum.playlistmaker.util.Resource
 import com.practicum.playlistmaker.search.data.NetworkClient
 import com.practicum.playlistmaker.search.data.dto.TrackSearchRequest

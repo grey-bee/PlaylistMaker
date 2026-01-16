@@ -1,7 +1,9 @@
-package com.practicum.playlistmaker.favorites.data.db
+package com.practicum.playlistmaker.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.practicum.playlistmaker.favorites.data.db.TrackDao
+import com.practicum.playlistmaker.favorites.data.db.TrackEntity
 
 @Database(version = 1, entities = [TrackEntity::class])
 abstract class AppDatabase : RoomDatabase() {
