@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.playlist.domian.model
+package com.practicum.playlistmaker.playlist.domain.model
 
 data class Playlist(
     val id: Long,

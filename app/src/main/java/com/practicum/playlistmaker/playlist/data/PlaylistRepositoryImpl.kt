@@ -3,8 +3,8 @@ package com.practicum.playlistmaker.playlist.data
 import com.practicum.playlistmaker.data.db.AppDatabase
 import com.practicum.playlistmaker.playlist.data.convertors.PlaylistDbConvertor
 import com.practicum.playlistmaker.playlist.data.db.PlaylistEntity
-import com.practicum.playlistmaker.playlist.domian.PlaylistRepository
-import com.practicum.playlistmaker.playlist.domian.model.Playlist
+import com.practicum.playlistmaker.playlist.domain.PlaylistRepository
+import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
