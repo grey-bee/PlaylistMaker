@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".playlist.ui.PlaylistsFragment">
+    tools:context=".playlist.ui.list.PlaylistsFragment">
 
     <Button
         android:id="@+id/newPlaylist"
@@ -25,13 +25,13 @@
         android:drawablePadding="@dimen/padding_16"
         android:text="@string/didnt_make_any_playlist"
         app:drawableTopCompat="@drawable/ic_nothing_found"
-        tools:visibility="gone"/>
+        tools:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingHorizontal="@dimen/margin_12"
+        android:layout_marginTop="@dimen/margin_16"
         app:spanCount="2"
         tools:itemCount="6"
         tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"

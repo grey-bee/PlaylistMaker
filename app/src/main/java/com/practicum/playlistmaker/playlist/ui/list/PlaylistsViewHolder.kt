@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.playlist.ui
+package com.practicum.playlistmaker.playlist.ui.list
 
 import android.view.View
 import android.widget.ImageView
@@ -11,7 +11,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.dpToPx
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
 
-class PlaylistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class PlaylistsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val playlistImage: ImageView = itemView.findViewById(R.id.image)
     private val playlistName: TextView = itemView.findViewById(R.id.playlistName)
     private val trackQty: TextView = itemView.findViewById(R.id.trackQty)

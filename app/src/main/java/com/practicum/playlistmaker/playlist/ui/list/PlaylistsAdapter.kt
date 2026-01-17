@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.playlist.ui
+package com.practicum.playlistmaker.playlist.ui.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,21 +6,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
 
-class PlaylistAdapter(
-    private val playlists: List<Playlist>,
+class PlaylistsAdapter(
+    private var playlists: List<Playlist>,
     private val onItemClick: (Playlist) -> Unit
-) : RecyclerView.Adapter<PlaylistViewHolder>() {
+) : RecyclerView.Adapter<PlaylistsViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): PlaylistViewHolder {
+    ): PlaylistsViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.playlist_item, parent, false)
-        return PlaylistViewHolder(view)
+        return PlaylistsViewHolder(view)
     }
 
     override fun onBindViewHolder(
-        holder: PlaylistViewHolder,
+        holder: PlaylistsViewHolder,
         position: Int
     ) {
         val item = playlists[position]
@@ -30,5 +30,9 @@ class PlaylistAdapter(
 
     override fun getItemCount(): Int {
         return playlists.size
+    }
+
+    fun updatePlaylists(playlists: List<Playlist>) {
+        this.playlists = playlists
     }
 }

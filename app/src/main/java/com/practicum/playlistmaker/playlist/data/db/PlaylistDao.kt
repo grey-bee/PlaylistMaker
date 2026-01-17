@@ -10,11 +10,11 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface PlaylistDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun add(playlist: PlaylistEntity)
+    suspend fun addPlaylist(playlist: PlaylistEntity)
 
     @Delete()
-    suspend fun delete(playlist: PlaylistEntity)
+    suspend fun deletePlaylist(playlist: PlaylistEntity)
 
     @Query("SELECT * FROM playlists")
-    fun get(): Flow<List<PlaylistEntity>>
+    fun getPlaylists(): Flow<List<PlaylistEntity>>
 }

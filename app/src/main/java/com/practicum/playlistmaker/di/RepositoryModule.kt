@@ -42,5 +42,5 @@ val repositoryModule = module {
     single<TracksRepository> { TracksRepositoryImpl(get(), get()) }
     single<SharingRepository> { SharingRepositoryImpl(androidContext()) }
     single<FavoritesRepository> { FavoritesRepositoryImpl(get(), get()) }
-    single<PlaylistRepository> { PlaylistRepositoryImpl(get(), get()) }
+    single<PlaylistRepository> { PlaylistRepositoryImpl(get(), get(), get()) }
 }
