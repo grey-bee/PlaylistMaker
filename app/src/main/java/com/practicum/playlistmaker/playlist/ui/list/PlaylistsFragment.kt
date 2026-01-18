@@ -63,6 +63,8 @@ class PlaylistsFragment : Fragment() {
 
         playlistAdapter = PlaylistsAdapter(emptyList(), { item -> playlistClickDebounce(item) })
         binding.recyclerView.adapter = playlistAdapter
+
+
     }
 
     companion object {

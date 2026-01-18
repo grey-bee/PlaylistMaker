@@ -34,5 +34,6 @@ class PlaylistsAdapter(
 
     fun updatePlaylists(playlists: List<Playlist>) {
         this.playlists = playlists
+        notifyDataSetChanged()
     }
 }

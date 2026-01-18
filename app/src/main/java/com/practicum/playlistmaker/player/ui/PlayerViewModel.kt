@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.favorites.domain.FavoritesInteractor
 import com.practicum.playlistmaker.playlist.domain.PlaylistInteractor
+import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import com.practicum.playlistmaker.playlist.ui.list.PlaylistsState
 import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.Job
@@ -29,6 +30,8 @@ class PlayerViewModel(
     fun observePlayerScreenState(): LiveData<PlayerState> = playerState
     private val isFavoriteLiveData = MutableLiveData<Boolean>()
     fun observeIsFavorite(): LiveData<Boolean> = isFavoriteLiveData
+    private val toastMessage = MutableLiveData<String>()
+    fun observeToastMessage(): LiveData<String> = toastMessage
 
     init {
         initMediaPlayer()
@@ -100,10 +103,27 @@ class PlayerViewModel(
         isFavoriteLiveData.postValue(!check)
     }
 
+    fun onAddtoPlaylistClidked(playlist: Playlist) {
+        if (playlist.trackIds.contains(track.trackId)) {
+            toastMessage.postValue("Трек уже добавлен...")
+        } else {
+            viewModelScope.launch {
+                playlistInteractor.updatePlaylist(
+                    playlist.copy(
+                        trackIds = playlist.trackIds + track.trackId,
+                        trackCount = playlist.trackCount + 1
+                    )
+                )
+            }
+            toastMessage.postValue("Добавлено в плейлист...")
+        }
+    }
+
     private fun getCurrentPlayerPosition(): String {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
             ?: "00:00"
     }
+
     private fun playlistsRequest() {
         viewModelScope.launch {
             playlistInteractor.getPlaylists().collect { playlists ->

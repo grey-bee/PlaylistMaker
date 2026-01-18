@@ -37,6 +37,10 @@ class PlaylistRepositoryImpl(
             .map { entities -> entities.map { entity -> convertEntityToPlaylist(entity) } }
     }
 
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        return appDatabase.playlistDao().updatePlaylist(convertPlaylistToEntity(playlist))
+    }
+
     override suspend fun saveImageToPrivateStorage(uri: Uri): String {
         return withContext(Dispatchers.IO) {
             val dir = File(

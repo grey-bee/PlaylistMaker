@@ -1,13 +1,16 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.BundleCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -18,7 +21,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlayerBinding
 import com.practicum.playlistmaker.dpToPx
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
-import com.practicum.playlistmaker.playlist.ui.list.PlaylistsAdapter
+import com.practicum.playlistmaker.playlist.ui.list.PlaylistsState
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -27,11 +30,24 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
 import kotlin.getValue
+import kotlin.requireNotNull
 
 class PlayerFragment : Fragment() {
     private lateinit var binding: FragmentPlayerBinding
     private lateinit var playlistsAdapter: PlaylistsAdapter
     private lateinit var playlistClickDebounce: (Playlist) -> Unit
+    private val track by lazy {
+        requireNotNull(
+            BundleCompat.getParcelable(
+                requireArguments(),
+                ARGS_TRACK,
+                Track::class.java
+            )
+        ) { "Track is required" }
+    }
+    val viewModel: PlayerViewModel by viewModel() {
+        parametersOf(track)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,6 +60,10 @@ class PlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.observeToastMessage().observe(viewLifecycleOwner) { text ->
+            Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
+        }
+
         val bottomSheetContainer = binding.standardBottomSheet
         val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
@@ -51,20 +71,27 @@ class PlayerFragment : Fragment() {
         binding.addToPlaylistButton.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             binding.darkScreen.visibility = View.VISIBLE
+            binding.darkScreen.alpha = 1f
         }
 
-        val track = requireNotNull(
-            BundleCompat.getParcelable(
-                requireArguments(),
-                ARGS_TRACK,
-                Track::class.java
-            )
-        ) {
-            "Track is required"
-        }
-        val viewModel: PlayerViewModel by viewModel() {
-            parametersOf(track)
-        }
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.darkScreen.visibility = View.GONE
+                    }
+
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        binding.darkScreen.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                if (slideOffset < 0) binding.darkScreen.alpha = (slideOffset + 1) / 2
+            }
+        })
 
         binding.apply {
             trackNameText.text = track.trackName
@@ -131,17 +158,35 @@ class PlayerFragment : Fragment() {
                 CLICK_DEBOUNCE_DELAY,
                 viewLifecycleOwner.lifecycleScope,
                 false
-            ) { track ->
-                //TODO
+            ) { playlist ->
+                viewModel.onAddtoPlaylistClidked(playlist)
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+//                binding.darkScreen.visibility = View.GONE
             }
 
         playlistsAdapter = PlaylistsAdapter(emptyList(), { item -> playlistClickDebounce(item) })
         binding.playlistsRecyclerView.adapter = playlistsAdapter
 
-        viewModel.observePlaylists().observe(viewLifecycleOwner) { playlists ->
-            playlistsAdapter.updatePlaylists(playlists)
+        viewModel.observePlaylists().observe(viewLifecycleOwner) { state ->
+            Log.d("PlayerFragment", "State: $state")
+            when (state) {
+                is PlaylistsState.Empty -> {}
+                is PlaylistsState.Content -> {
+                    playlistsAdapter.updatePlaylists(state.playlists)
+                }
+            }
+        }
+
+        binding.newPlaylist.setOnClickListener {
+            findNavController().navigate(R.id.action_audioPlayerFragment_to_newPlaylistFragment)
+        }
+        setFragmentResultListener("new_playlist") { _, bundle ->
+            val title = bundle.getString("title")
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            Toast.makeText(requireContext(), "Плейлист $title создан", Toast.LENGTH_LONG).show()
 
         }
+
 
         binding.backArrowImage.setOnClickListener {
             findNavController().navigateUp()
@@ -149,7 +194,7 @@ class PlayerFragment : Fragment() {
     }
 
     companion object {
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val CLICK_DEBOUNCE_DELAY = 500L
         private const val ARGS_TRACK = "track"
         fun createArgs(track: Track): Bundle =
             bundleOf(ARGS_TRACK to track)

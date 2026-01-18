@@ -17,6 +17,10 @@ class PlaylistInteractorImpl(private val repository: PlaylistRepository) : Playl
         return repository.getPlaylist()
     }
 
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        return repository.updatePlaylist(playlist)
+    }
+
     override suspend fun saveImageToPrivateStorage(uri: Uri): String {
         return repository.saveImageToPrivateStorage(uri)
     }
