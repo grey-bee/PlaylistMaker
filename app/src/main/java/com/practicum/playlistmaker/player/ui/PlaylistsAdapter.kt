@@ -7,7 +7,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
 
 class PlaylistsAdapter(
-    private val playlists: List<Playlist>,
+    private var playlists: List<Playlist>,
     private val onItemClick: (Playlist) -> Unit
 ) : RecyclerView.Adapter<PlaylistsViewHolder>() {
     override fun onCreateViewHolder(
@@ -30,5 +30,9 @@ class PlaylistsAdapter(
 
     override fun getItemCount(): Int {
         return playlists.size
+    }
+
+    fun updatePlaylists(playlists: List<Playlist>) {
+        this.playlists = playlists
     }
 }
