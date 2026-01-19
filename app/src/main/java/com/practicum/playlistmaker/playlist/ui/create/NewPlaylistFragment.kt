@@ -25,7 +25,7 @@ import androidx.core.net.toUri
 class NewPlaylistFragment : Fragment() {
     private lateinit var binding: FragmentNewPlaylistBinding
     private val viewModel: NewPlaylistViewModel by viewModel()
-    private var titleRequest: String? = ""
+    private var titleRequest: String = ""
     private var imageSelected = false
     private var selectedImageUri: Uri? = null
 
@@ -55,15 +55,15 @@ class NewPlaylistFragment : Fragment() {
         selectedImageUri = savedInstanceState?.getString(KEY_URI)?.toUri()
         if (selectedImageUri != null) binding.pickerImage.setImageURI(selectedImageUri)
 
-        binding.buttonCreate.isEnabled = titleRequest?.isNotEmpty() == true
+        binding.buttonCreate.isEnabled = titleRequest.isNotBlank() == true
 
         fun backButtonProcess() {
-            if (titleRequest?.isNotEmpty() == true || binding.description.editText?.text?.isNotEmpty() == true || imageSelected) {
+            if (titleRequest.isNotBlank() || binding.description.editText?.text?.isNotEmpty() == true || imageSelected) {
                 MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Завершить создание плейлиста?")
-                    .setMessage("Все несохраненные данные будут потеряны")
-                    .setNegativeButton("Отмена") { _, _ -> }
-                    .setPositiveButton("Завершить") { _, _ -> findNavController().navigateUp() }
+                    .setTitle(getString(R.string.finish_playlist_creating))
+                    .setMessage(R.string.all_unsaved_data_will_be_loose)
+                    .setNegativeButton(R.string.cancel) { _, _ -> }
+                    .setPositiveButton(R.string.finish) { _, _ -> findNavController().navigateUp() }
                     .show()
             } else {
                 findNavController().navigateUp()
@@ -85,7 +85,6 @@ class NewPlaylistFragment : Fragment() {
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
                     binding.pickerImage.setImageURI(uri)
-                    viewModel.saveCoverAlbum(uri)
                     imageSelected = true
                     selectedImageUri = uri
                 }
@@ -110,7 +109,7 @@ class NewPlaylistFragment : Fragment() {
         binding.buttonCreate.setOnClickListener {
             val title = binding.playlistName.editText?.text.toString()
             val description = binding.description.editText?.text.toString()
-            viewModel.savePlaylistInfo(title, description)
+            viewModel.savePlaylistInfo(title, description, selectedImageUri)
             setFragmentResult(KEY_NEW_PLAYLIST, bundleOf(KEY_TITLE to title))
             findNavController().navigateUp()
         }

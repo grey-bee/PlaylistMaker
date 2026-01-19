@@ -20,6 +20,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
+import kotlin.math.min
 
 class PlaylistRepositoryImpl(
     private val appDatabase: AppDatabase,
@@ -57,7 +58,11 @@ class PlaylistRepositoryImpl(
             val file = File(dir, "${UUID.randomUUID()}.jpg")
             context.contentResolver.openInputStream(uri).use { input ->
                 FileOutputStream(file).use { output ->
-                    BitmapFactory.decodeStream(input)
+                    val bitmap = BitmapFactory.decodeStream(input)
+                    val h = bitmap.height
+                    val w = bitmap.width
+                    val minSize = min(w, h)
+                    Bitmap.createBitmap(bitmap, (w - minSize) / 2, (h - minSize) / 2, minSize, minSize)
                         .compress(Bitmap.CompressFormat.JPEG, 30, output)
                 }
             }
@@ -65,13 +70,7 @@ class PlaylistRepositoryImpl(
         }
     }
 
-    override suspend fun addTrackToPlaylist(track: Track, playlist: Playlist) {
-        updatePlaylist(
-            playlist.copy(
-                trackIds = playlist.trackIds + track.trackId,
-                trackCount = playlist.trackCount + 1
-            )
-        )
+    override suspend fun addPlaylistTrack(track: Track) {
         appDatabase.playlistTrackDao().addPlaylistTrack(convertPlaylistTrackToEntity(track))
     }
 

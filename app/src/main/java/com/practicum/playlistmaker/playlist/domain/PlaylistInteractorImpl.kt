@@ -27,7 +27,13 @@ class PlaylistInteractorImpl(private val repository: PlaylistRepository) : Playl
     }
 
     override suspend fun addTrackToPlaylist(track: Track, playlist: Playlist) {
-        return repository.addTrackToPlaylist(track, playlist)
+        updatePlaylist(
+            playlist.copy(
+                trackIds = playlist.trackIds + track.trackId,
+                trackCount = playlist.trackCount + 1
+            )
+        )
+        return repository.addPlaylistTrack(track)
     }
 
     override suspend fun deletePlaylistTrack(track: Track) {

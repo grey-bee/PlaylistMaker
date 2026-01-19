@@ -10,16 +10,10 @@ import kotlinx.coroutines.launch
 class NewPlaylistViewModel(
     private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
-    private var coverPath: String? = null
 
-    fun saveCoverAlbum(uri: Uri) {
+    fun savePlaylistInfo(title: String, description: String, uri: Uri?) {
         viewModelScope.launch {
-            coverPath = playlistInteractor.saveImageToPrivateStorage(uri)
-        }
-    }
-
-    fun savePlaylistInfo(title: String, description: String) {
-        viewModelScope.launch {
+            val coverPath = uri?.let { playlistInteractor.saveImageToPrivateStorage(uri) }
             playlistInteractor.addPlaylist(
                 Playlist(
                     0,
