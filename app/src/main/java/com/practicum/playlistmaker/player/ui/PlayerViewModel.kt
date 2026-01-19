@@ -103,19 +103,16 @@ class PlayerViewModel(
         isFavoriteLiveData.postValue(!check)
     }
 
-    fun onAddtoPlaylistClidked(playlist: Playlist) {
+    fun onAddToPlaylistClicked(playlist: Playlist): Boolean {
         if (playlist.trackIds.contains(track.trackId)) {
-            toastMessage.postValue("Трек уже добавлен...")
+            toastMessage.postValue("Трек уже добавлен в плейлист ${playlist.name}")
+            return false
         } else {
             viewModelScope.launch {
-                playlistInteractor.updatePlaylist(
-                    playlist.copy(
-                        trackIds = playlist.trackIds + track.trackId,
-                        trackCount = playlist.trackCount + 1
-                    )
-                )
+                playlistInteractor.addTrackToPlaylist(track, playlist)
             }
-            toastMessage.postValue("Добавлено в плейлист...")
+            toastMessage.postValue("Добавлено в плейлист ${playlist.name}")
+            return true
         }
     }
 

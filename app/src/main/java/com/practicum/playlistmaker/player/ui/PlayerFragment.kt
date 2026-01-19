@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -159,16 +158,15 @@ class PlayerFragment : Fragment() {
                 viewLifecycleOwner.lifecycleScope,
                 false
             ) { playlist ->
-                viewModel.onAddtoPlaylistClidked(playlist)
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-//                binding.darkScreen.visibility = View.GONE
+                if (viewModel.onAddToPlaylistClicked(playlist)) {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
             }
 
         playlistsAdapter = PlaylistsAdapter(emptyList(), { item -> playlistClickDebounce(item) })
         binding.playlistsRecyclerView.adapter = playlistsAdapter
 
         viewModel.observePlaylists().observe(viewLifecycleOwner) { state ->
-            Log.d("PlayerFragment", "State: $state")
             when (state) {
                 is PlaylistsState.Empty -> {}
                 is PlaylistsState.Content -> {
@@ -184,10 +182,7 @@ class PlayerFragment : Fragment() {
             val title = bundle.getString("title")
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             Toast.makeText(requireContext(), "Плейлист $title создан", Toast.LENGTH_LONG).show()
-
         }
-
-
         binding.backArrowImage.setOnClickListener {
             findNavController().navigateUp()
         }

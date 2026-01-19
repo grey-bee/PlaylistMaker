@@ -20,6 +20,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
+import androidx.core.net.toUri
 
 class NewPlaylistFragment : Fragment() {
     private lateinit var binding: FragmentNewPlaylistBinding
@@ -32,7 +33,7 @@ class NewPlaylistFragment : Fragment() {
         outState.putBoolean(KEY_IMAGE_SELECTED, imageSelected)
         outState.putString(KEY_TITLE_REQUEST, titleRequest)
         outState.putString(KEY_DESCRIPTION, binding.description.editText?.text.toString())
-        outState.putString(KEY_URI, selectedImageUri.toString())
+        outState.putString(KEY_URI, selectedImageUri?.toString())
         super.onSaveInstanceState(outState)
     }
 
@@ -51,7 +52,7 @@ class NewPlaylistFragment : Fragment() {
         binding.playlistName.editText?.setText(titleRequest)
         binding.description.editText?.setText(savedInstanceState?.getString(KEY_DESCRIPTION) ?: "")
         imageSelected = savedInstanceState?.getBoolean(KEY_IMAGE_SELECTED) == true
-        selectedImageUri = Uri.parse(savedInstanceState?.getString(KEY_URI))
+        selectedImageUri = savedInstanceState?.getString(KEY_URI)?.toUri()
         if (selectedImageUri != null) binding.pickerImage.setImageURI(selectedImageUri)
 
         binding.buttonCreate.isEnabled = titleRequest?.isNotEmpty() == true
@@ -114,6 +115,7 @@ class NewPlaylistFragment : Fragment() {
             findNavController().navigateUp()
         }
     }
+
     companion object {
         private const val KEY_NEW_PLAYLIST = "new_playlist"
         private const val KEY_TITLE = "title"

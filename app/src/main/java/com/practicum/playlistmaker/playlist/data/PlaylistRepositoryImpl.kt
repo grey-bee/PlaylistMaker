@@ -7,9 +7,12 @@ import android.net.Uri
 import android.os.Environment
 import com.practicum.playlistmaker.data.db.AppDatabase
 import com.practicum.playlistmaker.playlist.data.convertors.PlaylistDbConvertor
+import com.practicum.playlistmaker.playlist.data.convertors.PlaylistTrackDbConvertor
 import com.practicum.playlistmaker.playlist.data.db.PlaylistEntity
+import com.practicum.playlistmaker.playlist.data.db.PlaylistTrackEntity
 import com.practicum.playlistmaker.playlist.domain.PlaylistRepository
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
+import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -20,7 +23,8 @@ import java.util.UUID
 
 class PlaylistRepositoryImpl(
     private val appDatabase: AppDatabase,
-    private val convertor: PlaylistDbConvertor,
+    private val playlistConvertor: PlaylistDbConvertor,
+    private val trackConvertor: PlaylistTrackDbConvertor,
     private val context: Context
 ) :
     PlaylistRepository {
@@ -61,11 +65,38 @@ class PlaylistRepositoryImpl(
         }
     }
 
+    override suspend fun addTrackToPlaylist(track: Track, playlist: Playlist) {
+        updatePlaylist(
+            playlist.copy(
+                trackIds = playlist.trackIds + track.trackId,
+                trackCount = playlist.trackCount + 1
+            )
+        )
+        appDatabase.playlistTrackDao().addPlaylistTrack(convertPlaylistTrackToEntity(track))
+    }
+
+    override suspend fun deletePlaylistTrack(track: Track) {
+        appDatabase.playlistTrackDao().deletePlaylistTrack(convertPlaylistTrackToEntity(track))
+    }
+
+    override suspend fun getPlaylistTrack(trackId: String): Track? {
+        val entity = appDatabase.playlistTrackDao().getPlaylistTrack(trackId)
+        return entity?.let { convertEntityToPlaylistTrack(it) }
+    }
+
     private fun convertEntityToPlaylist(entity: PlaylistEntity): Playlist {
-        return convertor.map(entity)
+        return playlistConvertor.map(entity)
     }
 
     private fun convertPlaylistToEntity(playlist: Playlist): PlaylistEntity {
-        return convertor.map(playlist)
+        return playlistConvertor.map(playlist)
+    }
+
+    private fun convertEntityToPlaylistTrack(entity: PlaylistTrackEntity): Track {
+        return trackConvertor.map(entity)
+    }
+
+    private fun convertPlaylistTrackToEntity(track: Track): PlaylistTrackEntity {
+        return trackConvertor.map(track)
     }
 }

@@ -5,6 +5,7 @@ import com.practicum.playlistmaker.favorites.data.convertors.TrackDbConvertor
 import com.practicum.playlistmaker.favorites.domain.FavoritesRepository
 import com.practicum.playlistmaker.playlist.data.PlaylistRepositoryImpl
 import com.practicum.playlistmaker.playlist.data.convertors.PlaylistDbConvertor
+import com.practicum.playlistmaker.playlist.data.convertors.PlaylistTrackDbConvertor
 import com.practicum.playlistmaker.playlist.domain.PlaylistRepository
 import com.practicum.playlistmaker.search.data.repository.HistoryRepositoryImpl
 import com.practicum.playlistmaker.search.data.repository.TracksRepositoryImpl
@@ -24,6 +25,7 @@ private const val THEME_SETTINGS = "theme_settings"
 val repositoryModule = module {
     single { TrackDbConvertor() }
     single { PlaylistDbConvertor() }
+    single { PlaylistTrackDbConvertor() }
 
     single<HistoryRepository> {
         HistoryRepositoryImpl(
@@ -42,5 +44,5 @@ val repositoryModule = module {
     single<TracksRepository> { TracksRepositoryImpl(get(), get()) }
     single<SharingRepository> { SharingRepositoryImpl(androidContext()) }
     single<FavoritesRepository> { FavoritesRepositoryImpl(get(), get()) }
-    single<PlaylistRepository> { PlaylistRepositoryImpl(get(), get(), get()) }
+    single<PlaylistRepository> { PlaylistRepositoryImpl(get(), get(), get(), get()) }
 }

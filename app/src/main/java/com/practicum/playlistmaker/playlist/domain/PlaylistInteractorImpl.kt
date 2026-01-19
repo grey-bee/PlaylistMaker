@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.playlist.domain
 
 import android.net.Uri
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
+import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 
 class PlaylistInteractorImpl(private val repository: PlaylistRepository) : PlaylistInteractor {
@@ -23,5 +24,17 @@ class PlaylistInteractorImpl(private val repository: PlaylistRepository) : Playl
 
     override suspend fun saveImageToPrivateStorage(uri: Uri): String {
         return repository.saveImageToPrivateStorage(uri)
+    }
+
+    override suspend fun addTrackToPlaylist(track: Track, playlist: Playlist) {
+        return repository.addTrackToPlaylist(track, playlist)
+    }
+
+    override suspend fun deletePlaylistTrack(track: Track) {
+        return repository.deletePlaylistTrack(track)
+    }
+
+    override suspend fun getPlaylistTrack(trackId: String): Track? {
+        return repository.getPlaylistTrack(trackId)
     }
 }
