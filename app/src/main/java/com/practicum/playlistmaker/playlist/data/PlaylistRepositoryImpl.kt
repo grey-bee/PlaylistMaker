@@ -62,7 +62,13 @@ class PlaylistRepositoryImpl(
                     val h = bitmap.height
                     val w = bitmap.width
                     val minSize = min(w, h)
-                    Bitmap.createBitmap(bitmap, (w - minSize) / 2, (h - minSize) / 2, minSize, minSize)
+                    Bitmap.createBitmap(
+                        bitmap,
+                        (w - minSize) / 2,
+                        (h - minSize) / 2,
+                        minSize,
+                        minSize
+                    )
                         .compress(Bitmap.CompressFormat.JPEG, 30, output)
                 }
             }
@@ -81,6 +87,11 @@ class PlaylistRepositoryImpl(
     override suspend fun getPlaylistTrack(trackId: String): Track? {
         val entity = appDatabase.playlistTrackDao().getPlaylistTrack(trackId)
         return entity?.let { convertEntityToPlaylistTrack(it) }
+    }
+
+    override suspend fun getPlaylistTracks(trackIds: List<String>): List<Track> {
+        val entities = appDatabase.playlistTrackDao().getPlaylistTracks(trackIds)
+        return entities.map { entity -> convertEntityToPlaylistTrack(entity) }
     }
 
     private fun convertEntityToPlaylist(entity: PlaylistEntity): Playlist {

@@ -43,4 +43,8 @@ class PlaylistInteractorImpl(private val repository: PlaylistRepository) : Playl
     override suspend fun getPlaylistTrack(trackId: String): Track? {
         return repository.getPlaylistTrack(trackId)
     }
+
+    override suspend fun getPlaylistTracks(trackIds: List<String>): List<Track> {
+        return repository.getPlaylistTracks(trackIds)
+    }
 }

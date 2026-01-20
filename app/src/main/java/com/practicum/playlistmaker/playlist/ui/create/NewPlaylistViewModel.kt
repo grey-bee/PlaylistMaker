@@ -1,6 +1,8 @@
 package com.practicum.playlistmaker.playlist.ui.create
 
 import android.net.Uri
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.playlist.domain.PlaylistInteractor
@@ -10,6 +12,8 @@ import kotlinx.coroutines.launch
 class NewPlaylistViewModel(
     private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
+    private val _playlistSaved = MutableLiveData<Boolean>()
+    fun observePlaylistSaved(): LiveData<Boolean> = _playlistSaved
 
     fun savePlaylistInfo(title: String, description: String, uri: Uri?) {
         viewModelScope.launch {
@@ -24,8 +28,7 @@ class NewPlaylistViewModel(
                     0
                 )
             )
+            _playlistSaved.postValue(true)
         }
     }
-
-
 }

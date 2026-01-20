@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
+import com.practicum.playlistmaker.playlist.ui.details.PlaylistFragment
 import com.practicum.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -57,8 +58,9 @@ class PlaylistsFragment : Fragment() {
                 CLICK_DEBOUNCE_DELAY,
                 viewLifecycleOwner.lifecycleScope,
                 false
-            ) { track ->
-                //TODO
+            ) { playlist ->
+                val bundle = PlaylistFragment.createArgs(playlist)
+                findNavController().navigate(R.id.action_mediaLibraryFragment_to_playlistFragment, bundle)
             }
 
         playlistAdapter = PlaylistsAdapter(emptyList(), { item -> playlistClickDebounce(item) })

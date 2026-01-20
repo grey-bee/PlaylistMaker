@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_text_background"
+    tools:context=".playlist.ui.details.PlaylistFragment">
+
+    <ImageView
+        android:id="@+id/backArrowImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_4"
+        android:contentDescription="@string/to_previous_screen"
+        android:padding="@dimen/padding_12"
+        android:src="@drawable/ic_arrow_left"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/albumCoverImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@string/album_cover"
+        android:scaleType="centerCrop"
+        android:src="@drawable/placeholder"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/upperLeftBorder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp" />
+
+    <TextView
+        android:id="@+id/playlistNameText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_24"
+        android:ellipsize="end"
+        android:fontFamily="@font/ys_display_bold"
+        android:maxLines="1"
+        android:textColor="?attr/colorPrimaryVariant"
+        android:textSize="@dimen/text_size_24"
+        app:layout_constraintStart_toStartOf="@id/upperLeftBorder"
+        app:layout_constraintTop_toBottomOf="@id/albumCoverImage"
+        tools:text="Best songs 2021" />
+
+    <TextView
+        android:id="@+id/playlistDescriptionText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_8"
+        android:ellipsize="end"
+        android:fontFamily="@font/ys_display_regular"
+        android:maxLines="1"
+        android:textColor="?attr/colorPrimaryVariant"
+        android:textSize="@dimen/text_size_18"
+        app:layout_constraintStart_toStartOf="@id/upperLeftBorder"
+        app:layout_constraintTop_toBottomOf="@id/playlistNameText"
+        tools:text="2022" />
+
+    <TextView
+        android:id="@+id/playlistInfoText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_8"
+        android:ellipsize="end"
+        android:fontFamily="@font/ys_display_regular"
+        android:maxLines="1"
+        android:textColor="?attr/colorPrimaryVariant"
+        android:textSize="@dimen/text_size_18"
+        app:layout_constraintStart_toStartOf="@id/upperLeftBorder"
+        app:layout_constraintTop_toBottomOf="@id/playlistDescriptionText"
+        tools:text="300 минут · 98 треков" />
+
+    <ImageView
+        android:id="@+id/shareButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_16"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_share"
+        app:layout_constraintStart_toStartOf="@id/upperLeftBorder"
+        app:layout_constraintTop_toBottomOf="@id/playlistInfoText"
+        app:tint="?attr/colorPrimaryVariant" />
+
+    <ImageView
+        android:id="@+id/settingsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_16"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_settings"
+        app:layout_constraintStart_toEndOf="@id/shareButton"
+        app:layout_constraintTop_toBottomOf="@id/playlistInfoText"
+        app:tint="?attr/colorPrimaryVariant" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
