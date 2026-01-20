@@ -44,6 +44,7 @@ android {
 dependencies {
     implementation(libs.room.ktx)
     implementation(libs.room.runtime)
+    implementation(libs.constraintlayout)
     ksp(libs.room.compiler)
     implementation(libs.okhttp)
     implementation(libs.glide)

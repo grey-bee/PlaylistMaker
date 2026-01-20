@@ -6,6 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.favorites.domain.FavoritesInteractor
+import com.practicum.playlistmaker.playlist.domain.PlaylistInteractor
+import com.practicum.playlistmaker.playlist.domain.model.Playlist
+import com.practicum.playlistmaker.playlist.ui.list.PlaylistsState
 import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -16,16 +19,23 @@ import java.util.Locale
 class PlayerViewModel(
     private val track: Track,
     private val mediaPlayer: MediaPlayer,
-    private val favoritesInteractor: FavoritesInteractor
+    private val favoritesInteractor: FavoritesInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
+    private val _playlists = MutableLiveData<PlaylistsState>()
+    fun observePlaylists(): LiveData<PlaylistsState> = _playlists
+
     private var timerJob: Job? = null
     private val playerState = MutableLiveData<PlayerState>(PlayerState.Default())
     fun observePlayerScreenState(): LiveData<PlayerState> = playerState
     private val isFavoriteLiveData = MutableLiveData<Boolean>()
     fun observeIsFavorite(): LiveData<Boolean> = isFavoriteLiveData
+    private val toastMessage = MutableLiveData<String>()
+    fun observeToastMessage(): LiveData<String> = toastMessage
 
     init {
         initMediaPlayer()
+        playlistsRequest()
     }
 
     override fun onCleared() {
@@ -93,8 +103,30 @@ class PlayerViewModel(
         isFavoriteLiveData.postValue(!check)
     }
 
+    fun onAddToPlaylistClicked(playlist: Playlist): Boolean {
+        if (playlist.trackIds.contains(track.trackId)) {
+            toastMessage.postValue("Трек уже добавлен в плейлист ${playlist.name}")
+            return false
+        } else {
+            viewModelScope.launch {
+                playlistInteractor.addTrackToPlaylist(track, playlist)
+            }
+            toastMessage.postValue("Добавлено в плейлист ${playlist.name}")
+            return true
+        }
+    }
+
     private fun getCurrentPlayerPosition(): String {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
             ?: "00:00"
+    }
+
+    private fun playlistsRequest() {
+        viewModelScope.launch {
+            playlistInteractor.getPlaylists().collect { playlists ->
+                if (playlists.isEmpty()) _playlists.postValue(PlaylistsState.Empty)
+                else _playlists.postValue(PlaylistsState.Content(playlists))
+            }
+        }
     }
 }

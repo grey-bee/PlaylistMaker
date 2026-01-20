@@ -6,35 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".favorites.ui.FavoritesFragment">
 
-    <LinearLayout
+    <TextView
         android:id="@+id/noTracksPlaceholder"
+        style="@style/ErrorText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_106"
-            android:contentDescription="@string/nothing_found"
-            android:src="@drawable/ic_nothing_found" />
-
-        <TextView
-            style="@style/ErrorText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_16"
-            android:text="@string/your_media_library_is_empty" />
-    </LinearLayout>
+        android:layout_marginTop="@dimen/margin_106"
+        android:contentDescription="@string/nothing_found"
+        android:drawablePadding="@dimen/padding_16"
+        android:text="@string/nothing_found"
+        app:drawableTopCompat="@drawable/ic_nothing_found"
+        tools:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/tracklist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_24"
+        android:layout_marginTop="@dimen/margin_16"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -42,13 +30,12 @@
             android:id="@+id/tracksRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_8"
             android:orientation="vertical"
+            android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="10"
             tools:listitem="@layout/track_item"
-            android:visibility="gone"
-            tools:visibility="gone" />
+            tools:visibility="visible" />
     </LinearLayout>
 
 </FrameLayout>

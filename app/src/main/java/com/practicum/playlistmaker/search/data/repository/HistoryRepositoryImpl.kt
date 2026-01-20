@@ -3,7 +3,7 @@ package com.practicum.playlistmaker.search.data.repository
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.google.gson.Gson
-import com.practicum.playlistmaker.favorites.data.db.AppDatabase
+import com.practicum.playlistmaker.data.db.AppDatabase
 import com.practicum.playlistmaker.search.domain.api.HistoryRepository
 import com.practicum.playlistmaker.search.domain.model.Track
 
