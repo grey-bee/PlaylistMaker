@@ -59,8 +59,11 @@ class PlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.observeToastMessage().observe(viewLifecycleOwner) { text ->
-            Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
+        viewModel.observeToastMessage().observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { text ->
+                Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
+            }
+
         }
 
         val bottomSheetContainer = binding.standardBottomSheet

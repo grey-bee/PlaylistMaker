@@ -13,7 +13,8 @@ import com.practicum.playlistmaker.playlist.data.db.PlaylistTrackEntity
 
 @Database(
     version = 3,
-    entities = [TrackEntity::class, PlaylistEntity::class, PlaylistTrackEntity::class]
+    entities = [TrackEntity::class, PlaylistEntity::class, PlaylistTrackEntity::class],
+    exportSchema = false
 )
 @TypeConverters(TrackIdConvertor::class)
 abstract class AppDatabase : RoomDatabase() {
