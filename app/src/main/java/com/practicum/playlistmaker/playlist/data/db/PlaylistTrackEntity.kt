@@ -15,7 +15,7 @@ data class PlaylistTrackEntity (
     val releaseYear: String,
     val primaryGenreName: String,
     val country: String,
-    val trackTime: String,
+    val trackTimeMillis: Int,
     val previewUrl: String,
     val addedAt: Long
 )

@@ -23,6 +23,7 @@ import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import com.practicum.playlistmaker.playlist.ui.list.PlaylistsState
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.util.debounce
+import com.practicum.playlistmaker.util.toTimeString
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
@@ -101,7 +102,7 @@ class PlayerFragment : Fragment() {
             playingTimeText.text = SimpleDateFormat("mm:ss", Locale.getDefault()).apply {
                 timeZone = TimeZone.getTimeZone("UTC")
             }.format(0)
-            durationText.text = track.trackTime
+            durationText.text = track.trackTimeMillis.toTimeString()
             genreText.text = track.primaryGenreName
             countryText.text = track.country
 

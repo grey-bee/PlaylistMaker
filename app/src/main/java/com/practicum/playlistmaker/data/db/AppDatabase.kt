@@ -12,7 +12,7 @@ import com.practicum.playlistmaker.playlist.data.db.PlaylistTrackDao
 import com.practicum.playlistmaker.playlist.data.db.PlaylistTrackEntity
 
 @Database(
-    version = 3,
+    version = 5,
     entities = [TrackEntity::class, PlaylistEntity::class, PlaylistTrackEntity::class],
     exportSchema = false
 )

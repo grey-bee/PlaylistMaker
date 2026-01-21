@@ -6,13 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.BundleCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistBinding
+import com.practicum.playlistmaker.player.ui.PlayerFragment
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
+import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.search.ui.TrackAdapter
+import com.practicum.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.getValue
@@ -28,6 +36,8 @@ class PlaylistFragment : Fragment() {
             )
         ) { "Playlist is required" }
     }
+    private lateinit var trackAdapter: TrackAdapter
+    private lateinit var trackClickDebounce: (Track) -> Unit
     private val playlistViewModel: PlaylistViewModel by viewModel() {
         parametersOf(playlist)
     }
@@ -43,29 +53,87 @@ class PlaylistFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.apply {
-            backArrowImage.setOnClickListener {
-                findNavController().navigateUp()
+        binding.backArrowImage.setOnClickListener {
+            findNavController().navigateUp()
+        }
+        trackClickDebounce =
+            debounce<Track>(
+                CLICK_DEBOUNCE_DELAY,
+                viewLifecycleOwner.lifecycleScope,
+                false
+            ) { track ->
+                openAudioPlayer(track)
             }
-            Glide.with(binding.albumCoverImage)
-                .load(playlist.imagePath)
-                .placeholder(R.drawable.placeholder)
-                .transform(CenterCrop())
-                .into(binding.albumCoverImage)
-            playlistNameText.text = playlist.name
-            playlistDescriptionText.text = playlist.description
-            playlistInfoText.text = "${playlist.trackCount} ${R.plurals.tracks_count}"
+        trackAdapter = TrackAdapter(
+            emptyList(),
+            { item -> trackClickDebounce(item) },
+            { item ->
+                MaterialAlertDialogBuilder(requireContext())
+                    .setMessage(R.string.do_you_want_to_detele_track)
+                    .setNegativeButton(R.string.no) { _, _ -> }
+                    .setPositiveButton(R.string.yes) { _, _ -> playlistViewModel.deleteTrack(item) }
+                    .show()
+            })
+        binding.playlistRecyclerView.adapter = trackAdapter
+
+        playlistViewModel.observeState().observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is PlaylistState.Content -> {
+                    binding.apply {
+                        Glide.with(albumCoverImage)
+                            .load(state.playlist.imagePath)
+                            .placeholder(R.drawable.placeholder)
+                            .transform(CenterCrop())
+                            .into(albumCoverImage)
+                        playlistNameText.text = state.playlist.name
+                        playlistDescriptionText.text = state.playlist.description
+                        playlistInfoText.text = getString(
+                            R.string.playlist_info,
+                            resources.getQuantityString(
+                                R.plurals.tracks_time,
+                                state.playlistTimeSec,
+                                state.playlistTimeSec
+                            ),
+                            resources.getQuantityString(
+                                R.plurals.tracks_count,
+                                state.playlist.trackCount,
+                                state.playlist.trackCount
+                            )
+                        )
 //            shareButton
 //            settingsButton
-        }
+                    }
 
+                    showContent(state.playlistTracks)
+                }
+
+                is PlaylistState.Empty -> {}
+            }
+        }
+        binding.root.doOnLayout {
+            val anchorElement = binding.shareButton
+            val screenHeight = binding.root.height
+            val peekHeight = screenHeight - anchorElement.bottom - 24
+            val behavior = BottomSheetBehavior.from(binding.standardBottomSheet)
+            behavior.peekHeight = peekHeight
+        }
+    }
+
+
+    private fun showContent(data: List<Track>) {
+        trackAdapter.updateTracks(data)
+        trackAdapter.notifyDataSetChanged()
     }
 
     companion object {
         private const val ARGS_PLAYLIST = "playlist"
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
         fun createArgs(playlist: Playlist): Bundle =
             bundleOf(ARGS_PLAYLIST to playlist)
     }
 
-
+    private fun openAudioPlayer(item: Track) {
+        val bundle = PlayerFragment.createArgs(item)
+        findNavController().navigate(R.id.action_playlistFragment_to_audioPlayerFragment, bundle)
+    }
 }
