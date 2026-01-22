@@ -4,8 +4,10 @@ import android.media.MediaPlayer
 import com.practicum.playlistmaker.favorites.ui.FavoritesViewModel
 import com.practicum.playlistmaker.playlist.ui.list.PlaylistsViewModel
 import com.practicum.playlistmaker.player.ui.PlayerViewModel
+import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import com.practicum.playlistmaker.playlist.ui.create.NewPlaylistViewModel
 import com.practicum.playlistmaker.playlist.ui.details.PlaylistViewModel
+import com.practicum.playlistmaker.playlist.ui.edit.PlaylistEditViewModel
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.SearchViewModel
 import com.practicum.playlistmaker.settings.ui.SettingsViewModel
@@ -21,4 +23,5 @@ val viewModelModule = module {
     viewModel { FavoritesViewModel(get()) }
     viewModel { NewPlaylistViewModel(get()) }
     viewModel { PlaylistViewModel(get(), get(), get()) }
+    viewModel { (playlist: Playlist) -> PlaylistEditViewModel(playlist, get()) }
 }

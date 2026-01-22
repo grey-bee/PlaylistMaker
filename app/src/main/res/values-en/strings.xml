@@ -34,6 +34,7 @@
     <string name="featured_tracks">Featured tracks</string>
     <string name="title">Title*</string>
     <string name="create">Create</string>
+    <string name="save">Save</string>
     <string name="description">Description</string>
     <string name="add_to_playlist">Add to playlist</string>
     <plurals name="tracks_count">
@@ -52,4 +53,8 @@
     <string name="share">Share</string>
     <string name="information_editing">Information editing</string>
     <string name="delete_playlist">Delete playlist</string>
+    <string name="edit">Edit</string>
+    <string name="cancel">Cancel</string>
+    <string name="finish">Finish</string>
+    <string name="do_you_want_to_delete_playlist">Do you want to delete playlist</string>
 </resources>

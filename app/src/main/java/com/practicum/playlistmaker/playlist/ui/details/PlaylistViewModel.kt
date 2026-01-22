@@ -32,6 +32,12 @@ class PlaylistViewModel(
         }
     }
 
+    fun deletePlaylist(playlist: Playlist) {
+        viewModelScope.launch {
+            playlistInteractor.deletePlaylist(playlist)
+        }
+    }
+
     fun playlistShare(): Share {
         val title = ""
         val text = buildString {
@@ -55,7 +61,7 @@ class PlaylistViewModel(
         return Share(text, title)
     }
 
-    private fun loadData() {
+    fun loadData() {
         viewModelScope.launch {
             val updatedPlaylist = playlistInteractor.getPlaylistById(playlist.id)
             playlist = updatedPlaylist

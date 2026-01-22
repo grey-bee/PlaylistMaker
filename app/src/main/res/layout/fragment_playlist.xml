@@ -53,6 +53,7 @@
             android:textColor="@color/dark_grey"
             android:textSize="@dimen/text_size_24"
             app:layout_constraintStart_toStartOf="@id/upperLeftBorder"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/albumCoverImage"
             tools:text="Best songs 2021" />
 
@@ -67,6 +68,7 @@
             android:textColor="@color/dark_grey"
             android:textSize="@dimen/text_size_18"
             app:layout_constraintStart_toStartOf="@id/upperLeftBorder"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/playlistNameText"
             tools:text="2022" />
 
@@ -82,6 +84,7 @@
             android:textSize="@dimen/text_size_18"
             app:layout_constraintStart_toStartOf="@id/upperLeftBorder"
             app:layout_constraintTop_toBottomOf="@id/playlistDescriptionText"
+            app:layout_constraintEnd_toEndOf="parent"
             tools:text="300 минут · 98 треков" />
 
         <ImageView
@@ -159,7 +162,7 @@
         app:behavior_hideable="true"
         app:behavior_peekHeight="360dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        tools:visibility="visible">
+        tools:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -228,7 +231,7 @@
             android:textColor="?attr/colorOnSurface"
             android:textSize="@dimen/text_size_16" />
         <TextView
-            android:id="@+id/editInfo"
+            android:id="@+id/settingsEditInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
@@ -241,7 +244,7 @@
             android:textColor="?attr/colorOnSurface"
             android:textSize="@dimen/text_size_16" />
         <TextView
-            android:id="@+id/deletePlaylist"
+            android:id="@+id/settingsDeletePlaylist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"

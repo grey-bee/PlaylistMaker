@@ -35,7 +35,12 @@ class PlaylistRepositoryImpl(
     }
 
     override suspend fun deletePlaylist(playlist: Playlist) {
+        val playlistTracks = playlist.trackIds
         appDatabase.playlistDao().deletePlaylist(convertPlaylistToEntity(playlist))
+        playlistTracks.forEach {
+            val track = getPlaylistTrack(it)
+            track?.let { deletePlaylistTrack(it) }
+        }
     }
 
     override fun getPlaylists(): Flow<List<Playlist>> {
@@ -108,7 +113,8 @@ class PlaylistRepositoryImpl(
         playlist: Playlist
     ) {
         val updatedTrackIds = playlist.trackIds.filter { it != track.trackId }
-        val updatedPlaylist = playlist.copy(trackIds = updatedTrackIds, trackCount = updatedTrackIds.size)
+        val updatedPlaylist =
+            playlist.copy(trackIds = updatedTrackIds, trackCount = updatedTrackIds.size)
         updatePlaylist(updatedPlaylist)
         deletePlaylistTrack(track)
     }

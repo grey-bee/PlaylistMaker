@@ -64,7 +64,6 @@ class PlayerFragment : Fragment() {
             event.getContentIfNotHandled()?.let { text ->
                 Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
             }
-
         }
 
         val bottomSheetContainer = binding.playlistBottomSheet

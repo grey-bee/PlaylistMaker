@@ -111,7 +111,6 @@ class NewPlaylistFragment : Fragment() {
             val description = binding.description.editText?.text.toString()
             viewModel.savePlaylistInfo(title, description, selectedImageUri)
             setFragmentResult(KEY_NEW_PLAYLIST, bundleOf(KEY_TITLE to title))
-
         }
         viewModel.observePlaylistSaved().observe(viewLifecycleOwner) { check ->
             if (check) findNavController().navigateUp()

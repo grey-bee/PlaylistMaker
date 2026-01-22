@@ -20,6 +20,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistBinding
 import com.practicum.playlistmaker.player.ui.PlayerFragment
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
+import com.practicum.playlistmaker.playlist.ui.edit.PlaylistEditFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.TrackAdapter
 import com.practicum.playlistmaker.util.debounce
@@ -42,6 +43,11 @@ class PlaylistFragment : Fragment() {
     private lateinit var trackClickDebounce: (Track) -> Unit
     private val playlistViewModel: PlaylistViewModel by viewModel() {
         parametersOf(playlist)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        playlistViewModel.loadData()
     }
 
     override fun onCreateView(
@@ -77,7 +83,6 @@ class PlaylistFragment : Fragment() {
                     .show()
             })
         binding.playlistRecyclerView.adapter = trackAdapter
-
         playlistViewModel.observeState().observe(viewLifecycleOwner) { state ->
             when (state) {
                 is PlaylistState.Content -> {
@@ -122,7 +127,7 @@ class PlaylistFragment : Fragment() {
                 is PlaylistState.Empty -> {}
             }
         }
-        binding.shareButton.setOnClickListener {
+        fun sharePlaylist() {
             if (playlist.trackIds.isEmpty()) {
                 Toast.makeText(
                     requireContext(), R.string.no_tracks_for_share, Toast.LENGTH_LONG
@@ -136,7 +141,9 @@ class PlaylistFragment : Fragment() {
                 startActivity(Intent.createChooser(intent, chooserTitle))
             }
         }
-
+        binding.shareButton.setOnClickListener {
+            sharePlaylist()
+        }
         binding.root.doOnLayout {
             val anchorElement = binding.shareButton
             val screenHeight = binding.root.height
@@ -144,17 +151,43 @@ class PlaylistFragment : Fragment() {
             val behavior = BottomSheetBehavior.from(binding.tracksBottomSheet)
             behavior.peekHeight = peekHeight
         }
-
         val bottomSheetContainer = binding.settingsBottomSheet
         val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        fun hideSettingsSheet() {
+            val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+                state = BottomSheetBehavior.STATE_HIDDEN
+            }
+            binding.darkScreen.visibility = View.GONE
         }
         binding.settingsButton.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             binding.darkScreen.visibility = View.VISIBLE
             binding.darkScreen.alpha = 1f
         }
-
+        binding.settingsPlaylistShare.setOnClickListener {
+            sharePlaylist()
+            hideSettingsSheet()
+        }
+        binding.settingsEditInfo.setOnClickListener {
+            val bundle = PlaylistEditFragment.createArgs(playlist)
+            findNavController().navigate(
+                R.id.action_playlistFragment_to_playlistEditFragment, bundle
+            )
+            hideSettingsSheet()
+        }
+        binding.settingsDeletePlaylist.setOnClickListener {
+            MaterialAlertDialogBuilder(requireContext())
+                .setMessage(getString(R.string.do_you_want_to_delete_playlist) + " '${playlist.name}'?")
+                .setNegativeButton(R.string.no) { _, _ -> }
+                .setPositiveButton(R.string.yes) { _, _ ->
+                    playlistViewModel.deletePlaylist(playlist)
+                    findNavController().navigateUp()
+                }
+                .show()
+        }
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -173,10 +206,7 @@ class PlaylistFragment : Fragment() {
                 if (slideOffset < 0) binding.darkScreen.alpha = (slideOffset + 1) / 2
             }
         })
-
-
     }
-
 
     private fun showContent(data: List<Track>) {
         trackAdapter.updateTracks(data)
