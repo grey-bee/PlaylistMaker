@@ -67,7 +67,7 @@ class PlayerFragment : Fragment() {
 
         }
 
-        val bottomSheetContainer = binding.standardBottomSheet
+        val bottomSheetContainer = binding.playlistBottomSheet
         val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }

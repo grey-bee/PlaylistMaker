@@ -4,15 +4,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.playlist.domain.PlaylistInteractor
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.sharing.domain.model.Share
+import com.practicum.playlistmaker.util.ResourceProvider
+import com.practicum.playlistmaker.util.toTimeString
 import kotlinx.coroutines.launch
 
 class PlaylistViewModel(
     private var playlist: Playlist,
     private val playlistInteractor: PlaylistInteractor,
+    private val resourceProvider: ResourceProvider
 ) : ViewModel() {
     private val _playlistTracks = MutableLiveData<PlaylistState>()
     fun observeState(): LiveData<PlaylistState> = _playlistTracks
@@ -33,11 +37,17 @@ class PlaylistViewModel(
         val text = buildString {
             append("${playlist.name}\n")
             append("${playlist.description}\n")
-            append("${playlist.trackCount} треков\n")
+            append(
+                resourceProvider.getQuantityString(
+                    R.plurals.tracks_count,
+                    playlist.trackCount
+                )
+            )
+            append("\n")
             _playlistTracks.value?.let { state ->
                 if (state is PlaylistState.Content) {
-                    state.playlistTracks.forEachIndexed  { index, track ->
-                        append(track.trackName)
+                    state.playlistTracks.forEachIndexed { index, track ->
+                        append("${index + 1}. ${track.artistName} - ${track.trackName} - ${track.trackTimeMillis.toTimeString()}\n")
                     }
                 }
             }

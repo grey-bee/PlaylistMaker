@@ -36,7 +36,7 @@ class PlaylistFragment : Fragment() {
                 ARGS_PLAYLIST,
                 Playlist::class.java
             )
-        ) { "Playlist is required" }
+        ) { R.string.playlist_is_required }
     }
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var trackClickDebounce: (Track) -> Unit
@@ -87,8 +87,19 @@ class PlaylistFragment : Fragment() {
                             .placeholder(R.drawable.placeholder)
                             .transform(CenterCrop())
                             .into(albumCoverImage)
+                        Glide.with(albumCoverImage)
+                            .load(state.playlist.imagePath)
+                            .placeholder(R.drawable.placeholder)
+                            .transform(CenterCrop())
+                            .into(settingsAlbumCover)
                         playlistNameText.text = state.playlist.name
+                        settingsPlaylistName.text = state.playlist.name
                         playlistDescriptionText.text = state.playlist.description
+                        settingsTrackCounter.text = resources.getQuantityString(
+                            R.plurals.tracks_count,
+                            state.playlist.trackCount,
+                            state.playlist.trackCount
+                        )
                         playlistInfoText.text = getString(
                             R.string.playlist_info,
                             resources.getQuantityString(
@@ -125,15 +136,45 @@ class PlaylistFragment : Fragment() {
                 startActivity(Intent.createChooser(intent, chooserTitle))
             }
         }
-        //            shareButton
-//            settingsButton
+
         binding.root.doOnLayout {
             val anchorElement = binding.shareButton
             val screenHeight = binding.root.height
             val peekHeight = screenHeight - anchorElement.bottom - 24
-            val behavior = BottomSheetBehavior.from(binding.standardBottomSheet)
+            val behavior = BottomSheetBehavior.from(binding.tracksBottomSheet)
             behavior.peekHeight = peekHeight
         }
+
+        val bottomSheetContainer = binding.settingsBottomSheet
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+        binding.settingsButton.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            binding.darkScreen.visibility = View.VISIBLE
+            binding.darkScreen.alpha = 1f
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.darkScreen.visibility = View.GONE
+                    }
+
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        binding.darkScreen.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                if (slideOffset < 0) binding.darkScreen.alpha = (slideOffset + 1) / 2
+            }
+        })
+
+
     }
 
 
