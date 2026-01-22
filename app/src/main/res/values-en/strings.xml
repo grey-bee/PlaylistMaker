@@ -47,4 +47,5 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="do_you_want_to_detele_track">Do you want to delete track?</string>
+    <string name="no_tracks_for_share">This playlist doesn\'t have a shareable track list.</string>
 </resources>

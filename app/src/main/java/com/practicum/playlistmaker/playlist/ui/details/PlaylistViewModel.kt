@@ -7,11 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.playlist.domain.PlaylistInteractor
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.sharing.domain.model.Share
 import kotlinx.coroutines.launch
 
 class PlaylistViewModel(
     private var playlist: Playlist,
-    private val playlistInteractor: PlaylistInteractor
+    private val playlistInteractor: PlaylistInteractor,
 ) : ViewModel() {
     private val _playlistTracks = MutableLiveData<PlaylistState>()
     fun observeState(): LiveData<PlaylistState> = _playlistTracks
@@ -25,6 +26,23 @@ class PlaylistViewModel(
             playlistInteractor.deleteTrackFromPlaylist(track, playlist)
             loadData()
         }
+    }
+
+    fun playlistShare(): Share {
+        val title = ""
+        val text = buildString {
+            append("${playlist.name}\n")
+            append("${playlist.description}\n")
+            append("${playlist.trackCount} треков\n")
+            _playlistTracks.value?.let { state ->
+                if (state is PlaylistState.Content) {
+                    state.playlistTracks.forEachIndexed  { index, track ->
+                        append(track.trackName)
+                    }
+                }
+            }
+        }
+        return Share(text, title)
     }
 
     private fun loadData() {

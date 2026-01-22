@@ -60,4 +60,5 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="do_you_want_to_detele_track">Хотите удалить трек?</string>
+    <string name="no_tracks_for_share">В этом плейлисте нет списка треков, которым можно поделиться</string>
 </resources>

@@ -1,9 +1,11 @@
 package com.practicum.playlistmaker.playlist.ui.details
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.BundleCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.doOnLayout
@@ -100,8 +102,7 @@ class PlaylistFragment : Fragment() {
                                 state.playlist.trackCount
                             )
                         )
-//            shareButton
-//            settingsButton
+
                     }
 
                     showContent(state.playlistTracks)
@@ -110,6 +111,22 @@ class PlaylistFragment : Fragment() {
                 is PlaylistState.Empty -> {}
             }
         }
+        binding.shareButton.setOnClickListener {
+            if (playlist.trackIds.isEmpty()) {
+                Toast.makeText(
+                    requireContext(), R.string.no_tracks_for_share, Toast.LENGTH_LONG
+                ).show()
+            } else {
+                val data = playlistViewModel.playlistShare()
+                val intent = Intent(Intent.ACTION_SEND)
+                val chooserTitle = data.title
+                intent.type = "text/plain"
+                intent.putExtra(Intent.EXTRA_TEXT, data.text)
+                startActivity(Intent.createChooser(intent, chooserTitle))
+            }
+        }
+        //            shareButton
+//            settingsButton
         binding.root.doOnLayout {
             val anchorElement = binding.shareButton
             val screenHeight = binding.root.height
