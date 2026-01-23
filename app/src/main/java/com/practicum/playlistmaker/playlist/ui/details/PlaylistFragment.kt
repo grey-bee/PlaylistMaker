@@ -21,7 +21,6 @@ import com.practicum.playlistmaker.databinding.FragmentPlaylistBinding
 import com.practicum.playlistmaker.player.ui.PlayerFragment
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import com.practicum.playlistmaker.playlist.ui.create.NewPlaylistFragment
-import com.practicum.playlistmaker.playlist.ui.edit.PlaylistEditFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.TrackAdapter
 import com.practicum.playlistmaker.util.debounce

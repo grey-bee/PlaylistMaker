@@ -15,7 +15,7 @@
 
     <style name="PlaylistDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="colorPrimary">@color/main_blue</item>
-        <item name="materialAlertDialogBodyTextStyle">@color/dark_grey</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/DarkGreyTextColor</item>
         <item name="shapeAppearanceOverlay">@dimen/corner_radius4</item>
         <item name="android:background">@color/white</item>
     </style>

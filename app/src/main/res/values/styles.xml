@@ -119,4 +119,7 @@
     <style name="TextInputLayoutAppearance" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="colorControlActivated">@color/main_blue</item>
     </style>
+    <style name="DarkGreyTextColor">
+        <item name="android:textColor">@color/dark_grey</item>
+    </style>
 </resources>
