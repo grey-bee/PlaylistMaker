@@ -59,7 +59,7 @@ class NewPlaylistFragment : Fragment() {
 
         fun backButtonProcess() {
             if (titleRequest.isNotBlank() || binding.description.editText?.text?.isNotEmpty() == true || imageSelected) {
-                MaterialAlertDialogBuilder(requireContext())
+                MaterialAlertDialogBuilder(requireContext(), R.style.PlaylistDialogTheme)
                     .setTitle(getString(R.string.finish_playlist_creating))
                     .setMessage(R.string.all_unsaved_data_will_be_loose)
                     .setNegativeButton(R.string.cancel) { _, _ -> }

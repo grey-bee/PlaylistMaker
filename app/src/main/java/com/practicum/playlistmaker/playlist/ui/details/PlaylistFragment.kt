@@ -76,7 +76,7 @@ class PlaylistFragment : Fragment() {
             emptyList(),
             { item -> trackClickDebounce(item) },
             { item ->
-                MaterialAlertDialogBuilder(requireContext())
+                MaterialAlertDialogBuilder(requireContext(), R.style.PlaylistDialogTheme)
                     .setMessage(R.string.do_you_want_to_detele_track)
                     .setNegativeButton(R.string.no) { _, _ -> }
                     .setPositiveButton(R.string.yes) { _, _ -> playlistViewModel.deleteTrack(item) }
@@ -179,7 +179,7 @@ class PlaylistFragment : Fragment() {
             hideSettingsSheet()
         }
         binding.settingsDeletePlaylist.setOnClickListener {
-            MaterialAlertDialogBuilder(requireContext())
+            MaterialAlertDialogBuilder(requireContext(), R.style.PlaylistDialogTheme)
                 .setMessage(getString(R.string.do_you_want_to_delete_playlist) + " '${playlist.name}'?")
                 .setNegativeButton(R.string.no) { _, _ -> }
                 .setPositiveButton(R.string.yes) { _, _ ->

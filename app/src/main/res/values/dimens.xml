@@ -52,6 +52,7 @@
 
     <dimen name="height_divider">16dp</dimen>
 
+    <dimen name="corner_radius4">4dp</dimen>
     <dimen name="corner_radius">16dp</dimen>
     <dimen name="corner_radius56">56dp</dimen>
     <dimen name="corner_radius54">54dp</dimen>

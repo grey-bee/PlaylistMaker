@@ -12,4 +12,11 @@
         <item name="colorForHole">@color/grey_text_background</item>
 
     </style>
+
+    <style name="PlaylistDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorPrimary">@color/main_blue</item>
+        <item name="materialAlertDialogBodyTextStyle">@color/dark_grey</item>
+        <item name="shapeAppearanceOverlay">@dimen/corner_radius4</item>
+        <item name="android:background">@color/white</item>
+    </style>
 </resources>
