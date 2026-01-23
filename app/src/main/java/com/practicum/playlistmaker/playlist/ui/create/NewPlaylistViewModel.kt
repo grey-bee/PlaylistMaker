@@ -8,13 +8,15 @@ import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.playlist.domain.PlaylistInteractor
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import kotlinx.coroutines.launch
+import com.practicum.playlistmaker.util.Event
 
 class NewPlaylistViewModel(
     private val playlistInteractor: PlaylistInteractor,
     private var playlist: Playlist?
 ) : ViewModel() {
-    private val _playlistSaved = MutableLiveData<Boolean>()
-    fun observePlaylistSaved(): LiveData<Boolean> = _playlistSaved
+
+    private val _playlistSaved = MutableLiveData<Event<Boolean>>()
+    fun observePlaylistSaved(): LiveData<Event<Boolean>> = _playlistSaved
 
     fun saveNewPlaylistInfo(title: String, description: String, uri: Uri?) {
         viewModelScope.launch {
@@ -29,7 +31,7 @@ class NewPlaylistViewModel(
                     0
                 )
             )
-            _playlistSaved.postValue(true)
+            _playlistSaved.postValue(Event(true))
         }
     }
 
@@ -41,7 +43,7 @@ class NewPlaylistViewModel(
                 playlistInteractor.updatePlaylist(
                     it.copy(name = title, description = description, imagePath = newImagePath)
                 )
-                _playlistSaved.postValue(true)
+                _playlistSaved.postValue(Event(true))
             }
         }
 

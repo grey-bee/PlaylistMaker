@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.playlist.domain.PlaylistInteractor
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
-import com.practicum.playlistmaker.util.toTimeString
 import kotlinx.coroutines.launch
 
 class PlaylistViewModel(
@@ -16,11 +15,6 @@ class PlaylistViewModel(
 ) : ViewModel() {
     private val _playlistTracks = MutableLiveData<PlaylistState>()
     fun observeState(): LiveData<PlaylistState> = _playlistTracks
-
-    init {
-        loadData()
-    }
-
     fun deleteTrack(track: Track) {
         viewModelScope.launch {
             playlistInteractor.deleteTrackFromPlaylist(track, playlist)

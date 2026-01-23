@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,6 +25,7 @@ import androidx.core.net.toUri
 import androidx.core.os.BundleCompat
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import org.koin.core.parameter.parametersOf
+
 
 class NewPlaylistFragment : Fragment() {
     private var _binding: FragmentNewPlaylistBinding? = null
@@ -140,10 +142,11 @@ class NewPlaylistFragment : Fragment() {
         binding.playlistName.editText?.addTextChangedListener(titleWatcher)
 
 
-        viewModel.observePlaylistSaved().observe(viewLifecycleOwner) { check ->
-            if (check) findNavController().navigateUp()
+        viewModel.observePlaylistSaved().observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { check ->
+                if (check) findNavController().navigateUp()
+            }
         }
-
     }
 
     private fun backButtonProcess() {
