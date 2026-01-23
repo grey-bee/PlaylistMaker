@@ -4,11 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import com.google.gson.Gson
 import com.practicum.playlistmaker.data.db.AppDatabase
-import com.practicum.playlistmaker.playlist.data.ResourceProviderImpl
 import com.practicum.playlistmaker.search.data.NetworkClient
 import com.practicum.playlistmaker.search.data.network.ApiService
 import com.practicum.playlistmaker.search.data.network.RetrofitClient
-import com.practicum.playlistmaker.util.ResourceProvider
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
@@ -49,7 +47,6 @@ val dataModule = module {
     }
 
     single<NetworkClient> { RetrofitClient(get()) }
-    single<ResourceProvider> { ResourceProviderImpl(get()) }
 
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")

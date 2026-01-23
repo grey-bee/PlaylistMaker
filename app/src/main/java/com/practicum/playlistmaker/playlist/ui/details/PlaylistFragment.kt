@@ -24,6 +24,7 @@ import com.practicum.playlistmaker.playlist.ui.create.NewPlaylistFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.TrackAdapter
 import com.practicum.playlistmaker.util.debounce
+import com.practicum.playlistmaker.util.toTimeString
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.getValue
@@ -134,14 +135,38 @@ class PlaylistFragment : Fragment() {
                     requireContext(), R.string.no_tracks_for_share, Toast.LENGTH_LONG
                 ).show()
             } else {
-                val data = playlistViewModel.playlistShare()
+                val state = playlistViewModel.observeState().value
+                val tracksInfo = if (state is PlaylistState.Content) state.playlistTracks else null
+                val tracksString = buildString {
+                    tracksInfo?.let { tracks ->
+                        tracks.forEachIndexed { index, track ->
+                            append("${index + 1}. ${track.artistName} - ${track.trackName} - ${track.trackTimeMillis.toTimeString()}\n")
+                        }
+                    }
+                }
+
+
+                val text = buildString {
+                    append("${playlist.name}\n")
+                    append("${playlist.description}\n")
+                    append(
+                        resources.getQuantityString(
+                            R.plurals.tracks_count,
+                            playlist.trackCount,
+                            playlist.trackCount
+                        )
+                    )
+                    append("\n")
+                    append(tracksString)
+                }
                 val intent = Intent(Intent.ACTION_SEND)
-                val chooserTitle = data.title
+                val chooserTitle = ""
                 intent.type = "text/plain"
-                intent.putExtra(Intent.EXTRA_TEXT, data.text)
+                intent.putExtra(Intent.EXTRA_TEXT, text)
                 startActivity(Intent.createChooser(intent, chooserTitle))
             }
         }
+
         binding.shareButton.setOnClickListener {
             sharePlaylist()
         }
@@ -152,13 +177,14 @@ class PlaylistFragment : Fragment() {
             val behavior = BottomSheetBehavior.from(binding.tracksBottomSheet)
             behavior.peekHeight = peekHeight
         }
+
         val bottomSheetContainer = binding.settingsBottomSheet
         val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 
         fun hideSettingsSheet() {
-            val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+            BottomSheetBehavior.from(bottomSheetContainer).apply {
                 state = BottomSheetBehavior.STATE_HIDDEN
             }
             binding.darkScreen.visibility = View.GONE
@@ -189,24 +215,25 @@ class PlaylistFragment : Fragment() {
                 }
                 .show()
         }
-        bottomSheetBehavior.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> {
-                        binding.darkScreen.visibility = View.GONE
-                    }
+        bottomSheetBehavior.addBottomSheetCallback(
+            object :
+                BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    when (newState) {
+                        BottomSheetBehavior.STATE_HIDDEN -> {
+                            _binding?.darkScreen?.visibility = View.GONE
+                        }
 
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
-                        binding.darkScreen.visibility = View.VISIBLE
+                        BottomSheetBehavior.STATE_COLLAPSED -> {
+                            _binding?.darkScreen?.visibility = View.VISIBLE
+                        }
                     }
                 }
-            }
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                if (slideOffset < 0) binding.darkScreen.alpha = (slideOffset + 1) / 2
-            }
-        })
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    if (slideOffset < 0) _binding?.darkScreen?.alpha = (slideOffset + 1) / 2
+                }
+            })
     }
 
     private fun showContent(data: List<Track>) {
@@ -228,6 +255,9 @@ class PlaylistFragment : Fragment() {
 
     private fun openAudioPlayer(item: Track) {
         val bundle = PlayerFragment.createArgs(item)
-        findNavController().navigate(R.id.action_playlistFragment_to_audioPlayerFragment, bundle)
+        findNavController().navigate(
+            R.id.action_playlistFragment_to_audioPlayerFragment,
+            bundle
+        )
     }
 }

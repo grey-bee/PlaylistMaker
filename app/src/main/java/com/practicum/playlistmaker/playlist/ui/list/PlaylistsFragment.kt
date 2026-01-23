@@ -17,7 +17,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment() {
     private var _binding: FragmentPlaylistsBinding? = null
-    private val binding = _binding!!
+    private val binding get() = _binding!!
     private val playlistsViewModel: PlaylistsViewModel by viewModel()
     private lateinit var playlistAdapter: PlaylistsAdapter
     private lateinit var playlistClickDebounce: (Playlist) -> Unit

@@ -71,6 +71,9 @@ class NewPlaylistFragment : Fragment() {
                 toolbar.title = getString(R.string.edit)
                 buttonCreate.text = getString(R.string.save)
                 pickerImage.setImageURI(playlist!!.imagePath?.toUri())
+                pickerImage.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+                pickerImage.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+                pickerImage.requestLayout()
                 titleRequest = playlist!!.name
                 playlistName.editText?.setText(titleRequest)
                 description.editText?.setText(playlist!!.description)

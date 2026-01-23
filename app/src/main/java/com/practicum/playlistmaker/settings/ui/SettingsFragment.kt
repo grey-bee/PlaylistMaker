@@ -16,7 +16,7 @@ class SettingsFragment : Fragment() {
     private val viewModel: SettingsViewModel by viewModel()
 
     private var _binding: FragmentSettingsBinding? = null
-    private val binding = _binding!!
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
