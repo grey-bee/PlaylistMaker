@@ -29,7 +29,8 @@ import org.koin.core.parameter.parametersOf
 import kotlin.getValue
 
 class PlaylistFragment : Fragment() {
-    private lateinit var binding: FragmentPlaylistBinding
+    private var _binding: FragmentPlaylistBinding? = null
+    private val binding get() = _binding!!
     private val playlist by lazy {
         requireNotNull(
             BundleCompat.getParcelable(
@@ -55,7 +56,7 @@ class PlaylistFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPlaylistBinding.inflate(inflater, container, false)
+        _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -218,6 +219,11 @@ class PlaylistFragment : Fragment() {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
         fun createArgs(playlist: Playlist): Bundle =
             bundleOf(ARGS_PLAYLIST to playlist)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun openAudioPlayer(item: Track) {

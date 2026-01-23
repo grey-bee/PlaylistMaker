@@ -26,7 +26,8 @@ import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import org.koin.core.parameter.parametersOf
 
 class NewPlaylistFragment : Fragment() {
-    private lateinit var binding: FragmentNewPlaylistBinding
+    private var _binding: FragmentNewPlaylistBinding? = null
+    private val binding get() = _binding!!
     private val playlist: Playlist? by lazy {
         arguments?.let {
             BundleCompat.getParcelable(
@@ -57,7 +58,7 @@ class NewPlaylistFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
+        _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -153,6 +154,11 @@ class NewPlaylistFragment : Fragment() {
         } else {
             findNavController().navigateUp()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

@@ -15,13 +15,14 @@ import kotlin.getValue
 class SettingsFragment : Fragment() {
     private val viewModel: SettingsViewModel by viewModel()
 
-    private lateinit var binding: FragmentSettingsBinding
+    private var _binding: FragmentSettingsBinding? = null
+    private val binding = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -67,5 +68,10 @@ class SettingsFragment : Fragment() {
             val intent = Intent(Intent.ACTION_VIEW, data.value.toUri())
             startActivity(intent)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -13,14 +13,15 @@ import com.practicum.playlistmaker.databinding.FragmentMediaLibraryBinding
 
 class MediaLibraryFragment : Fragment() {
 
-    private lateinit var binding: FragmentMediaLibraryBinding
+    private var _binding: FragmentMediaLibraryBinding? = null
+    private val binding get() = _binding!!
     private lateinit var tabMediator: TabLayoutMediator
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMediaLibraryBinding.inflate(inflater, container, false)
+        _binding = FragmentMediaLibraryBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -41,5 +42,10 @@ class MediaLibraryFragment : Fragment() {
             val title = bundle.getString("title")
             Toast.makeText(requireContext(), "Плейлист $title создан", Toast.LENGTH_LONG).show()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

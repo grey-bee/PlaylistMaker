@@ -16,7 +16,8 @@ import com.practicum.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment() {
-    private lateinit var binding: FragmentPlaylistsBinding
+    private var _binding: FragmentPlaylistsBinding? = null
+    private val binding = _binding!!
     private val playlistsViewModel: PlaylistsViewModel by viewModel()
     private lateinit var playlistAdapter: PlaylistsAdapter
     private lateinit var playlistClickDebounce: (Playlist) -> Unit
@@ -26,7 +27,7 @@ class PlaylistsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
+        _binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -60,13 +61,21 @@ class PlaylistsFragment : Fragment() {
                 false
             ) { playlist ->
                 val bundle = PlaylistFragment.createArgs(playlist)
-                findNavController().navigate(R.id.action_mediaLibraryFragment_to_playlistFragment, bundle)
+                findNavController().navigate(
+                    R.id.action_mediaLibraryFragment_to_playlistFragment,
+                    bundle
+                )
             }
 
         playlistAdapter = PlaylistsAdapter(emptyList(), { item -> playlistClickDebounce(item) })
         binding.recyclerView.adapter = playlistAdapter
 
 
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

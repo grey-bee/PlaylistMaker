@@ -25,7 +25,8 @@ class SearchFragment : Fragment() {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
-    private lateinit var binding: FragmentSearchBinding
+    private var _binding: FragmentSearchBinding? = null
+    private val binding = _binding!!
     private val viewModel: SearchViewModel by viewModel()
     private var searchRequest = ""
     private lateinit var trackClickDebounce: (Track) -> Unit
@@ -36,7 +37,7 @@ class SearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -177,6 +178,11 @@ class SearchFragment : Fragment() {
             noConnectionPlaceholder.isVisible = false
             progressBar.isVisible = false
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun openAudioPlayer(item: Track) {

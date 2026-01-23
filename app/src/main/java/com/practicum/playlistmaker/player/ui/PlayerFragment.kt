@@ -33,7 +33,8 @@ import kotlin.getValue
 import kotlin.requireNotNull
 
 class PlayerFragment : Fragment() {
-    private lateinit var binding: FragmentPlayerBinding
+    private var _binding: FragmentPlayerBinding? = null
+    private val binding get() = _binding!!
     private lateinit var playlistsAdapter: PlaylistsAdapter
     private lateinit var playlistClickDebounce: (Playlist) -> Unit
     private val track by lazy {
@@ -53,7 +54,7 @@ class PlayerFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPlayerBinding.inflate(inflater, container, false)
+        _binding = FragmentPlayerBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -189,6 +190,11 @@ class PlayerFragment : Fragment() {
         binding.backArrowImage.setOnClickListener {
             findNavController().navigateUp()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {
