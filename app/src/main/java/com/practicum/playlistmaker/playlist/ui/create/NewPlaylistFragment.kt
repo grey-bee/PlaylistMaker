@@ -21,6 +21,8 @@ import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 import androidx.core.net.toUri
+import androidx.core.os.BundleCompat
+import com.practicum.playlistmaker.playlist.domain.model.Playlist
 
 class NewPlaylistFragment : Fragment() {
     private lateinit var binding: FragmentNewPlaylistBinding
@@ -28,6 +30,15 @@ class NewPlaylistFragment : Fragment() {
     private var titleRequest: String = ""
     private var imageSelected = false
     private var selectedImageUri: Uri? = null
+    private val playlist: Playlist? by lazy {
+        arguments?.let {
+            BundleCompat.getParcelable(
+                it,
+                NewPlaylistFragment.Companion.ARGS_PLAYLIST,
+                Playlist::class.java
+            )
+        }
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putBoolean(KEY_IMAGE_SELECTED, imageSelected)
@@ -49,8 +60,33 @@ class NewPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         titleRequest = savedInstanceState?.getString(KEY_TITLE_REQUEST) ?: ""
-        binding.playlistName.editText?.setText(titleRequest)
-        binding.description.editText?.setText(savedInstanceState?.getString(KEY_DESCRIPTION) ?: "")
+
+        if(playlist != null){
+            binding.apply {
+                toolbar.title = getString(R.string.edit)
+                buttonCreate.text = getString(R.string.save)
+                pickerImage.setImageURI(playlist!!.imagePath?.toUri())
+                playlistName.editText?.setText(playlist!!.name)
+                description.editText?.setText(playlist!!.description)
+                toolbar.setOnClickListener { findNavController().navigateUp() }
+                buttonCreate.setOnClickListener {
+                    val title = binding.playlistName.editText?.text.toString()
+                    val description = binding.description.editText?.text.toString()
+                    viewModel.saveEditPlaylistInfo(title, description, selectedImageUri)
+                }
+            }
+        } else {
+            binding.playlistName.editText?.setText(titleRequest)
+            binding.description.editText?.setText(savedInstanceState?.getString(KEY_DESCRIPTION) ?: "")
+            binding.buttonCreate.setOnClickListener {
+                val title = binding.playlistName.editText?.text.toString()
+                val description = binding.description.editText?.text.toString()
+                viewModel.saveNewPlaylistInfo(title, description, selectedImageUri)
+                setFragmentResult(KEY_NEW_PLAYLIST, bundleOf(KEY_TITLE to title))
+            }
+        }
+
+
         imageSelected = savedInstanceState?.getBoolean(KEY_IMAGE_SELECTED) == true
         selectedImageUri = savedInstanceState?.getString(KEY_URI)?.toUri()
         if (selectedImageUri != null) binding.pickerImage.setImageURI(selectedImageUri)
@@ -106,12 +142,7 @@ class NewPlaylistFragment : Fragment() {
         }
         binding.playlistName.editText?.addTextChangedListener(titleWatcher)
 
-        binding.buttonCreate.setOnClickListener {
-            val title = binding.playlistName.editText?.text.toString()
-            val description = binding.description.editText?.text.toString()
-            viewModel.savePlaylistInfo(title, description, selectedImageUri)
-            setFragmentResult(KEY_NEW_PLAYLIST, bundleOf(KEY_TITLE to title))
-        }
+
         viewModel.observePlaylistSaved().observe(viewLifecycleOwner) { check ->
             if (check) findNavController().navigateUp()
         }
@@ -124,6 +155,8 @@ class NewPlaylistFragment : Fragment() {
         private const val KEY_TITLE_REQUEST = "titleRequest"
         private const val KEY_DESCRIPTION = "description"
         private const val KEY_URI = "uri"
-
+        private const val ARGS_PLAYLIST = "playlist"
+        fun createArgs(playlist: Playlist): Bundle =
+            bundleOf(ARGS_PLAYLIST to playlist)
     }
 }

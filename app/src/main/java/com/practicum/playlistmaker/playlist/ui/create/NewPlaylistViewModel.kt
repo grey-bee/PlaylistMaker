@@ -11,11 +11,12 @@ import kotlinx.coroutines.launch
 
 class NewPlaylistViewModel(
     private val playlistInteractor: PlaylistInteractor
+    private var playlist: Playlist?,
 ) : ViewModel() {
     private val _playlistSaved = MutableLiveData<Boolean>()
     fun observePlaylistSaved(): LiveData<Boolean> = _playlistSaved
 
-    fun savePlaylistInfo(title: String, description: String, uri: Uri?) {
+    fun saveNewPlaylistInfo(title: String, description: String, uri: Uri?) {
         viewModelScope.launch {
             val coverPath = uri?.let { playlistInteractor.saveImageToPrivateStorage(uri) }
             playlistInteractor.addPlaylist(
@@ -27,6 +28,16 @@ class NewPlaylistViewModel(
                     emptyList(),
                     0
                 )
+            )
+            _playlistSaved.postValue(true)
+        }
+    }
+    fun saveEditPlaylistInfo(title: String, description: String, uri: Uri?) {
+        viewModelScope.launch {
+            val coverPath = uri?.let { playlistInteractor.saveImageToPrivateStorage(uri) }
+            val newImagePath = coverPath ?: playlist.imagePath
+            playlistInteractor.updatePlaylist(
+                playlist.copy(name = title, description = description, imagePath = newImagePath)
             )
             _playlistSaved.postValue(true)
         }

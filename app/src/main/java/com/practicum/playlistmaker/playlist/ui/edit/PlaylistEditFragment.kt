@@ -58,7 +58,6 @@ class PlaylistEditFragment : Fragment() {
                 val title = binding.playlistName.editText?.text.toString()
                 val description = binding.description.editText?.text.toString()
                 viewModel.savePlaylistInfo(title, description, selectedImageUri)
-//                setFragmentResult(KEY_EDIT_PLAYLIST, bundleOf(KEY_TITLE to title))
             }
         }
         val pickMedia =
