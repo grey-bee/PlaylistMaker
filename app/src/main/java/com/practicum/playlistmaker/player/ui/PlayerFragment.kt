@@ -23,6 +23,7 @@ import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import com.practicum.playlistmaker.playlist.ui.list.PlaylistsState
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.util.debounce
+import com.practicum.playlistmaker.util.toTimeString
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
@@ -32,7 +33,8 @@ import kotlin.getValue
 import kotlin.requireNotNull
 
 class PlayerFragment : Fragment() {
-    private lateinit var binding: FragmentPlayerBinding
+    private var _binding: FragmentPlayerBinding? = null
+    private val binding get() = _binding!!
     private lateinit var playlistsAdapter: PlaylistsAdapter
     private lateinit var playlistClickDebounce: (Playlist) -> Unit
     private val track by lazy {
@@ -52,18 +54,20 @@ class PlayerFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPlayerBinding.inflate(inflater, container, false)
+        _binding = FragmentPlayerBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.observeToastMessage().observe(viewLifecycleOwner) { text ->
-            Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
+        viewModel.observeToastMessage().observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { text ->
+                Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
+            }
         }
 
-        val bottomSheetContainer = binding.standardBottomSheet
+        val bottomSheetContainer = binding.playlistBottomSheet
         val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
@@ -98,7 +102,7 @@ class PlayerFragment : Fragment() {
             playingTimeText.text = SimpleDateFormat("mm:ss", Locale.getDefault()).apply {
                 timeZone = TimeZone.getTimeZone("UTC")
             }.format(0)
-            durationText.text = track.trackTime
+            durationText.text = track.trackTimeMillis.toTimeString()
             genreText.text = track.primaryGenreName
             countryText.text = track.country
 
@@ -186,6 +190,11 @@ class PlayerFragment : Fragment() {
         binding.backArrowImage.setOnClickListener {
             findNavController().navigateUp()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

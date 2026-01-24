@@ -15,7 +15,7 @@ class TrackDbConvertor {
             track.releaseYear,
             track.primaryGenreName,
             track.country,
-            track.trackTime,
+            track.trackTimeMillis,
             track.previewUrl,
             System.currentTimeMillis()
         )
@@ -26,7 +26,7 @@ class TrackDbConvertor {
             entity.trackId,
             entity.trackName,
             entity.artistName,
-            entity.trackTime,
+            entity.trackTimeMillis,
             entity.artworkUrl100,
             entity.artworkUrl512,
             entity.collectionName,

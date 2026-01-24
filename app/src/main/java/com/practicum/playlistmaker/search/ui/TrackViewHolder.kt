@@ -11,11 +11,13 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.dpToPx
 import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.util.toTimeString
 
 class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val trackImage: ImageView = itemView.findViewById(R.id.track_image)
     private val trackName: TextView = itemView.findViewById(R.id.track_name)
     private val trackInfo: TextView = itemView.findViewById(R.id.track_info)
+
     @SuppressLint("SetTextI18n")
     fun bind(model: Track) {
         Glide.with(itemView)
@@ -24,6 +26,6 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .transform(CenterCrop(), RoundedCorners(2.dpToPx(itemView.context)))
             .into(trackImage)
         trackName.text = model.trackName
-        trackInfo.text = "${model.artistName} • ${model.trackTime}"
+        trackInfo.text = "${model.artistName} • ${model.trackTimeMillis.toTimeString()}"
     }
 }

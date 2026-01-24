@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,13 +22,30 @@ import com.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 import androidx.core.net.toUri
+import androidx.core.os.BundleCompat
+import com.practicum.playlistmaker.playlist.domain.model.Playlist
+import org.koin.core.parameter.parametersOf
+
 
 class NewPlaylistFragment : Fragment() {
-    private lateinit var binding: FragmentNewPlaylistBinding
-    private val viewModel: NewPlaylistViewModel by viewModel()
+    private var _binding: FragmentNewPlaylistBinding? = null
+    private val binding get() = _binding!!
+    private val playlist: Playlist? by lazy {
+        arguments?.let {
+            BundleCompat.getParcelable(
+                it,
+                ARGS_PLAYLIST,
+                Playlist::class.java
+            )
+        }
+    }
+    val viewModel: NewPlaylistViewModel by viewModel() {
+        parametersOf(playlist)
+    }
     private var titleRequest: String = ""
     private var imageSelected = false
     private var selectedImageUri: Uri? = null
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putBoolean(KEY_IMAGE_SELECTED, imageSelected)
@@ -42,41 +60,58 @@ class NewPlaylistFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
+        _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         titleRequest = savedInstanceState?.getString(KEY_TITLE_REQUEST) ?: ""
-        binding.playlistName.editText?.setText(titleRequest)
-        binding.description.editText?.setText(savedInstanceState?.getString(KEY_DESCRIPTION) ?: "")
+
+        if (playlist != null) {
+            binding.apply {
+                toolbar.title = getString(R.string.edit)
+                buttonCreate.text = getString(R.string.save)
+                pickerImage.setImageURI(playlist!!.imagePath?.toUri())
+                pickerImage.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+                pickerImage.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+                pickerImage.requestLayout()
+                titleRequest = playlist!!.name
+                playlistName.editText?.setText(titleRequest)
+                description.editText?.setText(playlist!!.description)
+                toolbar.setOnClickListener { findNavController().navigateUp() }
+                buttonCreate.setOnClickListener {
+                    val title = binding.playlistName.editText?.text.toString()
+                    val description = binding.description.editText?.text.toString()
+                    viewModel.saveEditPlaylistInfo(title, description, selectedImageUri)
+                }
+            }
+        } else {
+            binding.playlistName.editText?.setText(titleRequest)
+            binding.description.editText?.setText(
+                savedInstanceState?.getString(KEY_DESCRIPTION) ?: ""
+            )
+            binding.buttonCreate.setOnClickListener {
+                val title = binding.playlistName.editText?.text.toString()
+                val description = binding.description.editText?.text.toString()
+                viewModel.saveNewPlaylistInfo(title, description, selectedImageUri)
+                setFragmentResult(KEY_NEW_PLAYLIST, bundleOf(KEY_TITLE to title))
+            }
+            binding.toolbar.setNavigationOnClickListener {
+                backButtonProcess()
+            }
+
+            requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+                backButtonProcess()
+            }
+        }
+
+
         imageSelected = savedInstanceState?.getBoolean(KEY_IMAGE_SELECTED) == true
         selectedImageUri = savedInstanceState?.getString(KEY_URI)?.toUri()
         if (selectedImageUri != null) binding.pickerImage.setImageURI(selectedImageUri)
 
         binding.buttonCreate.isEnabled = titleRequest.isNotBlank() == true
-
-        fun backButtonProcess() {
-            if (titleRequest.isNotBlank() || binding.description.editText?.text?.isNotEmpty() == true || imageSelected) {
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(getString(R.string.finish_playlist_creating))
-                    .setMessage(R.string.all_unsaved_data_will_be_loose)
-                    .setNegativeButton(R.string.cancel) { _, _ -> }
-                    .setPositiveButton(R.string.finish) { _, _ -> findNavController().navigateUp() }
-                    .show()
-            } else {
-                findNavController().navigateUp()
-            }
-        }
-
-        binding.toolbar.setNavigationOnClickListener {
-            backButtonProcess()
-        }
-
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            backButtonProcess()
-        }
 
         binding.playlistName.editText?.textCursorDrawable =
             ContextCompat.getDrawable(requireContext(), R.drawable.cursor_color)
@@ -106,13 +141,30 @@ class NewPlaylistFragment : Fragment() {
         }
         binding.playlistName.editText?.addTextChangedListener(titleWatcher)
 
-        binding.buttonCreate.setOnClickListener {
-            val title = binding.playlistName.editText?.text.toString()
-            val description = binding.description.editText?.text.toString()
-            viewModel.savePlaylistInfo(title, description, selectedImageUri)
-            setFragmentResult(KEY_NEW_PLAYLIST, bundleOf(KEY_TITLE to title))
+
+        viewModel.observePlaylistSaved().observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { check ->
+                if (check) findNavController().navigateUp()
+            }
+        }
+    }
+
+    private fun backButtonProcess() {
+        if (titleRequest.isNotBlank() || binding.description.editText?.text?.isNotEmpty() == true || imageSelected) {
+            MaterialAlertDialogBuilder(requireContext(), R.style.PlaylistDialogTheme)
+                .setTitle(getString(R.string.finish_playlist_creating))
+                .setMessage(R.string.all_unsaved_data_will_be_loose)
+                .setNegativeButton(R.string.cancel) { _, _ -> }
+                .setPositiveButton(R.string.finish) { _, _ -> findNavController().navigateUp() }
+                .show()
+        } else {
             findNavController().navigateUp()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {
@@ -122,6 +174,8 @@ class NewPlaylistFragment : Fragment() {
         private const val KEY_TITLE_REQUEST = "titleRequest"
         private const val KEY_DESCRIPTION = "description"
         private const val KEY_URI = "uri"
-
+        private const val ARGS_PLAYLIST = "playlist"
+        fun createArgs(playlist: Playlist): Bundle =
+            bundleOf(ARGS_PLAYLIST to playlist)
     }
 }

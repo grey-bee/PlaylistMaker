@@ -15,6 +15,7 @@ import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -34,12 +35,22 @@ class PlaylistRepositoryImpl(
     }
 
     override suspend fun deletePlaylist(playlist: Playlist) {
+        val playlistTracks = playlist.trackIds
         appDatabase.playlistDao().deletePlaylist(convertPlaylistToEntity(playlist))
+        playlistTracks.forEach {
+            val track = getPlaylistTrack(it)
+            track?.let { deletePlaylistTrack(it) }
+        }
     }
 
-    override fun getPlaylist(): Flow<List<Playlist>> {
+    override fun getPlaylists(): Flow<List<Playlist>> {
         return appDatabase.playlistDao().getPlaylists()
             .map { entities -> entities.map { entity -> convertEntityToPlaylist(entity) } }
+    }
+
+    override suspend fun getPlaylistById(id: Long): Playlist {
+        val entity = appDatabase.playlistDao().getPlaylistById(id)
+        return convertEntityToPlaylist(entity)
     }
 
     override suspend fun updatePlaylist(playlist: Playlist) {
@@ -62,7 +73,13 @@ class PlaylistRepositoryImpl(
                     val h = bitmap.height
                     val w = bitmap.width
                     val minSize = min(w, h)
-                    Bitmap.createBitmap(bitmap, (w - minSize) / 2, (h - minSize) / 2, minSize, minSize)
+                    Bitmap.createBitmap(
+                        bitmap,
+                        (w - minSize) / 2,
+                        (h - minSize) / 2,
+                        minSize,
+                        minSize
+                    )
                         .compress(Bitmap.CompressFormat.JPEG, 30, output)
                 }
             }
@@ -75,12 +92,31 @@ class PlaylistRepositoryImpl(
     }
 
     override suspend fun deletePlaylistTrack(track: Track) {
-        appDatabase.playlistTrackDao().deletePlaylistTrack(convertPlaylistTrackToEntity(track))
+        val playlists = getPlaylists().first()
+        if (!playlists.any { it.trackIds.contains(track.trackId) }) {
+            appDatabase.playlistTrackDao().deletePlaylistTrack(convertPlaylistTrackToEntity(track))
+        }
     }
 
     override suspend fun getPlaylistTrack(trackId: String): Track? {
         val entity = appDatabase.playlistTrackDao().getPlaylistTrack(trackId)
         return entity?.let { convertEntityToPlaylistTrack(it) }
+    }
+
+    override suspend fun getPlaylistTracks(trackIds: List<String>): List<Track> {
+        val entities = appDatabase.playlistTrackDao().getPlaylistTracks(trackIds)
+        return entities.map { entity -> convertEntityToPlaylistTrack(entity) }
+    }
+
+    override suspend fun deleteTrackFromPlaylist(
+        track: Track,
+        playlist: Playlist
+    ) {
+        val updatedTrackIds = playlist.trackIds.filter { it != track.trackId }
+        val updatedPlaylist =
+            playlist.copy(trackIds = updatedTrackIds, trackCount = updatedTrackIds.size)
+        updatePlaylist(updatedPlaylist)
+        deletePlaylistTrack(track)
     }
 
     private fun convertEntityToPlaylist(entity: PlaylistEntity): Playlist {

@@ -16,7 +16,8 @@ import com.practicum.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavoritesFragment : Fragment() {
-    private lateinit var binding: FragmentFavoritesBinding
+    private var _binding: FragmentFavoritesBinding? = null
+    private val binding get() = _binding!!
     private lateinit var trackClickDebounce: (Track) -> Unit
     private lateinit var trackAdapter: TrackAdapter
     private val viewModel: FavoritesViewModel by viewModel()
@@ -26,7 +27,7 @@ class FavoritesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFavoritesBinding.inflate(inflater, container, false)
+        _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -68,6 +69,11 @@ class FavoritesFragment : Fragment() {
             R.id.action_mediaLibraryFragment_to_audioPlayerFragment,
             bundle
         )
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

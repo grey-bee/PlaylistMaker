@@ -10,6 +10,7 @@ import com.practicum.playlistmaker.playlist.domain.PlaylistInteractor
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import com.practicum.playlistmaker.playlist.ui.list.PlaylistsState
 import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.util.Event
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -30,8 +31,8 @@ class PlayerViewModel(
     fun observePlayerScreenState(): LiveData<PlayerState> = playerState
     private val isFavoriteLiveData = MutableLiveData<Boolean>()
     fun observeIsFavorite(): LiveData<Boolean> = isFavoriteLiveData
-    private val toastMessage = MutableLiveData<String>()
-    fun observeToastMessage(): LiveData<String> = toastMessage
+    private val toastMessage = MutableLiveData<Event<String>>()
+    fun observeToastMessage(): LiveData<Event<String>> = toastMessage
 
     init {
         initMediaPlayer()
@@ -105,13 +106,13 @@ class PlayerViewModel(
 
     fun onAddToPlaylistClicked(playlist: Playlist): Boolean {
         if (playlist.trackIds.contains(track.trackId)) {
-            toastMessage.postValue("Трек уже добавлен в плейлист ${playlist.name}")
+            toastMessage.postValue(Event("Трек уже добавлен в плейлист ${playlist.name}"))
             return false
         } else {
             viewModelScope.launch {
                 playlistInteractor.addTrackToPlaylist(track, playlist)
             }
-            toastMessage.postValue("Добавлено в плейлист ${playlist.name}")
+            toastMessage.postValue(Event("Добавлено в плейлист ${playlist.name}"))
             return true
         }
     }
