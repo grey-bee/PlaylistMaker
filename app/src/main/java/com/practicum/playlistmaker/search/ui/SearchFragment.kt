@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.search.ui
 
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.IntentFilter
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -16,6 +18,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker.player.ui.PlayerFragment
 import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.util.InternetConnectionReceiver
 import com.practicum.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
@@ -25,6 +28,7 @@ class SearchFragment : Fragment() {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
+    private val internetConnectionReceiver = InternetConnectionReceiver()
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
     private val viewModel: SearchViewModel by viewModel()
@@ -32,6 +36,20 @@ class SearchFragment : Fragment() {
     private lateinit var trackClickDebounce: (Track) -> Unit
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter
+    override fun onResume() {
+        super.onResume()
+        ContextCompat.registerReceiver(
+            requireContext(),
+            internetConnectionReceiver,
+            IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"),
+            ContextCompat.RECEIVER_EXPORTED
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        requireContext().unregisterReceiver(internetConnectionReceiver)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

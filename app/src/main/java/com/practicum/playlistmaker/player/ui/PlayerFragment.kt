@@ -1,11 +1,13 @@
 package com.practicum.playlistmaker.player.ui
 
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.os.BundleCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -22,6 +24,7 @@ import com.practicum.playlistmaker.dpToPx
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import com.practicum.playlistmaker.playlist.ui.list.PlaylistsState
 import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.util.InternetConnectionReceiver
 import com.practicum.playlistmaker.util.debounce
 import com.practicum.playlistmaker.util.toTimeString
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -35,6 +38,7 @@ import kotlin.requireNotNull
 class PlayerFragment : Fragment() {
     private var _binding: FragmentPlayerBinding? = null
     private val binding get() = _binding!!
+    private val internetConnectionReceiver = InternetConnectionReceiver()
     private lateinit var playlistsAdapter: PlaylistsAdapter
     private lateinit var playlistClickDebounce: (Playlist) -> Unit
     private val track by lazy {
@@ -49,6 +53,22 @@ class PlayerFragment : Fragment() {
     val viewModel: PlayerViewModel by viewModel() {
         parametersOf(track)
     }
+
+    override fun onResume() {
+        super.onResume()
+        ContextCompat.registerReceiver(
+            requireContext(),
+            internetConnectionReceiver,
+            IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"),
+            ContextCompat.RECEIVER_EXPORTED
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        requireContext().unregisterReceiver(internetConnectionReceiver)
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
