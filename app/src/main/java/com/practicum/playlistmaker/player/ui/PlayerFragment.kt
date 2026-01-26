@@ -139,15 +139,15 @@ class PlayerFragment : Fragment() {
             when (state) {
                 is PlayerState.Prepared -> {
                     binding.playButton.isEnabled = true
-                    binding.playButton.setPlayingStop()
+                    binding.playButton.setButtonChange(false)
                 }
 
                 is PlayerState.Playing -> {
-                    binding.playButton.setPlayingStart()
+                    binding.playButton.setButtonChange(true)
                 }
 
                 is PlayerState.Paused -> {
-                    binding.playButton.setPlayingStop()
+                    binding.playButton.setButtonChange(false)
                 }
 
                 is PlayerState.Default -> {
