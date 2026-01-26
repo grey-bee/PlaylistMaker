@@ -139,15 +139,15 @@ class PlayerFragment : Fragment() {
             when (state) {
                 is PlayerState.Prepared -> {
                     binding.playButton.isEnabled = true
-                    binding.playButton.setImageResource(R.drawable.button_play)
+                    binding.playButton.setButtonChange(false)
                 }
 
                 is PlayerState.Playing -> {
-                    binding.playButton.setImageResource(R.drawable.button_pause)
+                    binding.playButton.setButtonChange(true)
                 }
 
                 is PlayerState.Paused -> {
-                    binding.playButton.setImageResource(R.drawable.button_play)
+                    binding.playButton.setButtonChange(false)
                 }
 
                 is PlayerState.Default -> {

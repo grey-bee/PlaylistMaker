@@ -97,17 +97,18 @@
                 app:layout_constraintStart_toStartOf="@id/upperLeftBorder"
                 app:layout_constraintTop_toTopOf="@id/playButton" />
 
-            <ImageButton
+            <com.practicum.playlistmaker.player.ui.CustomPlayButton
                 android:id="@+id/playButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:background="@null"
                 android:contentDescription="@string/button_play"
-                android:src="@drawable/button_play"
                 app:layout_constraintEnd_toStartOf="@+id/likeButton"
                 app:layout_constraintStart_toEndOf="@id/addToPlaylistButton"
-                app:layout_constraintTop_toBottomOf="@id/artistNameText" />
+                app:layout_constraintTop_toBottomOf="@id/artistNameText"
+                app:pauseImg="@drawable/button_pause"
+                app:playImg="@drawable/button_play" />
 
             <ImageButton
                 android:id="@+id/likeButton"
@@ -305,8 +306,8 @@
         android:orientation="vertical"
         app:behavior_hideable="true"
         app:behavior_peekHeight="505dp"
-        tools:visibility="gone"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        tools:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -337,10 +338,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_24"
             android:orientation="vertical"
-            tools:visibility="visible"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="10"
-            tools:listitem="@layout/playlist_item2"/>
+            tools:listitem="@layout/playlist_item2"
+            tools:visibility="visible" />
 
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
