@@ -14,10 +14,9 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
-    factory { MediaPlayer() }
     viewModel { SettingsViewModel(get(), get()) }
     viewModel { SearchViewModel(get(), get(), get(), get()) }
-    viewModel { (track: Track) -> PlayerViewModel(track, get(), get(), get()) }
+    viewModel { (track: Track) -> PlayerViewModel(track, get(), get()) }
     viewModel { PlaylistsViewModel(get()) }
     viewModel { FavoritesViewModel(get()) }
     viewModel { (playlist: Playlist) -> NewPlaylistViewModel(get(), playlist) }
