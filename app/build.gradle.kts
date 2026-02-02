@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.room.ktx)
     implementation(libs.room.runtime)
     implementation(libs.constraintlayout)
+    implementation(libs.androidx.runtime)
     ksp(libs.room.compiler)
     implementation(libs.okhttp)
     implementation(libs.glide)
