@@ -1,51 +1,56 @@
-package com.practicum.playlistmaker.ui.settings
+package com.practicum.playlistmaker.ui.search
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.bumptech.glide.load.resource.bitmap.BitmapDrawableResource
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.ui.elements.CustomSearchField
+import com.practicum.playlistmaker.ui.theme.MainBlue
 import com.practicum.playlistmaker.ui.theme.PlaylistMakerTheme
 
+
 @Composable
-fun SettingsScreen(
-    onShareClick: () -> Unit,
-    onSupportClick: () -> Unit,
-    onAgreementClick: () -> Unit,
-    isDarkTheme: Boolean,
-    onThemeChange: (Boolean) -> Unit
+fun SearchScreen(
+    searchText: String,
+    onSearchTextChange: (String) -> Unit
 ) {
-    val items = listOf(
-        SettingItem(
-            R.string.dark_theme, SettingType.Switch(isDarkTheme, onThemeChange)
-        ),
-        SettingItem(
-            R.string.share,
-            SettingType.ItemIcon(R.drawable.ic_share)
-        ) { onShareClick() },
-        SettingItem(
-            R.string.write_to_support,
-            SettingType.ItemIcon(R.drawable.ic_support)
-        ) { onSupportClick() },
-        SettingItem(
-            R.string.user_agreement,
-            SettingType.ItemIcon(R.drawable.ic_arrow_short_right)
-        ) { onAgreementClick() },
-    )
+    var searchText by remember { mutableStateOf("") }
+
     PlaylistMakerTheme {
         Scaffold(
             topBar = {
@@ -59,14 +64,14 @@ fun SettingsScreen(
                                 },
                         ) {
                             Text(
-                                stringResource(id = R.string.settings),
+                                stringResource(id = R.string.search),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     },
                 )
-            },
+            }
         ) { innerPadding ->
             Column(
                 modifier = Modifier
@@ -74,7 +79,15 @@ fun SettingsScreen(
                     .fillMaxSize()
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
-                items.forEach { item -> SettingRow(item) }
+                CustomSearchField(
+                    value = searchText,
+                    onValueChange = onSearchTextChange
+                )
+//                Text(
+//                    stringResource(id = R.string.settings),
+//                    style = MaterialTheme.typography.titleMedium,
+//                    color = MaterialTheme.colorScheme.onSurface
+//                )
             }
         }
     }
@@ -83,12 +96,6 @@ fun SettingsScreen(
 @Preview(name = "Light", uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun SettingsPreview() {
-            SettingsScreen(
-                {},
-                {},
-                {},
-                true,
-                {}
-            )
+fun SearchPreview() {
+    SearchScreen("text", {})
 }

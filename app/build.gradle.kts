@@ -46,10 +46,12 @@ android {
     }
     kotlinOptions {
         jvmTarget = "17"
+        freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
     }
 }
 
 dependencies {
+    implementation(libs.coil.compose)
     implementation(libs.androidx.material.icons.extended)
     implementation(platform(libs.compose.bom))
     implementation(libs.androidx.material3)
@@ -58,6 +60,7 @@ dependencies {
     implementation(libs.androidx.runtime)
     implementation(libs.androidx.runtime.livedata)
     debugImplementation(libs.androidx.ui.tooling)
+    androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.androidx.adaptive)

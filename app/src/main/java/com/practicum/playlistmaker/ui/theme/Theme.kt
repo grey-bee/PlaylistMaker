@@ -33,6 +33,9 @@ private val LightColorScheme = lightColorScheme(
     surface = White,
     onSurface = DarkGrey,
     onBackground = LightGrey,
+    onPrimary = LightGrey,
+    primaryContainer = VeryLightGrey,
+    onSecondary = Black
 )
 private val DarkColorScheme = darkColorScheme(
     primary = DarkGrey,
@@ -40,6 +43,9 @@ private val DarkColorScheme = darkColorScheme(
     surface = DarkGrey,
     onSurface = White,
     onBackground = White,
+    onPrimary = Black,
+    primaryContainer = White,
+    onSecondary = White
 )
 
 data class CustomColors(
@@ -56,3 +62,25 @@ val DarkCustomColors = CustomColors(
     switchThumb = MainBlue,
     switchTrack = LightBlue.copy(alpha = 0.48f),
 )
+//Primary группа:
+//- onPrimaryContainer — контент на primaryContainer
+//
+//Secondary группа:
+//- secondary, secondaryContainer, onSecondaryContainer
+//
+//Tertiary группа:
+//- tertiary, onTertiary, tertiaryContainer, onTertiaryContainer
+//
+//Error группа:
+//- error, onError, errorContainer, onErrorContainer
+//
+//Surface варианты:
+//- surfaceVariant, onSurfaceVariant
+//- surfaceTint
+//- inverseSurface, inverseOnSurface
+//
+//Другие:
+//- outline — для рамок, разделителей
+//- outlineVariant — более мягкий outline
+//- scrim — затемнение фона (для диалогов)
+//- inversePrimary
