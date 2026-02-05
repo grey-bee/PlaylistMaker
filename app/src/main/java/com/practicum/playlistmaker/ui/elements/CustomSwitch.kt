@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.ui.settings
+package com.practicum.playlistmaker.ui.elements
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background

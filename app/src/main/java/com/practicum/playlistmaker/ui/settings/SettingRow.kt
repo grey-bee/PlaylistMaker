@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.practicum.playlistmaker.ui.elements.CustomSwitch
 import com.practicum.playlistmaker.ui.theme.PlaylistMakerTheme
 
 @Composable
@@ -40,7 +41,7 @@ fun SettingRow(item: SettingItem) {
 
         when (val type = item.type) {
             is SettingType.Switch -> {
-                CustomSwitch( type.checked, type.onCheckedChange)
+                CustomSwitch(type.checked, type.onCheckedChange)
             }
 
             is SettingType.ItemIcon -> {

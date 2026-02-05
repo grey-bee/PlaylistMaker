@@ -30,5 +30,15 @@ val PlaylistTypography = Typography(
         fontFamily = YsFamily,
         fontWeight = FontWeight.Bold,
         fontSize = 22.sp
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = YsFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 14.sp
+    ),
+    bodyLarge = TextStyle(
+        fontFamily = YsFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 19.sp
     )
 )
