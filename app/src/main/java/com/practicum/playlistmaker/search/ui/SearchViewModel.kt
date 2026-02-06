@@ -21,13 +21,18 @@ class SearchViewModel(
     ViewModel() {
     private val stateLiveData = MutableLiveData<SearchScreenState>()
     fun observeState(): LiveData<SearchScreenState> = stateLiveData
-    private var currentSearchText = ""
+    var searchTextLiveData = MutableLiveData<String>()
+    fun observeSearchText(): LiveData<String> = searchTextLiveData
     private var trackSearchDebounce =
         debounce<String>(
             SEARCH_DEBOUNCE_DELAY,
             viewModelScope,
             true
         ) { changedText -> searchRequest(changedText) }
+
+    init {
+        getSearchHistory()
+    }
 
     private fun searchRequest(query: String) {
         if (query.isNotEmpty()) {
@@ -42,8 +47,9 @@ class SearchViewModel(
     }
 
     fun onTextChanged(value: String) {
-        if (currentSearchText != value) {
-            currentSearchText = value
+        if (value.isEmpty()) getSearchHistory()
+        if (searchTextLiveData.value != value) {
+            searchTextLiveData.postValue(value)
             trackSearchDebounce(value)
         }
     }
@@ -71,6 +77,7 @@ class SearchViewModel(
     }
 
     private fun processResult(data: List<Track>?, errorMessage: String?) {
+        println("data: $data, error: $errorMessage")
         val tracks = mutableListOf<Track>()
         if (data != null) {
             tracks.addAll(data)

@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -20,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.search.ui.SearchScreenState
 import com.practicum.playlistmaker.ui.elements.CustomListItem
 import com.practicum.playlistmaker.ui.elements.CustomSearchField
 import com.practicum.playlistmaker.ui.mock.PreviewData
@@ -31,7 +34,7 @@ import com.practicum.playlistmaker.util.toTimeString
 fun SearchScreen(
     searchText: String,
     onSearchTextChange: (String) -> Unit,
-    tracks: List<Track>,
+    state: SearchScreenState,
     onTrackClick: (Track) -> Unit
 ) {
 
@@ -67,14 +70,27 @@ fun SearchScreen(
                     value = searchText,
                     onValueChange = onSearchTextChange
                 )
-                tracks.forEach {
-                    CustomListItem(
-                        it.artworkUrl100,
-                        it.trackName,
-                        "${it.artistName} • ${it.trackTimeMillis.toTimeString()}",
-                        { onTrackClick(it) }
-                    )
+                when (state) {
+                    is SearchScreenState.History -> {}
+                    is SearchScreenState.Empty -> {}
+                    is SearchScreenState.Content -> {
+                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                            items(items = state.tracks, key = { item -> item.trackId }) { item ->
+                                CustomListItem(
+                                    item.artworkUrl100,
+                                    item.trackName,
+                                    "${item.artistName} • ${item.trackTimeMillis.toTimeString()}",
+                                    { onTrackClick(item) }
+                                )
+                            }
+                        }
+                    }
+
+                    is SearchScreenState.Error -> {}
+                    is SearchScreenState.Loading -> {}
+
                 }
+
             }
         }
     }
@@ -84,5 +100,5 @@ fun SearchScreen(
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun SearchPreview() {
-    SearchScreen("text", {}, PreviewData.trackList, {})
+    SearchScreen("text", {}, SearchScreenState.Content(PreviewData.trackList), {})
 }
