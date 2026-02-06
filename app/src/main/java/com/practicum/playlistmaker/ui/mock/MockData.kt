@@ -18,6 +18,8 @@ object PreviewData {
         isFavorite = true
     )
 
-    val trackList =
-        listOf(track, track, track, track, track, track, track, track, track, track, track, track)
+    val trackList10 =
+        listOf(track, track, track, track, track, track, track, track, track, track)
+    val trackList5 =
+        listOf(track, track, track, track, track)
 }

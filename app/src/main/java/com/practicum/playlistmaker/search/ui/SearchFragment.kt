@@ -46,8 +46,11 @@ class SearchFragment : Fragment() {
                 SearchScreen(
                     searchText,
                     { viewModel.onTextChanged(it) },
-                    screenState
-                ) { trackClickDebounce(it) }
+                    screenState,
+                    { trackClickDebounce(it) },
+                    { viewModel.historyClear() },
+                    { viewModel.searchRequest(searchText)}
+                )
             }
         }
     }

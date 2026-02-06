@@ -34,7 +34,7 @@ class SearchViewModel(
         getSearchHistory()
     }
 
-    private fun searchRequest(query: String) {
+    fun searchRequest(query: String) {
         if (query.isNotEmpty()) {
             renderState(SearchScreenState.Loading)
 
@@ -70,6 +70,7 @@ class SearchViewModel(
 
     fun historyClear() {
         historyClearInteractor()
+        getSearchHistory()
     }
 
     private fun renderState(state: SearchScreenState) {
