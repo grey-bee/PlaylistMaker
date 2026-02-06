@@ -51,13 +51,7 @@ fun SettingsScreen(
             topBar = {
                 TopAppBar(
                     title = {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    println("Клик по всей шапке!")
-                                },
-                        ) {
+                        Box(modifier = Modifier.fillMaxWidth()) {
                             Text(
                                 stringResource(id = R.string.settings),
                                 style = MaterialTheme.typography.titleMedium,

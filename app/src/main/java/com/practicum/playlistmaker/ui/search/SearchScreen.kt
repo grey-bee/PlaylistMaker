@@ -53,11 +53,7 @@ fun SearchScreen(
                 TopAppBar(
                     title = {
                         Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    println("Клик по всей шапке!")
-                                },
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
                                 stringResource(id = R.string.search),
