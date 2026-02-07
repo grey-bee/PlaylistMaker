@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.ui.mock
 
+import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
 
 object PreviewData {
@@ -22,4 +23,27 @@ object PreviewData {
         listOf(track, track, track, track, track, track, track, track, track, track)
     val trackList5 =
         listOf(track, track, track, track, track)
+
+    val playlist = Playlist(
+        id = 1L,
+        name = "Мой плейлист",
+        description = "Любимые треки",
+        imagePath = null,
+        trackIds = listOf("1", "2", "3"),
+        trackCount = 3
+    )
+
+    val playlistList10 = listOf(
+        playlist,
+        playlist,
+        playlist,
+        playlist,
+        playlist,
+        playlist,
+        playlist,
+        playlist,
+        playlist,
+        playlist
+    )
+    val playlistList5 = listOf(playlist, playlist, playlist, playlist, playlist)
 }

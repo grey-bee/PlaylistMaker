@@ -8,7 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryTabRow
@@ -17,20 +20,28 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.favorites.ui.FavoritesState
+import com.practicum.playlistmaker.playlist.ui.list.PlaylistsState
+import com.practicum.playlistmaker.ui.elements.CustomListItem
+import com.practicum.playlistmaker.ui.mock.PreviewData
 import com.practicum.playlistmaker.ui.theme.PlaylistMakerTheme
+import com.practicum.playlistmaker.util.toTimeString
+import kotlinx.coroutines.launch
 
 @Composable
-fun MediaLibraryScreen() {
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+fun MediaLibraryScreen(
+    favoritesState: FavoritesState,
+    playlistsState: PlaylistsState
+) {
+    val pagerState = rememberPagerState(initialPage = 1) { 2 }
+    val coroutineScope = rememberCoroutineScope()
+
     PlaylistMakerTheme {
         Scaffold(
             topBar = {
@@ -53,40 +64,70 @@ fun MediaLibraryScreen() {
                     .fillMaxSize()
             ) {
                 SecondaryTabRow(
-                    selectedTabIndex = selectedTabIndex,indicator = {
+                    selectedTabIndex = pagerState.currentPage, indicator = {
                         TabRowDefaults.SecondaryIndicator(
-                            Modifier.tabIndicatorOffset(selectedTabIndex, matchContentSize = false)
+                            Modifier.tabIndicatorOffset(
+                                pagerState.currentPage,
+                                matchContentSize = false
+                            )
                         )
                     }
                 ) {
                     Tab(
-                        selected = selectedTabIndex == 0,
-                        onClick = { selectedTabIndex = 0 },
+                        selected = pagerState.currentPage == 0,
+                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(0) } },
                         text = { Text(stringResource(R.string.featured_tracks)) }
                     )
                     Tab(
-                        selected = selectedTabIndex == 1,
-                        onClick = { selectedTabIndex = 1 },
+                        selected = pagerState.currentPage == 1,
+                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(1) } },
                         text = { Text(stringResource(R.string.playlists)) }
                     )
                 }
                 Spacer(modifier = Modifier.height(24.dp))
-                HorizontalPager(
-                    state = TODO(),
-                    modifier = TODO(),
-                    contentPadding = TODO(),
-                    pageSize = TODO(),
-                    beyondViewportPageCount = TODO(),
-                    pageSpacing = TODO(),
-                    verticalAlignment = TODO(),
-                    flingBehavior = TODO(),
-                    userScrollEnabled = TODO(),
-                    reverseLayout = TODO(),
-                    key = TODO(),
-                    pageNestedScrollConnection = TODO(),
-                    snapPosition = TODO(),
-                    overscrollEffect = TODO()
-                ){}
+                HorizontalPager(pagerState) { page ->
+                    when (page) {
+                        0 -> {
+                            when (favoritesState) {
+                                is FavoritesState.Empty -> {}
+                                is FavoritesState.Content -> {
+                                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                        itemsIndexed(
+                                            items = favoritesState.tracks,
+                                            key = { index, _ -> index }) { _, item ->
+                                            CustomListItem(
+                                                item.artworkUrl100,
+                                                item.trackName,
+                                                "${item.artistName} • ${item.trackTimeMillis.toTimeString()}",
+                                                {}
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        1 -> {
+                            when (playlistsState) {
+                                is PlaylistsState.Empty -> {}
+                                is PlaylistsState.Content -> {
+                                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                        itemsIndexed(
+                                            items = playlistsState.playlists,
+                                            key = { index, _ -> index }) { _, item ->
+                                            CustomListItem(
+                                                item.imagePath,
+                                                item.name,
+                                                "${item.trackCount}",
+                                                {}
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -97,5 +138,11 @@ fun MediaLibraryScreen() {
 @Composable
 fun MediaLibraryScreenPreview() {
     MediaLibraryScreen(
+        FavoritesState.Content(
+            PreviewData.trackList10
+        ),
+        PlaylistsState.Content(
+            PreviewData.playlistList10,
+        )
     )
 }
