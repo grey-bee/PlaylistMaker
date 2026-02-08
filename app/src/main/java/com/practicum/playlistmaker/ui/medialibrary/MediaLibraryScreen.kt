@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
@@ -29,21 +25,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.favorites.ui.FavoritesState
+import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import com.practicum.playlistmaker.playlist.ui.list.PlaylistsState
-import com.practicum.playlistmaker.ui.elements.CustomGridItem
-import com.practicum.playlistmaker.ui.elements.CustomListItem
-import com.practicum.playlistmaker.ui.mock.PreviewData
+import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.ui.theme.PlaylistMakerTheme
-import com.practicum.playlistmaker.util.toTimeString
 import kotlinx.coroutines.launch
-import androidx.compose.foundation.lazy.grid.items as gridItems
 
 @Composable
 fun MediaLibraryScreen(
     favoritesState: FavoritesState,
-    playlistsState: PlaylistsState
+    playlistsState: PlaylistsState,
+    onNewPlaylist: () -> Unit,
+    onTrackClick: (Track) -> Unit,
+    onPlaylistClick: (Playlist) -> Unit,
 ) {
-    val pagerState = rememberPagerState(initialPage = 1) { 2 }
+    val pagerState = rememberPagerState() { 2 }
     val coroutineScope = rememberCoroutineScope()
 
     PlaylistMakerTheme {
@@ -89,54 +85,17 @@ fun MediaLibraryScreen(
                     )
                 }
                 Spacer(modifier = Modifier.height(24.dp))
-                HorizontalPager(pagerState) { page ->
+                HorizontalPager(
+                    pagerState,
+                    modifier = Modifier.padding(12.dp, 8.dp, 12.dp, 0.dp)
+                ) { page ->
                     when (page) {
                         0 -> {
-                            when (favoritesState) {
-                                is FavoritesState.Empty -> {}
-                                is FavoritesState.Content -> {
-                                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                        itemsIndexed(
-                                            items = favoritesState.tracks,
-                                            key = { index, _ -> index }) { _, item ->
-                                            CustomListItem(
-                                                item.artworkUrl100,
-                                                item.trackName,
-                                                "${item.artistName} • ${item.trackTimeMillis.toTimeString()}",
-                                                {}
-                                            )
-                                        }
-                                    }
-                                }
-                            }
+                            FavoriteTab(favoritesState, onTrackClick)
                         }
 
                         1 -> {
-                            when (playlistsState) {
-                                is PlaylistsState.Empty -> {}
-                                is PlaylistsState.Content -> {
-                                    LazyVerticalGrid(
-                                        columns = GridCells.Fixed(2),
-                                        modifier = Modifier.fillMaxSize()
-                                    ) {
-                                        gridItems(playlistsState.playlists) { item ->
-                                            CustomGridItem(
-                                                imageUrl = item.imagePath,
-                                                title = item.name,
-                                                secondLine = item.description ?: "",
-                                                onItemClick = {}
-                                            )
-                                        }
-//                                            CustomGridItem(
-//                                                item.,
-//                                                item.name,
-//                                                "${item.trackCount}",
-//                                                {}
-//                                            )
-
-                                    }
-                                }
-                            }
+                            PlaylistsTab(playlistsState, onNewPlaylist, onPlaylistClick)
                         }
                     }
                 }
@@ -150,11 +109,14 @@ fun MediaLibraryScreen(
 @Composable
 fun MediaLibraryScreenPreview() {
     MediaLibraryScreen(
-        FavoritesState.Content(
-            PreviewData.trackList10
-        ),
-        PlaylistsState.Content(
-            PreviewData.playlistList10,
-        )
+//        FavoritesState.Content(
+//            PreviewData.trackList10
+//        ),
+        FavoritesState.Empty,
+//        PlaylistsState.Content(
+//            PreviewData.playlistList10,
+//        ),
+        PlaylistsState.Empty,
+        {}, {}, {}
     )
 }
