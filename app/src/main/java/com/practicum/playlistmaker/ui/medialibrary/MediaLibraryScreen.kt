@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -28,11 +30,13 @@ import androidx.compose.ui.unit.dp
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.favorites.ui.FavoritesState
 import com.practicum.playlistmaker.playlist.ui.list.PlaylistsState
+import com.practicum.playlistmaker.ui.elements.CustomGridItem
 import com.practicum.playlistmaker.ui.elements.CustomListItem
 import com.practicum.playlistmaker.ui.mock.PreviewData
 import com.practicum.playlistmaker.ui.theme.PlaylistMakerTheme
 import com.practicum.playlistmaker.util.toTimeString
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.lazy.grid.items as gridItems
 
 @Composable
 fun MediaLibraryScreen(
@@ -111,17 +115,25 @@ fun MediaLibraryScreen(
                             when (playlistsState) {
                                 is PlaylistsState.Empty -> {}
                                 is PlaylistsState.Content -> {
-                                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                        itemsIndexed(
-                                            items = playlistsState.playlists,
-                                            key = { index, _ -> index }) { _, item ->
-                                            CustomListItem(
-                                                item.imagePath,
-                                                item.name,
-                                                "${item.trackCount}",
-                                                {}
+                                    LazyVerticalGrid(
+                                        columns = GridCells.Fixed(2),
+                                        modifier = Modifier.fillMaxSize()
+                                    ) {
+                                        gridItems(playlistsState.playlists) { item ->
+                                            CustomGridItem(
+                                                imageUrl = item.imagePath,
+                                                title = item.name,
+                                                secondLine = item.description ?: "",
+                                                onItemClick = {}
                                             )
                                         }
+//                                            CustomGridItem(
+//                                                item.,
+//                                                item.name,
+//                                                "${item.trackCount}",
+//                                                {}
+//                                            )
+
                                     }
                                 }
                             }
