@@ -1,6 +1,9 @@
 package com.practicum.playlistmaker.ui.playlist
 
 import android.content.res.Configuration
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -27,6 +31,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,32 +50,45 @@ import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
-import com.practicum.playlistmaker.sharing.domain.model.Url
+import com.practicum.playlistmaker.ui.elements.CustomAlertDialog
 import com.practicum.playlistmaker.ui.theme.LightGrey
 import com.practicum.playlistmaker.ui.theme.MainBlue
 import com.practicum.playlistmaker.ui.theme.PlaylistMakerTheme
+import com.practicum.playlistmaker.ui.theme.White
 
 @Composable
 fun PlaylistEditScreen(
     nameOfScreen: Int,
     nameOfButton: Int,
     onPushButton: (Playlist) -> Unit,
-    name: String? = null,
-    description: String? = null,
-    cover: Url? = null,
-    onPushBack: () -> Unit = {}
+    playlist: Playlist? = null,
+    onPushBack: (() -> Unit)? = null
 ) {
+    val nameState = rememberTextFieldState(playlist?.name ?: "")
+    val descriptionState = rememberTextFieldState(playlist?.description ?: "")
+    val coverState = remember { mutableStateOf(playlist?.imagePath) }
+    val imageLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia(),
+        onResult = { item -> coverState.value = item?.toString() }
+    )
+    var showDialog by remember { mutableStateOf(false) }
 
     PlaylistMakerTheme {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    modifier = Modifier.clickable { },
+                    modifier = Modifier.clickable {
+                        if (nameState.text.isEmpty()) {
+                            showDialog = true
+                        } else {
+                            onPushBack?.invoke()
+                        }
+                    },
                     title = {
                         Row(
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            if (onPushButton != {}) {
+                            if (onPushBack != null) {
                                 Icon(
                                     painterResource(R.drawable.ic_arrow_left),
                                     tint = MaterialTheme.colorScheme.onSurface,
@@ -94,8 +115,35 @@ fun PlaylistEditScreen(
                             .fillMaxWidth()
                             .padding(17.dp, 0.dp, 17.dp, 32.dp),
                         shape = RoundedCornerShape(8.dp),
+                        enabled = !nameState.text.isEmpty(),
+                        colors = ButtonColors(
+                            containerColor = MainBlue,
+                            contentColor = White,
+                            disabledContainerColor = LightGrey,
+                            disabledContentColor = White
+                        ),
                         content = { Text(stringResource(nameOfButton)) },
-                        onClick = {})
+                        onClick = {
+                            onPushButton(
+                                (if (playlist != null) {
+                                    playlist.copy(
+                                        name = nameState.text.toString(),
+                                        description = descriptionState.text.toString(),
+                                        imagePath = coverState.value
+                                    )
+                                } else {
+                                    Playlist(
+                                        name = nameState.text.toString(),
+                                        description = descriptionState.text.toString(),
+                                        imagePath = coverState.value,
+                                        id = 0,
+                                        trackIds = emptyList(),
+                                        trackCount = 0
+                                    )
+
+                                })
+                            )
+                        })
                 }
 
             }) { innerPadding ->
@@ -107,12 +155,19 @@ fun PlaylistEditScreen(
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
                 SubcomposeAsyncImage(
-                    model = "",
+                    model = coverState.value,
                     contentDescription = null,
                     modifier = Modifier
                         .aspectRatio(1F)
                         .padding(24.dp, 26.dp, 24.dp, 0.dp)
                         .clip(RoundedCornerShape(8.dp))
+                        .clickable {
+                            imageLauncher.launch(
+                                PickVisualMediaRequest(
+                                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                                )
+                            )
+                        }
                         .drawBehind {
                             drawRoundRect(
                                 cornerRadius = CornerRadius(8.dp.toPx()), style = Stroke(
@@ -128,7 +183,7 @@ fun PlaylistEditScreen(
                     loading = { IconNewPlaylist() },
                     error = { IconNewPlaylist() })
                 OutlinedTextField(
-                    state = rememberTextFieldState(name ?: ""),
+                    state = nameState,
                     label = {
                         Text(
                             stringResource(R.string.title),
@@ -147,7 +202,7 @@ fun PlaylistEditScreen(
                         .padding(16.dp, 32.dp, 16.dp, 0.dp)
                 )
                 OutlinedTextField(
-                    state = rememberTextFieldState(description ?: ""),
+                    state = descriptionState,
                     label = {
                         Text(
                             stringResource(R.string.description),
@@ -169,7 +224,15 @@ fun PlaylistEditScreen(
             }
         }
     }
-
+    if (showDialog) {
+        CustomAlertDialog(
+            R.string.finish_playlist_creating,
+            R.string.all_unsaved_data_will_be_loose,
+            R.string.finish,
+            R.string.cancel,
+            onPushBack
+        )
+    }
 
 }
 
@@ -185,16 +248,14 @@ fun IconNewPlaylist() {
     }
 }
 
+
 @Preview(name = "Light", uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PlaylistEditScreenPreview() {
-//    SearchScreen("text", {}, SearchScreenState.Empty, {})
     PlaylistEditScreen(
-        R.string.new_playlist,
+        nameOfScreen = R.string.new_playlist,
         nameOfButton = R.string.create,
         onPushButton = {},
-        name = "",
-        description = "",
     )
 }
