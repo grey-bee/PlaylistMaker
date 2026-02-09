@@ -78,11 +78,8 @@ fun PlaylistEditScreen(
             topBar = {
                 TopAppBar(
                     modifier = Modifier.clickable {
-                        if (nameState.text.isEmpty()) {
-                            showDialog = true
-                        } else {
-                            onPushBack?.invoke()
-                        }
+                        if (playlist == null && nameState.text.isNotEmpty()) showDialog = true
+                        else onPushBack?.invoke()
                     },
                     title = {
                         Row(
@@ -230,7 +227,8 @@ fun PlaylistEditScreen(
             R.string.all_unsaved_data_will_be_loose,
             R.string.finish,
             R.string.cancel,
-            onPushBack
+            onPushBack,
+            { showDialog = false }
         )
     }
 

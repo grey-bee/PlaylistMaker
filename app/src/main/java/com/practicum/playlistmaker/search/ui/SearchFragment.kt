@@ -27,11 +27,12 @@ class SearchFragment : Fragment() {
     private lateinit var trackClickDebounce: (Track) -> Unit
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         trackClickDebounce =
-            debounce<Track>(
+            debounce(
                 CLICK_DEBOUNCE_DELAY,
                 viewLifecycleOwner.lifecycleScope,
                 false

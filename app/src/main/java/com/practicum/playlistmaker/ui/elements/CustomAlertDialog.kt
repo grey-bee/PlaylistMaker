@@ -22,12 +22,12 @@ fun CustomAlertDialog(
     text: Int,
     successButtonText: Int,
     cancelButtonText: Int,
-    onPushSuccess: (() -> Unit)? = null,
-    onPushCancel: (() -> Unit)? = null,
+    onPushSuccess: (() -> Unit)?,
+    onPushCancel: () -> Unit,
 
     ) {
     AlertDialog(
-        onDismissRequest = {},
+        onDismissRequest = { onPushCancel() },
         containerColor = White,
         shape = RoundedCornerShape(4.dp),
         title = {
@@ -57,7 +57,7 @@ fun CustomAlertDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = { onPushCancel?.invoke() }) {
+            TextButton(onClick = { onPushCancel() }) {
                 Text(
                     stringResource(cancelButtonText),
                     color = MainBlue,
@@ -77,6 +77,8 @@ fun CustomAlertDialogPreview() {
         R.string.finish_playlist_creating,
         R.string.all_unsaved_data_will_be_loose,
         R.string.finish,
-        R.string.cancel
+        R.string.cancel,
+        {},
+        {}
     )
 }
