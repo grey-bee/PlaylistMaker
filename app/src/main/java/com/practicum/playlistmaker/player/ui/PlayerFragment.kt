@@ -21,15 +21,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.BundleCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import com.practicum.playlistmaker.playlist.ui.list.PlaylistsState
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.ui.player.PlayerScreen
 import com.practicum.playlistmaker.util.InternetConnectionReceiver
-import com.practicum.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -78,7 +75,8 @@ class PlayerFragment : Fragment() {
 
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {

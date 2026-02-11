@@ -142,7 +142,6 @@ fun PlaylistEditScreen(
                             )
                         })
                 }
-
             }) { innerPadding ->
             Column(
                 modifier = Modifier
@@ -217,7 +216,6 @@ fun PlaylistEditScreen(
                         .fillMaxWidth()
                         .padding(16.dp, 16.dp, 16.dp, 0.dp)
                 )
-
             }
         }
     }
@@ -231,7 +229,6 @@ fun PlaylistEditScreen(
             { showDialog = false }
         )
     }
-
 }
 
 @Composable

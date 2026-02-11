@@ -19,7 +19,7 @@ import com.practicum.playlistmaker.ui.theme.White
 @Composable
 fun CustomAlertDialog(
     title: Int,
-    text: Int,
+    text: Int?,
     successButtonText: Int,
     cancelButtonText: Int,
     onPushSuccess: (() -> Unit)?,
@@ -39,12 +39,16 @@ fun CustomAlertDialog(
             )
         },
         text = {
-            Text(
-                stringResource(text),
-                color = DarkGrey,
-                fontWeight = FontWeight.Normal,
-                fontSize = 14.sp
-            )
+            if (text != null) {
+                Text(
+                    stringResource(text),
+                    color = DarkGrey,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 14.sp
+                )
+            } else {
+                ""
+            }
         },
         confirmButton = {
             TextButton(onClick = { onPushSuccess?.invoke() }) {

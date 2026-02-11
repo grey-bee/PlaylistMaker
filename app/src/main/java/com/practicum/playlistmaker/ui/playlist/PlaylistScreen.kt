@@ -7,13 +7,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -36,7 +34,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -47,6 +44,7 @@ import coil.compose.SubcomposeAsyncImage
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.playlist.ui.details.PlaylistState
 import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.ui.elements.CustomAlertDialog
 import com.practicum.playlistmaker.ui.elements.CustomListItem
 import com.practicum.playlistmaker.ui.mock.PreviewData
 import com.practicum.playlistmaker.ui.theme.DarkGrey
@@ -68,10 +66,9 @@ fun PlaylistScreen(
     val state = playlistState as? PlaylistState.Content ?: return
     var contentHeight by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
-    val containerSize = LocalWindowInfo.current.containerSize
     var showBottomSheet by remember { mutableStateOf(false) }
-    val systemBarsInsets = WindowInsets.systemBars
     var availableHeight by remember { mutableIntStateOf(0) }
+    var showDialog by remember { mutableStateOf(false) }
 
     PlaylistMakerTheme {
         Box(
@@ -83,7 +80,7 @@ fun PlaylistScreen(
             BottomSheetScaffold(
                 sheetPeekHeight = maxOf(
                     with(density) { (availableHeight - contentHeight).toDp() } - 24.dp,
-                    1.dp
+                    24.dp
                 ),
                 sheetContainerColor = MaterialTheme.colorScheme.background,
                 sheetShape = RoundedCornerShape(16.dp),
@@ -112,7 +109,7 @@ fun PlaylistScreen(
                     ) {
                         Box() {
                             SubcomposeAsyncImage(
-                                model = { state.playlist.imagePath },
+                                model = state.playlist.imagePath,
                                 contentDescription = null,
                                 modifier = Modifier
                                     .aspectRatio(1F),
@@ -290,7 +287,7 @@ fun PlaylistScreen(
                     stringResource(R.string.delete_playlist),
                     modifier = Modifier
                         .padding(16.dp, 0.dp)
-                        .clickable(enabled = true, onClick = { onPlaylistDeleteClick() }),
+                        .clickable(enabled = true, onClick = { showDialog = true }),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
@@ -298,6 +295,16 @@ fun PlaylistScreen(
                 )
                 Spacer(modifier = Modifier.height(107.dp))
             }
+        }
+        if (showDialog) {
+            CustomAlertDialog(
+                R.string.do_you_want_to_delete_playlist,
+                null,
+                R.string.finish,
+                R.string.cancel,
+                { onPlaylistDeleteClick() },
+                { showDialog = false }
+            )
         }
 
 
