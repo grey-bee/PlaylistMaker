@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.ui.player
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
@@ -25,15 +27,20 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,30 +48,34 @@ import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.player.ui.PlayerState
+import com.practicum.playlistmaker.playlist.domain.model.Playlist
+import com.practicum.playlistmaker.playlist.ui.list.PlaylistsState
 import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.ui.elements.CustomListItem
 import com.practicum.playlistmaker.ui.elements.InfoRow
 import com.practicum.playlistmaker.ui.mock.PreviewData
 import com.practicum.playlistmaker.ui.theme.LightGrey
 import com.practicum.playlistmaker.ui.theme.PlaylistMakerTheme
 import com.practicum.playlistmaker.util.toTimeString
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.stringResource
-import com.practicum.playlistmaker.ui.elements.CustomListItem
 
 @Composable
 fun PlayerScreen(
     track: Track,
     playerState: PlayerState,
+    playlistsState: PlaylistsState,
     isFavorite: Boolean,
     onPushPlaybutton: () -> Unit,
     onFavoriteClick: (Track) -> Unit,
-    onAddToPlaylist: (Track) -> Unit,
+    onAddToPlaylist: (Playlist) -> Unit,
     onPushBack: () -> Unit,
+    onNewPlaylist: () -> Unit,
 ) {
-    val modalState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
+    val playlists = when (playlistsState) {
+        is PlaylistsState.Content -> playlistsState.playlists
+        else -> emptyList()
+    }
+
     PlaylistMakerTheme {
         Scaffold(
             topBar = {
@@ -184,81 +195,78 @@ fun PlayerScreen(
                 if (track.collectionName.isNotEmpty()) {
                     InfoRow(R.string.album, track.collectionName)
                 }
-                if (track.releaseYear.isEmpty()) {
+                if (track.releaseYear.isNotEmpty()) {
                     InfoRow(R.string.year, track.releaseYear)
                 }
                 InfoRow(R.string.genre, track.primaryGenreName)
                 InfoRow(R.string.country, track.country)
-
             }
         }
-        ModalBottomSheet(
-            onDismissRequest = {},
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    stringResource(R.string.add_to_playlist),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = { }, colors = ButtonColors(
-                        containerColor = MaterialTheme.colorScheme.onSecondary,
-                        contentColor = MaterialTheme.colorScheme.background,
-                        disabledContainerColor = LightGrey,
-                        disabledContentColor = LightGrey,
-                    ),
-                    modifier = Modifier.padding(0.dp, 24.dp, 0.dp, 0.dp)
-                ) {
-                    Text(
-                        stringResource(R.string.new_playlist),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet = false},
+                containerColor = MaterialTheme.colorScheme.background,
+                dragHandle = {
+                    Box(
+                        contentAlignment = Center, modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp, 8.dp, 0.dp, 0.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .width(50.dp)
+                                .height(4.dp)
+                                .clip(RoundedCornerShape(44.dp))
+                                .background(MaterialTheme.colorScheme.onSurface)
+                        )
+                    }
                 }
-                Spacer(modifier = Modifier.height(24.dp))
+            ) {
                 LazyColumn(
                     horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     item {
+                        Spacer(modifier = Modifier.height(30.dp))
                         Text(
-                            stringResource(id = R.string.you_search),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(0.dp, 42.dp, 0.dp, 12.dp)
+                            stringResource(R.string.add_to_playlist),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
-                    }
-                    itemsIndexed(
-                        items = state.tracks,
-                        key = { index, _ -> index }
-                    ) { _, item ->
-                        CustomListItem(
-                            item.artworkUrl100,
-                            item.trackName,
-                            "${item.artistName} • ${item.trackTimeMillis.toTimeString()}",
-                            { onTrackClick(item) }
-                        )
-                    }
-                    item {
+                        Spacer(modifier = Modifier.height(28.dp))
                         Button(
-                            onClick = {  }, colors = ButtonColors(
+                            onClick = { onNewPlaylist() }, colors = ButtonColors(
                                 containerColor = MaterialTheme.colorScheme.onSecondary,
                                 contentColor = MaterialTheme.colorScheme.background,
                                 disabledContainerColor = LightGrey,
                                 disabledContentColor = LightGrey,
                             ),
-                            modifier = Modifier.padding(0.dp, 24.dp, 0.dp, 0.dp)
+                            modifier = Modifier
                         ) {
                             Text(
-                                stringResource(R.string.history_clear),
+                                stringResource(R.string.new_playlist),
                                 style = MaterialTheme.typography.bodyMedium,
                             )
                         }
-
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+                    itemsIndexed(
+                        items = playlists,
+                        key = { index, _ -> index }
+                    ) { _, item ->
+                        CustomListItem(
+                            item.imagePath,
+                            item.name,
+                            pluralStringResource(
+                                R.plurals.tracks_count,
+                                item.trackCount,
+                                item.trackCount
+                            ),
+                            {
+                                onAddToPlaylist(item)
+                                showBottomSheet = false
+                            }
+                        )
                     }
                 }
             }
@@ -274,10 +282,13 @@ fun PlayerScreenPreview() {
         PreviewData.track,
         PlayerState.Playing(
             progress = "00:30"
-        ), true,
+        ),
+        PlaylistsState.Content(PreviewData.playlistList10),
+        true,
         {},
         {},
         {},
-        {}
+        {},
+        {},
     )
 }

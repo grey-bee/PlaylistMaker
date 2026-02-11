@@ -9,7 +9,6 @@ import android.content.ServiceConnection
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,17 +20,10 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.ContextCompat
 import androidx.core.os.BundleCompat
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
-import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.dpToPx
-import com.practicum.playlistmaker.favorites.ui.FavoritesState
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import com.practicum.playlistmaker.playlist.ui.list.PlaylistsState
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -40,12 +32,9 @@ import com.practicum.playlistmaker.util.InternetConnectionReceiver
 import com.practicum.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
-import kotlin.getValue
-import kotlin.requireNotNull
 
 class PlayerFragment : Fragment() {
     private val internetConnectionReceiver = InternetConnectionReceiver()
-    private lateinit var playlistClickDebounce: (Playlist) -> Unit
     private val track by lazy {
         requireNotNull(
             BundleCompat.getParcelable(
@@ -100,13 +89,18 @@ class PlayerFragment : Fragment() {
                 val isFavorite by viewModel.observeIsFavorite().observeAsState(
                     false
                 )
+                val playlistsState by viewModel.observePlaylists()
+                    .observeAsState(PlaylistsState.Empty)
                 PlayerScreen(
                     track,
                     playerScreenState,
+                    playlistsState,
                     isFavorite,
                     { viewModel.playbackControl() },
-                    onFavoriteClick = { viewModel.onFavoriteClicked(it) },
-                    onAddToPlaylist = { }, { findNavController().navigateUp() }
+                    { viewModel.onFavoriteClicked(it) },
+                    { viewModel.onAddToPlaylistClicked(it) },
+                    { findNavController().navigateUp() },
+                    { findNavController().navigate(R.id.action_audioPlayerFragment_to_newPlaylistFragment) }
                 )
             }
         }
@@ -124,64 +118,6 @@ class PlayerFragment : Fragment() {
                 Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
             }
         }
-
-//        val bottomSheetContainer = binding.playlistBottomSheet
-//        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
-//            state = BottomSheetBehavior.STATE_HIDDEN
-//        }
-//        binding.addToPlaylistButton.setOnClickListener {
-//            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-//            binding.darkScreen.visibility = View.VISIBLE
-//            binding.darkScreen.alpha = 1f
-//        }
-
-//        bottomSheetBehavior.addBottomSheetCallback(object :
-//            BottomSheetBehavior.BottomSheetCallback() {
-//            override fun onStateChanged(bottomSheet: View, newState: Int) {
-//                when (newState) {
-//                    BottomSheetBehavior.STATE_HIDDEN -> {
-//                        binding.darkScreen.visibility = View.GONE
-//                    }
-//
-//                    BottomSheetBehavior.STATE_COLLAPSED -> {
-//                        binding.darkScreen.visibility = View.VISIBLE
-//                    }
-//                }
-//            }
-//
-//            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-//                if (slideOffset < 0) binding.darkScreen.alpha = (slideOffset + 1) / 2
-//            }
-//        })
-
-        playlistClickDebounce =
-            debounce<Playlist>(
-                CLICK_DEBOUNCE_DELAY,
-                viewLifecycleOwner.lifecycleScope,
-                false
-            ) { playlist ->
-                if (viewModel.onAddToPlaylistClicked(playlist)) {
-//                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                }
-            }
-
-
-//        viewModel.observePlaylists().observe(viewLifecycleOwner) { state ->
-//            when (state) {
-//                is PlaylistsState.Empty -> {}
-//                is PlaylistsState.Content -> {
-//                    playlistsAdapter.updatePlaylists(state.playlists)
-//                }
-//            }
-//        }
-
-//        binding.newPlaylist.setOnClickListener {
-//            findNavController().navigate(R.id.action_audioPlayerFragment_to_newPlaylistFragment)
-//        }
-//        setFragmentResultListener("new_playlist") { _, bundle ->
-//            val title = bundle.getString("title")
-//            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-//            Toast.makeText(requireContext(), "Плейлист $title создан", Toast.LENGTH_LONG).show()
     }
 
     override fun onDestroyView() {
@@ -212,7 +148,6 @@ class PlayerFragment : Fragment() {
     }
 
     companion object {
-        private const val CLICK_DEBOUNCE_DELAY = 500L
         private const val ARGS_TRACK = "track"
         fun createArgs(track: Track): Bundle =
             bundleOf(ARGS_TRACK to track)
