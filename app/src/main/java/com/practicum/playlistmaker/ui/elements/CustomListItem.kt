@@ -36,7 +36,8 @@ fun CustomListItem(
     imageUrl: Any?,
     title: String,
     subtitle: String,
-    onItemClick: () -> Unit
+    onItemClick: () -> Unit,
+    edgeSymbol: Boolean = true,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -87,11 +88,13 @@ fun CustomListItem(
             )
         }
         Spacer(modifier = Modifier.weight(1f))
-        Icon(
-            painter = painterResource(R.drawable.ic_arrow_short_right),
-            contentDescription = "",
-            tint = MaterialTheme.colorScheme.onBackground
-        )
+        if (edgeSymbol) {
+            Icon(
+                painter = painterResource(R.drawable.ic_arrow_short_right),
+                contentDescription = "",
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+        }
     }
 }
 

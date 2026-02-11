@@ -59,6 +59,8 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.androidx.runtime)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.foundation.layout)
+    implementation(libs.androidx.compose.material.core)
     debugImplementation(libs.androidx.ui.tooling)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)

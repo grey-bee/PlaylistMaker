@@ -1,49 +1,42 @@
 package com.practicum.playlistmaker.ui.playlist
 
 import android.content.res.Configuration
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -52,138 +45,262 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.playlist.domain.model.Playlist
 import com.practicum.playlistmaker.playlist.ui.details.PlaylistState
-import com.practicum.playlistmaker.ui.elements.CustomAlertDialog
+import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.ui.elements.CustomListItem
 import com.practicum.playlistmaker.ui.mock.PreviewData
+import com.practicum.playlistmaker.ui.theme.DarkGrey
 import com.practicum.playlistmaker.ui.theme.LightGrey
-import com.practicum.playlistmaker.ui.theme.MainBlue
 import com.practicum.playlistmaker.ui.theme.PlaylistMakerTheme
-import com.practicum.playlistmaker.ui.theme.White
+import com.practicum.playlistmaker.ui.theme.VeryLightGrey
+import com.practicum.playlistmaker.util.toTimeString
 
 
 @Composable
 fun PlaylistScreen(
-//    nameOfScreen: Int,
-//    nameOfButton: Int,
-//    onPushButton: (Playlist) -> Unit,
+    onShareClick: () -> Unit,
+    onInfoEditingClick: () -> Unit,
+    onPlaylistDeleteClick: () -> Unit,
+    onTrackClick: (Track) -> Unit,
     playlistState: PlaylistState,
     onPushBack: () -> Unit
 ) {
-//    val nameState = rememberTextFieldState(playlist?.name ?: "")
-//    val descriptionState = rememberTextFieldState(playlist?.description ?: "")
-//    val coverState = remember { mutableStateOf(playlist?.imagePath) }
-//    val imageLauncher = rememberLauncherForActivityResult(
-//        ActivityResultContracts.PickVisualMedia(),
-//        onResult = { item -> coverState.value = item?.toString() }
-//    )
-//    var showDialog by remember { mutableStateOf(false) }
+    val state = playlistState as? PlaylistState.Content ?: return
+    var contentHeight by remember { mutableIntStateOf(0) }
+    val density = LocalDensity.current
+    val containerSize = LocalWindowInfo.current.containerSize
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val systemBarsInsets = WindowInsets.systemBars
+    var availableHeight by remember { mutableIntStateOf(0) }
 
     PlaylistMakerTheme {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            Box() {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .padding()
-                        .height(52.dp)
-                        .width(52.dp)
-                        .clickable(enabled = true, onClick = { onPushBack() }),
-                ) {
-                    Icon(
-                        painterResource(R.drawable.ic_arrow_left),
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        contentDescription = "",
-                    )
-                }
-                SubcomposeAsyncImage(
-                    model = {},
-                    contentDescription = null,
-                    modifier = Modifier
-                        .aspectRatio(1F),
-                    contentScale = ContentScale.Crop,
-                    loading = {
-                        Icon(
-                            painterResource(R.drawable.placeholder),
-                            modifier = Modifier,
-                            tint = LightGrey,
-                            contentDescription = "",
+                .onGloballyPositioned {
+                    availableHeight = it.size.height
+                }) {
+            BottomSheetScaffold(
+                sheetPeekHeight = maxOf(
+                    with(density) { (availableHeight - contentHeight).toDp() } - 24.dp,
+                    1.dp
+                ),
+                sheetContainerColor = MaterialTheme.colorScheme.background,
+                sheetShape = RoundedCornerShape(16.dp),
+                containerColor = VeryLightGrey,
+                sheetDragHandle = {
+                    Box(
+                        contentAlignment = Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp, 8.dp, 0.dp, 0.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .width(50.dp)
+                                .height(4.dp)
+                                .clip(RoundedCornerShape(44.dp))
+                                .background(MaterialTheme.colorScheme.onBackground)
                         )
-                    },
-                    error = {
-                        Icon(
-                            painterResource(R.drawable.placeholder),
-                            modifier = Modifier,
-                            tint = LightGrey,
-                            contentDescription = "",
-                        )
-                    })
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-            when (playlistState) {
-                is PlaylistState.Content -> {
-                    Text(
-                        playlistState.playlist.name,
-                        modifier = Modifier.padding(16.dp, 0.dp),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    playlistState.playlist.description?.let {
+                    }
+                },
+                content = {
+                    Column(
+                        Modifier.onGloballyPositioned { it ->
+                            contentHeight = it.size.height
+                        }
+                    ) {
+                        Box() {
+                            SubcomposeAsyncImage(
+                                model = { state.playlist.imagePath },
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .aspectRatio(1F),
+                                contentScale = ContentScale.Crop,
+                                loading = {
+                                    Icon(
+                                        painterResource(R.drawable.placeholder),
+                                        modifier = Modifier,
+                                        tint = LightGrey,
+                                        contentDescription = "",
+                                    )
+                                },
+                                error = {
+                                    Icon(
+                                        painterResource(R.drawable.placeholder),
+                                        modifier = Modifier,
+                                        tint = LightGrey,
+                                        contentDescription = "",
+                                    )
+                                })
+                            Box(
+                                contentAlignment = Center,
+                                modifier = Modifier
+                                    .padding()
+                                    .height(52.dp)
+                                    .width(52.dp)
+                                    .clickable(enabled = true, onClick = { onPushBack() }),
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.ic_arrow_left),
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    contentDescription = "",
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(24.dp))
                         Text(
-                            it,
+                            playlistState.playlist.name,
+                            modifier = Modifier.padding(16.dp, 0.dp),
+                            style = MaterialTheme.typography.titleLarge,
+                            color = DarkGrey,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        playlistState.playlist.description?.let {
+                            Text(
+                                it,
+                                modifier = Modifier.padding(16.dp, 0.dp),
+                                style = MaterialTheme.typography.displayMedium,
+                                color = DarkGrey
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            "${
+                                pluralStringResource(
+                                    R.plurals.tracks_time,
+                                    playlistState.playlistTimeSec,
+                                    playlistState.playlistTimeSec,
+                                )
+                            } • ${
+                                pluralStringResource(
+                                    R.plurals.tracks_count,
+                                    playlistState.playlist.trackCount,
+                                    playlistState.playlist.trackCount,
+                                )
+                            }",
                             modifier = Modifier.padding(16.dp, 0.dp),
                             style = MaterialTheme.typography.displayMedium,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = DarkGrey,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Row(modifier = Modifier.padding(16.dp, 0.dp)) {
+                            Icon(
+                                painterResource(R.drawable.ic_share),
+                                tint = DarkGrey,
+                                contentDescription = "",
+                                modifier = Modifier.clickable(enabled = true, onClick = {
+                                    onShareClick()
+                                })
+                            )
+                            Icon(
+                                painterResource(R.drawable.ic_settings2),
+                                tint = DarkGrey,
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .padding(16.dp, 0.dp)
+                                    .clickable(enabled = true, onClick = {
+                                        showBottomSheet = true
+                                    }),
+                            )
+                        }
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        "${
-                            pluralStringResource(
-                                R.plurals.tracks_time,
-                                playlistState.playlistTimeSec,
-                                playlistState.playlistTimeSec,
+                },
+                sheetContent = {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    LazyColumn(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        itemsIndexed(
+                            items = state.playlistTracks,
+                            key = { index, _ -> index }
+                        ) { _, item ->
+                            CustomListItem(
+                                item.artworkUrl100,
+                                item.trackName,
+                                "${item.artistName} • ${item.trackTimeMillis.toTimeString()}",
+                                { onTrackClick(item) }
                             )
-                        } • ${
-                            pluralStringResource(
-                                R.plurals.tracks_count,
-                                playlistState.playlist.trackCount,
-                                playlistState.playlist.trackCount,
-                            )
-                        }",
-                        modifier = Modifier.padding(16.dp, 0.dp),
-                        style = MaterialTheme.typography.displayMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Row(modifier = Modifier.padding(16.dp, 0.dp),) {
-                        Icon(
-                            painterResource(R.drawable.ic_share),
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            contentDescription = ""
-                        )
-                        Icon(
-                            painterResource(R.drawable.ic_settings2),
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            contentDescription = "",
-                            modifier = Modifier.padding(16.dp, 0.dp),
-                        )
-
+                        }
                     }
                 }
-
-                is PlaylistState.Empty -> {}
+            )
+        }
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet = false },
+                containerColor = MaterialTheme.colorScheme.background,
+                dragHandle = {
+                    Box(
+                        contentAlignment = Center, modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp, 8.dp, 0.dp, 0.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .width(50.dp)
+                                .height(4.dp)
+                                .clip(RoundedCornerShape(44.dp))
+                                .background(MaterialTheme.colorScheme.onBackground)
+                        )
+                    }
+                }
+            ) {
+                Spacer(modifier = Modifier.height(12.dp))
+                CustomListItem(
+                    playlistState.playlist.imagePath,
+                    playlistState.playlist.name,
+                    pluralStringResource(
+                        R.plurals.tracks_count,
+                        playlistState.playlist.trackCount,
+                        playlistState.playlist.trackCount
+                    ),
+                    {},
+                    false
+                )
+                Spacer(modifier = Modifier.height(29.dp))
+                Text(
+                    stringResource(R.string.share),
+                    modifier = Modifier
+                        .padding(16.dp, 0.dp)
+                        .clickable(enabled = true, onClick = { onShareClick() }),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(41.dp))
+                Text(
+                    stringResource(R.string.information_editing),
+                    modifier = Modifier
+                        .padding(16.dp, 0.dp)
+                        .clickable(enabled = true, onClick = { onInfoEditingClick() }),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(41.dp))
+                Text(
+                    stringResource(R.string.delete_playlist),
+                    modifier = Modifier
+                        .padding(16.dp, 0.dp)
+                        .clickable(enabled = true, onClick = { onPlaylistDeleteClick() }),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(107.dp))
             }
         }
+
+
     }
 }
 
@@ -192,6 +309,7 @@ fun PlaylistScreen(
 @Composable
 fun PlaylistScreenPreview() {
     PlaylistScreen(
+        {}, {}, {}, {},
         PlaylistState.Content(
             PreviewData.playlist,
             playlistTimeSec = 300,
