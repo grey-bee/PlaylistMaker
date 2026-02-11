@@ -22,6 +22,11 @@ val PlaylistTypography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp
     ),
+    displayMedium = TextStyle(
+        fontFamily = YsFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 18.sp
+    ),
     labelMedium = TextStyle(
         fontFamily = YsFamily,
         fontWeight = FontWeight.Normal,
@@ -36,6 +41,11 @@ val PlaylistTypography = Typography(
         fontFamily = YsFamily,
         fontWeight = FontWeight.Bold,
         fontSize = 22.sp
+    ),
+    titleLarge = TextStyle(
+        fontFamily = YsFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp
     ),
     bodySmall = TextStyle(
         fontFamily = YsFamily,

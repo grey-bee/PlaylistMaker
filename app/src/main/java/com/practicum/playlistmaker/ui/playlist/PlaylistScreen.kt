@@ -45,13 +45,17 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.playlist.domain.model.Playlist
+import com.practicum.playlistmaker.playlist.ui.details.PlaylistState
 import com.practicum.playlistmaker.ui.elements.CustomAlertDialog
+import com.practicum.playlistmaker.ui.mock.PreviewData
 import com.practicum.playlistmaker.ui.theme.LightGrey
 import com.practicum.playlistmaker.ui.theme.MainBlue
 import com.practicum.playlistmaker.ui.theme.PlaylistMakerTheme
@@ -63,8 +67,8 @@ fun PlaylistScreen(
 //    nameOfScreen: Int,
 //    nameOfButton: Int,
 //    onPushButton: (Playlist) -> Unit,
-//    playlist: Playlist? = null,
-//    onPushBack: (() -> Unit)? = null
+    playlistState: PlaylistState,
+    onPushBack: () -> Unit
 ) {
 //    val nameState = rememberTextFieldState(playlist?.name ?: "")
 //    val descriptionState = rememberTextFieldState(playlist?.description ?: "")
@@ -81,19 +85,104 @@ fun PlaylistScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            Icon(
-                painterResource(R.drawable.ic_arrow_left),
-                tint = MaterialTheme.colorScheme.onSurface,
-                contentDescription = ""
-            )
-            SubcomposeAsyncImage(
-                model = R.drawable.placeholder,
-                contentDescription = null,
-                modifier = Modifier
-                    .aspectRatio(1F),
-                contentScale = ContentScale.Crop,
-                loading = { R.drawable.placeholder },
-                error = { R.drawable.placeholder })
+            Box() {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .padding()
+                        .height(52.dp)
+                        .width(52.dp)
+                        .clickable(enabled = true, onClick = { onPushBack() }),
+                ) {
+                    Icon(
+                        painterResource(R.drawable.ic_arrow_left),
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        contentDescription = "",
+                    )
+                }
+                SubcomposeAsyncImage(
+                    model = {},
+                    contentDescription = null,
+                    modifier = Modifier
+                        .aspectRatio(1F),
+                    contentScale = ContentScale.Crop,
+                    loading = {
+                        Icon(
+                            painterResource(R.drawable.placeholder),
+                            modifier = Modifier,
+                            tint = LightGrey,
+                            contentDescription = "",
+                        )
+                    },
+                    error = {
+                        Icon(
+                            painterResource(R.drawable.placeholder),
+                            modifier = Modifier,
+                            tint = LightGrey,
+                            contentDescription = "",
+                        )
+                    })
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            when (playlistState) {
+                is PlaylistState.Content -> {
+                    Text(
+                        playlistState.playlist.name,
+                        modifier = Modifier.padding(16.dp, 0.dp),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    playlistState.playlist.description?.let {
+                        Text(
+                            it,
+                            modifier = Modifier.padding(16.dp, 0.dp),
+                            style = MaterialTheme.typography.displayMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        "${
+                            pluralStringResource(
+                                R.plurals.tracks_time,
+                                playlistState.playlistTimeSec,
+                                playlistState.playlistTimeSec,
+                            )
+                        } • ${
+                            pluralStringResource(
+                                R.plurals.tracks_count,
+                                playlistState.playlist.trackCount,
+                                playlistState.playlist.trackCount,
+                            )
+                        }",
+                        modifier = Modifier.padding(16.dp, 0.dp),
+                        style = MaterialTheme.typography.displayMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(modifier = Modifier.padding(16.dp, 0.dp),) {
+                        Icon(
+                            painterResource(R.drawable.ic_share),
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            contentDescription = ""
+                        )
+                        Icon(
+                            painterResource(R.drawable.ic_settings2),
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            contentDescription = "",
+                            modifier = Modifier.padding(16.dp, 0.dp),
+                        )
+
+                    }
+                }
+
+                is PlaylistState.Empty -> {}
+            }
         }
     }
 }
@@ -103,8 +192,11 @@ fun PlaylistScreen(
 @Composable
 fun PlaylistScreenPreview() {
     PlaylistScreen(
-//        nameOfScreen = R.string.new_playlist,
-//        nameOfButton = R.string.create,
-//        onPushButton = {},
+        PlaylistState.Content(
+            PreviewData.playlist,
+            playlistTimeSec = 300,
+            playlistTracks = PreviewData.trackList10
+        ),
+        {}
     )
 }
