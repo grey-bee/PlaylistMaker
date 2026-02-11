@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
@@ -35,7 +36,8 @@ fun CustomListItem(
     imageUrl: Any?,
     title: String,
     subtitle: String,
-    onItemClick: () -> Unit
+    onItemClick: () -> Unit,
+    edgeSymbol: Boolean = true,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -74,7 +76,9 @@ fun CustomListItem(
             Text(
                 title,
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSecondary
+                color = MaterialTheme.colorScheme.onSecondary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(1.dp))
             Text(
@@ -84,11 +88,13 @@ fun CustomListItem(
             )
         }
         Spacer(modifier = Modifier.weight(1f))
-        Icon(
-            painter = painterResource(R.drawable.ic_arrow_short_right),
-            contentDescription = "",
-            tint = MaterialTheme.colorScheme.onBackground
-        )
+        if (edgeSymbol) {
+            Icon(
+                painter = painterResource(R.drawable.ic_arrow_short_right),
+                contentDescription = "",
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+        }
     }
 }
 

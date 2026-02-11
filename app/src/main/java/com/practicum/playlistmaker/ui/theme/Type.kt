@@ -6,6 +6,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.practicum.playlistmaker.R
 import  androidx.compose.ui.text.TextStyle
 import  androidx.compose.material3.Typography
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.unit.sp
 
 
@@ -21,6 +22,11 @@ val PlaylistTypography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp
     ),
+    displayMedium = TextStyle(
+        fontFamily = YsFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 18.sp
+    ),
     labelMedium = TextStyle(
         fontFamily = YsFamily,
         fontWeight = FontWeight.Normal,
@@ -35,6 +41,16 @@ val PlaylistTypography = Typography(
         fontFamily = YsFamily,
         fontWeight = FontWeight.Bold,
         fontSize = 22.sp
+    ),
+    titleLarge = TextStyle(
+        fontFamily = YsFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp
+    ),
+    bodySmall = TextStyle(
+        fontFamily = YsFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 13.sp
     ),
     bodyMedium = TextStyle(
         fontFamily = YsFamily,
