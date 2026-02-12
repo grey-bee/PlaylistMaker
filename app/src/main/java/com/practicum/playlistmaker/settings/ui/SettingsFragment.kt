@@ -13,6 +13,7 @@ import androidx.core.net.toUri
 import com.practicum.playlistmaker.ui.settings.SettingsScreen
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.ViewCompositionStrategy
 
 class SettingsFragment : Fragment() {
     private val viewModel: SettingsViewModel by viewModel()
@@ -22,6 +23,7 @@ class SettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 val isDarkTheme by viewModel.observeTheme().observeAsState(false)
                 SettingsScreen(

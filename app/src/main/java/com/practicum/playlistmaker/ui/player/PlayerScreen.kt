@@ -44,6 +44,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.practicum.playlistmaker.R
@@ -53,7 +54,6 @@ import com.practicum.playlistmaker.playlist.ui.list.PlaylistsState
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.ui.elements.CustomListItem
 import com.practicum.playlistmaker.ui.elements.InfoRow
-import com.practicum.playlistmaker.ui.mock.PreviewData
 import com.practicum.playlistmaker.ui.theme.LightGrey
 import com.practicum.playlistmaker.ui.theme.PlaylistMakerTheme
 import com.practicum.playlistmaker.util.toTimeString
@@ -204,7 +204,7 @@ fun PlayerScreen(
         }
         if (showBottomSheet) {
             ModalBottomSheet(
-                onDismissRequest = { showBottomSheet = false},
+                onDismissRequest = { showBottomSheet = false },
                 containerColor = MaterialTheme.colorScheme.background,
                 dragHandle = {
                     Box(
@@ -277,13 +277,13 @@ fun PlayerScreen(
 @Preview(name = "Light", uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun PlayerScreenPreview() {
+private fun PlayerScreenPreview(
+    @PreviewParameter(PlayerStateProvider::class) data: PlayerPreviewData,
+) {
     PlayerScreen(
-        PreviewData.track,
-        PlayerState.Playing(
-            progress = "00:30"
-        ),
-        PlaylistsState.Content(PreviewData.playlistList10),
+        data.track,
+        data.playerState,
+        data.playlistsState,
         true,
         {},
         {},

@@ -76,7 +76,7 @@ fun CustomAlertDialog(
 @Preview(name = "Light", uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun CustomAlertDialogPreview() {
+private fun CustomAlertDialogPreview() {
     CustomAlertDialog(
         R.string.finish_playlist_creating,
         R.string.all_unsaved_data_will_be_loose,

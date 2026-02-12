@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.os.BundleCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -21,7 +22,6 @@ import com.practicum.playlistmaker.playlist.ui.create.NewPlaylistFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.ui.playlist.PlaylistScreen
 import com.practicum.playlistmaker.util.debounce
-import com.practicum.playlistmaker.util.toTimeString
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -59,6 +59,7 @@ class PlaylistFragment : Fragment() {
                 openAudioPlayer(track)
             }
         return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 val playlistState by playlistViewModel.observeState()
                     .observeAsState(PlaylistState.Empty)
@@ -88,30 +89,7 @@ class PlaylistFragment : Fragment() {
                 requireContext(), R.string.no_tracks_for_share, Toast.LENGTH_LONG
             ).show()
         } else {
-            val state = playlistViewModel.observeState().value
-            val tracksInfo = if (state is PlaylistState.Content) state.playlistTracks else null
-            val tracksString = buildString {
-                tracksInfo?.let { tracks ->
-                    tracks.forEachIndexed { index, track ->
-                        append("${index + 1}. ${track.artistName} - ${track.trackName} - ${track.trackTimeMillis.toTimeString()}\n")
-                    }
-                }
-            }
-
-
-            val text = buildString {
-                append("${playlist.name}\n")
-                append("${playlist.description}\n")
-                append(
-                    resources.getQuantityString(
-                        R.plurals.tracks_count,
-                        playlist.trackCount,
-                        playlist.trackCount
-                    )
-                )
-                append("\n")
-                append(tracksString)
-            }
+            val text = playlistViewModel.getShareText()
             val intent = Intent(Intent.ACTION_SEND)
             val chooserTitle = ""
             intent.type = "text/plain"

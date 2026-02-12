@@ -39,6 +39,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.practicum.playlistmaker.R
@@ -46,7 +47,6 @@ import com.practicum.playlistmaker.playlist.ui.details.PlaylistState
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.ui.elements.CustomAlertDialog
 import com.practicum.playlistmaker.ui.elements.CustomListItem
-import com.practicum.playlistmaker.ui.mock.PreviewData
 import com.practicum.playlistmaker.ui.theme.DarkGrey
 import com.practicum.playlistmaker.ui.theme.LightGrey
 import com.practicum.playlistmaker.ui.theme.PlaylistMakerTheme
@@ -314,14 +314,15 @@ fun PlaylistScreen(
 @Preview(name = "Light", uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun PlaylistScreenPreview() {
+private fun PlaylistScreenPreview(
+    @PreviewParameter(PlaylistStateProvider::class) state: PlaylistState
+) {
     PlaylistScreen(
-        {}, {}, {}, {},
-        PlaylistState.Content(
-            PreviewData.playlist,
-            playlistTimeSec = 300,
-            playlistTracks = PreviewData.trackList10
-        ),
+        {},
+        {},
+        {},
+        {},
+        state,
         {}
     )
 }

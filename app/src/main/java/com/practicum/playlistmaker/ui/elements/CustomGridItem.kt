@@ -32,7 +32,7 @@ import com.practicum.playlistmaker.ui.theme.PlaylistMakerTheme
 fun CustomGridItem(
     imageUrl: Any?,
     title: String,
-    secondLine: String,
+    trackQty: Int,
     onItemClick: () -> Unit
 ) {
     Column(
@@ -71,7 +71,7 @@ fun CustomGridItem(
         )
         Spacer(modifier = Modifier.height(1.dp))
         Text(
-            secondLine,
+            pluralStringResource(R.plurals.tracks_count, trackQty, trackQty),
             style = MaterialTheme.typography.displaySmall,
             color = MaterialTheme.colorScheme.onSecondary
         )
@@ -82,19 +82,14 @@ fun CustomGridItem(
 @Preview(name = "Light", uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun CustomGridItemPreview() {
+private fun CustomGridItemPreview() {
     val playlist = PreviewData.playlist
     PlaylistMakerTheme {
         Surface {
             CustomGridItem(
                 playlist.imagePath,
                 playlist.name,
-                "${playlist.trackCount} ${
-                    pluralStringResource(
-                        R.plurals.tracks_count,
-                        playlist.trackCount
-                    )
-                }",
+                playlist.trackCount,
                 {}
             )
         }
