@@ -314,7 +314,7 @@ fun PlaylistScreen(
 @Preview(name = "Light", uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun PlaylistScreenPreview() {
+private fun PlaylistScreenPreview() {
     PlaylistScreen(
         {}, {}, {}, {},
         PlaylistState.Content(

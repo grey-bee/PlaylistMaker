@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.os.BundleCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -59,6 +60,7 @@ class PlaylistFragment : Fragment() {
                 openAudioPlayer(track)
             }
         return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 val playlistState by playlistViewModel.observeState()
                     .observeAsState(PlaylistState.Empty)

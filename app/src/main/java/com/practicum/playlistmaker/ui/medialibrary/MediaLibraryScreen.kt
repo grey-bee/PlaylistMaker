@@ -107,7 +107,7 @@ fun MediaLibraryScreen(
 @Preview(name = "Light", uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun MediaLibraryScreenPreview() {
+private fun MediaLibraryScreenPreview() {
     MediaLibraryScreen(
 //        FavoritesState.Content(
 //            PreviewData.trackList10

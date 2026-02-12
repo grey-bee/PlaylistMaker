@@ -77,7 +77,7 @@ fun ErrorPlaceHolder(
 @Preview(name = "Light", uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun ErrorPlaceHolderPreview() {
+private fun ErrorPlaceHolderPreview() {
     PlaylistMakerTheme {
         Surface {
             ErrorPlaceHolder(
