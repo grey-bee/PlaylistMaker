@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.playlist.domain.PlaylistInteractor
@@ -33,28 +33,28 @@ class PlaylistViewModel(
     }
 
     fun getTracksString(): String {
+        val state = observeState().value
+        val tracksInfo = if (state is PlaylistState.Content) state.playlistTracks else null
         return buildString {
-            _playlistTracks.value?.let { tracks ->
-                tracks.forEachIndexed { index, track ->
-                    append("${index + 1}. ${track.artistName} - ${track.trackName} - ${track.trackTimeMillis.toTimeString()}\n")
-                }
+            tracksInfo?.forEachIndexed { index, track ->
+                append("${index + 1}. ${track.artistName} - ${track.trackName} - ${track.trackTimeMillis.toTimeString()}\n")
             }
         }
     }
 
-    fun getShareText(trackCountLabel: String): String {
+    fun getShareText(): String {
         return buildString {
             append("${playlist.name}\n")
             append("${playlist.description}\n")
             append(
-                resources.getQuantityString(
+                application.resources.getQuantityString(
                     R.plurals.tracks_count,
                     playlist.trackCount,
                     playlist.trackCount
                 )
             )
             append("\n")
-            append(tracksString)
+            append(getTracksString())
         }
     }
 
