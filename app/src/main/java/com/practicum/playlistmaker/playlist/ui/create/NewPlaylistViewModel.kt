@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.playlist.ui.create
 
 import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,40 +13,24 @@ import com.practicum.playlistmaker.util.Event
 
 class NewPlaylistViewModel(
     private val playlistInteractor: PlaylistInteractor,
-    private var playlist: Playlist?
 ) : ViewModel() {
 
     private val _playlistSaved = MutableLiveData<Event<Boolean>>()
     fun observePlaylistSaved(): LiveData<Event<Boolean>> = _playlistSaved
 
-    fun saveNewPlaylistInfo(title: String, description: String, uri: Uri?) {
+    fun savePlaylist(playlist: Playlist) {
         viewModelScope.launch {
-            val coverPath = uri?.let { playlistInteractor.saveImageToPrivateStorage(uri) }
-            playlistInteractor.addPlaylist(
-                Playlist(
-                    0,
-                    title,
-                    description,
-                    coverPath,
-                    emptyList(),
-                    0
-                )
-            )
+            val imagePath = if (playlist.imagePath?.startsWith("content://") == true) {
+                playlistInteractor.saveImageToPrivateStorage(playlist.imagePath.toUri())
+            } else playlist.imagePath
+            val editedPlaylist = playlist.copy(imagePath = imagePath)
+
+            if (editedPlaylist.id.toInt() == 0) {
+                playlistInteractor.addPlaylist(editedPlaylist)
+            } else {
+                playlistInteractor.updatePlaylist(editedPlaylist)
+            }
             _playlistSaved.postValue(Event(true))
         }
-    }
-
-    fun saveEditPlaylistInfo(title: String, description: String, uri: Uri?) {
-        playlist?.let {
-            viewModelScope.launch {
-                val coverPath = uri?.let { playlistInteractor.saveImageToPrivateStorage(uri) }
-                val newImagePath = coverPath ?: it.imagePath
-                playlistInteractor.updatePlaylist(
-                    it.copy(name = title, description = description, imagePath = newImagePath)
-                )
-                _playlistSaved.postValue(Event(true))
-            }
-        }
-
     }
 }
